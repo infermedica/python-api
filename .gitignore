@@ -1,9 +1,22 @@
-### Python
+# Python
+__pycache__/
 *.py[cod]
 
 
-### JetBrains
+# JetBrains
 .idea/
 
-### OSX
+# OSX
 .DS_Store
+
+# Distribution / packaging
+.Python
+env/
+build/
+develop-eggs/
+dist/
+eggs/
+.eggs/
+*.egg-info/
+.installed.cfg
+*.egg

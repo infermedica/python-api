@@ -1,0 +1,9 @@
+### Python
+*.py[cod]
+
+
+### JetBrains
+.idea/
+
+### OSX
+.DS_Store

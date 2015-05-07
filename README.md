@@ -1,7 +1,7 @@
 Python client for Infermedica API 
 =================================
 
-Infermedica Python client provides access to powerful medical diagnostic API created by [Infermedica](http://infermedica.com).
+Infermedica Python client provides access to a medical diagnostic API created by [Infermedica](http://infermedica.com).
 The API documentation can be found at [Infermedica Developer Portal](https://developer.infermedica.com).
 
 
@@ -22,7 +22,7 @@ $ easy_install infermedica-api
 
 ## Configuration
 
-First of all register for a developer account and get your app_id and app_key at [Infermedica Developer Portal](https://developer.infermedica.com).
+First of all register for a developer account and obtain your app_id and app_key at [Infermedica Developer Portal](https://developer.infermedica.com).
 
 #### Option one
 Configure a global API object to easily use it everywhere:
@@ -54,7 +54,7 @@ print(api.info())
 
 ## Usage
 
-Here is an example of how to use diagnosis service.
+Here is an example of how to use the API to get a list of patient's likely diagnoses.
 
 ```python
 import infermedica_api
@@ -77,15 +77,15 @@ request = api.diagnosis(request)
 print(request)
 ```
 
-Note that after each diagnosis call, the request object gets updated and you can obtain question from it.
-You can also update the request object with new observations or risk factors to get more precise diagnosis result and new control questions. 
+Note that after each diagnosis call, the request object gets updated and you can obtain a diagnostic question to ask.
+You can also update the request object with new observations or risk factors to get even more precise diagnostic insights and new questions to verify. 
 
 For more take a look at provided examples.
 
 ## Examples
 
 To easily run examples edit `examples/config.py` file and enter your account credentials.
-Then go to `examples` folder and just run examples:
+Then go to `examples` folder and just run the following:
  
 ```bash
 $ python observations.py
@@ -105,8 +105,7 @@ $ python diagnosis.py
 
 ### Contributing ###
 
-Arkadiusz Szydełko ([akszydelko](https://github.com/akszydelko)) and Paweł Iwaszko ([iwaszko](https://github.com/iwaszko)) are the creators and current maintainers of the 
-Infermedica API Python client. 
+Arkadiusz Szydełko ([akszydelko](https://github.com/akszydelko)) and Paweł Iwaszko ([iwaszko](https://github.com/iwaszko)) are the creators and current maintainers of the Infermedica API Python client. 
 
 Pull requests are always welcome. Before submitting a pull request, please ensure that your coding style follows PEP 8 and rules form `.editorconfig` file.
 

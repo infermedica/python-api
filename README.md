@@ -51,6 +51,8 @@ api = infermedica_api.API(app_id='YOUR_APP_ID', app_key='YOUR_APP_KEY')
 print(api.info())
 ```
 
+### Api version
+Both of the above options to configure API object take an optional parameter `api_version`, which determines the version of Infermedica API to be used. For the current version the default API version is set automatically set to `v2` and this is the recommended version to use.
 
 ## Usage
 
@@ -62,12 +64,12 @@ import infermedica_api
 api = infermedica_api.get_api()
 
 # Create diagnosis object with initial patient information.
-# Note that time argument is optional here as well as in the add_observation function
+# Note that time argument is optional here as well as in the add_symptom function
 request = infermedica_api.Diagnosis(sex='male', age=35, time='2015-02-09T08:30:00+05:00')
 
-request.add_observation('s_102', 'present', time='2015-02-09T08:00:00+05:00')
-request.add_observation('s_21', 'present', time='2015-02-09')
-request.add_observation('s_98', 'absent')
+request.add_symptom('s_102', 'present', time='2015-02-09T08:00:00+05:00')
+request.add_symptom('s_21', 'present', time='2015-02-09')
+request.add_symptom('s_98', 'absent')
 
 request.set_pursued_conditions(['c_76', 'c_9'])  # Optional
 

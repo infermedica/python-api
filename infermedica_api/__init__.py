@@ -36,12 +36,12 @@ is available at <https://developer.infermedica.com>.
 """
 
 __title__ = 'Infermedica API'
-__version__ = '0.0.1'
+__version__ = '0.0.2'
 __author__ = 'Arkadiusz Szydelko'
 __license__ = 'Apache 2.0'
 __copyright__ = 'Copyright 2015 Infermedica'
 
-DEFAULT_API_VERSION = 'v1'
+DEFAULT_API_VERSION = 'v2'
 
 API_CONFIG = {
     'v1': {
@@ -56,9 +56,29 @@ API_CONFIG = {
             'risk_factors': '/risk_factors',
             'risk_factor_details': '/risk_factors/{id}'
         }
+    },
+    'v2': {
+        'endpoint': 'https://api.infermedica.com/',
+        'methods': {
+            'info': '/info',
+            'search': '/search',
+            'diagnosis': '/diagnosis',
+            'conditions': '/conditions',
+            'condition_details': '/conditions/{id}',
+            'symptoms': '/symptoms',
+            'symptom_details': '/symptoms/{id}',
+            'lab_tests': '/lab_tests',
+            'lab_test_details': '/lab_tests/{id}',
+            'risk_factors': '/risk_factors',
+            'risk_factor_details': '/risk_factors/{id}'
+        }
     }
 }
 
+from .models.condition import Condition, ConditionList
+from .models.diagnosis import Diagnosis, DiagnosisQuestion, ConditionResult, ConditionResultList
+from .models.lab_test import LabTest, LabTestList
+from .models.observation import Observation, ObservationList
+from .models.risk_factor import RiskFactor, RiskFactorList
+from .models.symptom import Symptom, SymptomList
 from .webservice import configure, get_api, API
-from .models import Condition, ConditionList, Observation, ObservationList, RiskFactor, RiskFactorList, Diagnosis, \
-    DiagnosisQuestion, ConditionResult, ConditionResultList

@@ -109,6 +109,34 @@ class API(object):
         except KeyError as e:
             raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'info')
 
+    def search(self, phrase, sex=None, max_results=8):
+        """
+        Makes an API search request and returns list of dicts with two keys 'id' and 'label'.
+        Each dict represent an observation (symptom, lab test or risk factor).
+
+        :param phrase: Phrase to look for.
+        :type phrase: str
+
+        :param sex: Sex of the patient 'female' or 'male'.
+        :type sex: str
+
+        :param max_results: Maximum number of result to return, default is 8.
+        :type max_results: int
+
+        :returns: A List of dicts with 'id' and 'label' keys.
+        :rtype: list
+        """
+        try:
+            params = {
+                'phrase': phrase,
+                'max_results': max_results
+            }
+            if sex:
+                params['sex'] = sex
+            return self.__get(self.api_methods['search'], params=params)
+        except KeyError as e:
+            raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'search')
+
     def diagnosis(self, diagnosis_request):
         """
         Makes an diagnosis API request with provided diagnosis data
@@ -194,6 +222,70 @@ class API(object):
             raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'conditions_list')
 
         return models.ConditionList.from_json(response)
+
+    def symptom_details(self, _id):
+        """
+        Makes an API request and returns symptom details object.
+
+        :param _id: Symptom id
+        :type _id: str
+
+        :returns: A Symptom object
+        :rtype: :class:`infermedica_api.models.Symptom`
+        """
+        try:
+            url = self.api_methods['symptom_details'].format(**{'id': _id})
+            response = self.__get(url)
+        except KeyError as e:
+            raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'symptom_details')
+
+        return models.Symptom.from_json(response)
+
+    def symptoms_list(self):
+        """
+        Makes an API request and returns list of symptom details objects.
+
+        :returns: A SymptomList list object with Symptom objects
+        :rtype: :class:`infermedica_api.models.SymptomList`
+        """
+        try:
+            response = self.__get(self.api_methods['symptoms'])
+        except KeyError as e:
+            raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'symptoms_list')
+
+        return models.SymptomList.from_json(response)
+
+    def lab_test_details(self, _id):
+        """
+        Makes an API request and returns lab_test details object.
+
+        :param _id: LabTest id
+        :type _id: str
+
+        :returns: A LabTest object
+        :rtype: :class:`infermedica_api.models.LabTest`
+        """
+        try:
+            url = self.api_methods['lab_test_details'].format(**{'id': _id})
+            response = self.__get(url)
+        except KeyError as e:
+            raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'lab_test_details')
+
+        return models.LabTest.from_json(response)
+
+    def lab_tests_list(self):
+        """
+        Makes an API request and returns list of lab_test details objects.
+
+        :returns: A LabTestList list object with LabTest objects
+        :rtype: :class:`infermedica_api.models.LabTestList`
+        """
+        try:
+            response = self.__get(self.api_methods['lab_tests'])
+        except KeyError as e:
+            raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'lab_tests_list')
+
+        return models.LabTestList.from_json(response)
 
     def risk_factor_details(self, _id):
         """

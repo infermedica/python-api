@@ -32,23 +32,44 @@ class API(object):
         self.api_version = kwargs.get("api_version", DEFAULT_API_VERSION)
         self.app_id = kwargs["app_id"]  # Mandatory parameter, so not using `dict.get`
         self.app_key = kwargs["app_key"]  # Mandatory parameter, so not using `dict.get`
+        self.default_headers = self.__calculate_headers(kwargs)
 
-        self.endpoint = API_CONFIG[self.api_version]['endpoint']
-        self.api_methods = API_CONFIG[self.api_version]['methods']
+        if self.api_version in kwargs.get("api_definitions", {}) or {}:
+            self.endpoint = kwargs["api_definitions"][self.api_version]['endpoint']
+            self.api_methods = kwargs["api_definitions"][self.api_version]['methods']
+        else:
+            self.endpoint = API_CONFIG[self.api_version]['endpoint']
+            self.api_methods = API_CONFIG[self.api_version]['methods']
+
+    def __calculate_headers(self, parameters):
+        headers = parameters.get("default_headers", {})
+        if parameters.get("model", None):
+            headers.update({
+                "Model": parameters["model"]
+            })
+
+        if parameters.get("dev_mode", None) and parameters["dev_mode"] == True:
+            headers.update({
+                "Dev-Mode": True
+            })
+
+        return headers
 
     def __get_url(self, method):
         return self.endpoint + self.api_version + method
 
     def __get_headers(self, override):
         """Returns default HTTP headers."""
-
-        return dict({
+        headers = {
             "Content-Type": "application/json",
             "Accept": "application/json",
             "User-Agent": self.user_agent,
             "app_id": self.app_id,
             "app_key": self.app_key
-        }, **override)
+        }
+        headers.update(self.default_headers)
+        headers.update(override)
+        return headers
 
     def __api_call(self, url, method, **kwargs):
 
@@ -321,18 +342,29 @@ class API(object):
 
 
 __api__ = None
+__api_aliased__ = {}
 
 
-def get_api():
+def get_api(alias=None):
     """
     Returns global API object and if present,
     otherwise raise MissingConfiguration exception.
+
+    :param alias: Alias of the API to retrieve
+    :type alias: str
 
     :returns: An API object
     :rtype: :class:`infermedica_api.webservice.API`
     :raises: :class:`infermedica_api.exceptions.MissingConfiguration`
     """
     global __api__
+    global __api_aliased__
+
+    if isinstance(alias, basestring):
+        try:
+            return __api_aliased__[alias]
+        except KeyError:
+            raise exceptions.MissingConfiguration(alias)
 
     if __api__ is None:
         raise exceptions.MissingConfiguration()
@@ -361,6 +393,18 @@ def configure(options=None, **config):
     :rtype: :class:`infermedica_api.webservice.API`
     """
     global __api__
-    __api__ = API(**dict(options or {}, **config))
+    global __api_aliased__
+
+    configuration = dict(options or {}, **config)
+
+    if 'alias' in configuration and isinstance(configuration['alias'], basestring):
+        __api_aliased__[configuration['alias']] = API(**configuration)
+
+        if configuration.get('default', False):
+            __api__ = __api_aliased__[configuration['alias']]
+
+        return __api_aliased__[configuration['alias']]
+
+    __api__ = API(**configuration)
 
     return __api__

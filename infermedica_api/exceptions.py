@@ -49,7 +49,12 @@ class ServerError(ConnectionError):
 class MissingConfiguration(Exception):
     """API not configured."""
 
+    def __init__(self, alias=None):
+        self.alias = alias
+
     def __str__(self):
+        if self.alias:
+            return "API credentials for alias '%s' has not been configured." % self.alias
         return "API credentials has not been configured."
 
 

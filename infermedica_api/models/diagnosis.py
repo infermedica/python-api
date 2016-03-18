@@ -183,13 +183,13 @@ class Diagnosis(ModelCommon):
         :param json: Dict obtained from the API diagnosis response
         :type json: dict
         """
-        if 'question' in json:
+        if 'question' in json and isinstance(json['question'], dict):
             self.question = DiagnosisQuestion.from_json(json['question'])
         else:
             self.question = None
 
-        self.conditions = ConditionResultList.from_json(json.get('conditions', []))
-        self.extras = json.get('extras', {})
+        self.conditions = ConditionResultList.from_json(json.get('conditions', []) or [])
+        self.extras = json.get('extras', {}) or {}
 
     def get_api_request(self):
         """

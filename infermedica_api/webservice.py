@@ -13,6 +13,9 @@ import platform
 import requests
 from . import __version__, exceptions, models, API_CONFIG, DEFAULT_API_VERSION
 
+if platform.python_version_tuple()[0] == '3':
+    basestring = (str,bytes)
+
 
 class API(object):
     """Class which handles requests to the Infermedica API."""

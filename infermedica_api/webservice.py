@@ -206,6 +206,32 @@ class API(object):
         except KeyError as e:
             raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'diagnosis')
 
+    def explain(self, diagnosis_request, target_id):
+        """
+        Makes an explain API request with provided diagnosis data and target condition.
+        Returns explain results with supporting and conflicting evidences.
+
+        :param diagnosis_request: Diagnosis request object or json request for diagnosis method.
+        :type diagnosis_request: :class:`infermedica_api.models.Diagnosis` or dict
+
+        :param target_id: Condition id for which explain shall be calculated.
+        :type target_id: str
+
+        :returns: A Diagnosis object with api response
+        :rtype: :class:`infermedica_api.models.Diagnosis`
+        """
+        try:
+            if isinstance(diagnosis_request, models.Diagnosis):
+                request = diagnosis_request.get_explain_request(target_id)
+            else:
+                request = dict(diagnosis_request, **{'target': target_id})
+
+            response = self.__post(self.api_methods['explain'], json.dumps(request))
+
+            return models.ExplainResults.from_json(response)
+        except KeyError as e:
+            raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'explain')
+
     def observation_details(self, _id):
         """
         Makes an API request and returns observation details object.

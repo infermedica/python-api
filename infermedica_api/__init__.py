@@ -65,6 +65,7 @@ API_CONFIG = {
             'search': '/search',
             'lookup': '/lookup',
             'diagnosis': '/diagnosis',
+            'explain': '/explain',
             'conditions': '/conditions',
             'condition_details': '/conditions/{id}',
             'symptoms': '/symptoms',

@@ -225,7 +225,7 @@ class Diagnosis(ModelCommon):
     def get_api_request(self):
         """
         Based on current Diagnosis object construct
-        dict object of the format accepted by API.
+        dict object of the format accepted by diagnosis API method.
 
         :return: Diagnosis API request dict
         :rtype: dict
@@ -244,5 +244,21 @@ class Diagnosis(ModelCommon):
 
         if self.evaluation_time:
             request['evaluated_at'] = self.evaluation_time
+
+        return request
+
+    def get_explain_request(self, target_id):
+        """
+        Based on current Diagnosis object construct
+        dict object of the format accepted by explain API method.
+
+        :param target_id: Condition id for which explain shall be calculated.
+        :type target_id: str
+
+        :return: Diagnosis API request dict
+        :rtype: dict
+        """
+        request = self.get_api_request()
+        request['target'] = target_id
 
         return request

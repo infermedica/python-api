@@ -65,13 +65,13 @@ api = infermedica_api.get_api()
 
 # Create diagnosis object with initial patient information.
 # Note that time argument is optional here as well as in the add_symptom function
-request = infermedica_api.Diagnosis(sex='male', age=35, time='2015-02-09T08:30:00+05:00')
+request = infermedica_api.Diagnosis(sex='male', age=35)
 
-request.add_symptom('s_102', 'present', time='2015-02-09T08:00:00+05:00')
-request.add_symptom('s_21', 'present', time='2015-02-09')
-request.add_symptom('s_98', 'absent')
+request.add_symptom('s_21', 'present')
+request.add_symptom('s_98', 'present')
+request.add_symptom('s_107', 'absent')
 
-request.set_pursued_conditions(['c_76', 'c_9'])  # Optional
+request.set_pursued_conditions(['c_33', 'c_49'])  # Optional
 
 # call diagnosis
 request = api.diagnosis(request)

@@ -7,6 +7,8 @@ infermedica_api.models.diagnosis
 This module contains models for data returned from api as well as object to construct api requests,
 related to /diagnosis method.
 """
+import warnings
+
 from .base import BaseModel, BaseModelList, ModelCommon
 
 
@@ -91,7 +93,6 @@ class Diagnosis(ModelCommon):
         self.patient_age = age
         self.evaluation_time = time
 
-        self.observations = []
         self.symptoms = []
         self.lab_tests = []
         self.risk_factors = []
@@ -101,6 +102,10 @@ class Diagnosis(ModelCommon):
         self.question = None
         self.conditions = ConditionResultList()
         self.extras = {}
+
+    @property
+    def observations(self):
+        return self.symptoms
 
     def __add_evidence(self, collection, _id, state, time):
         """Helper function to update evidence list."""
@@ -125,7 +130,9 @@ class Diagnosis(ModelCommon):
         :param time: (optional) Observation occurrence time (ISO8601 formatted)
         :type time: str
         """
-        self.__add_evidence(self.observations, _id, state, time)
+        warnings.warn("Function add_observation is deprecated, please use add_symptom.",
+                      category=DeprecationWarning)
+        self.add_symptom(_id, state, time)
 
     def add_symptom(self, _id, state, time=None):
         """
@@ -167,6 +174,27 @@ class Diagnosis(ModelCommon):
         """
         self.__add_evidence(self.risk_factors, _id, state, time)
 
+    def add_evidence(self, _id, state, time=None):
+        """
+        Adds evidence with given presence to evidence list.
+
+        :param _id: Evidence id
+        :type _id: str
+        :param state: Evidence presence,
+        one of three values ("present", "absent" or "unknown")
+        :type state: str
+        :param time: (optional) Evidence occurrence time (ISO8601 formatted)
+        :type time: str
+        """
+        evidence_list = self.symptoms
+
+        if _id.startswith(("p_", "rf_")):
+            evidence_list = self.risk_factors
+        elif _id.startswith("lt_"):
+            evidence_list = self.lab_tests
+
+        self.__add_evidence(evidence_list, _id, state, time)
+
     def set_pursued_conditions(self, pursued):
         """
         Sets conditions for pursued diagnosis.
@@ -191,6 +219,9 @@ class Diagnosis(ModelCommon):
         self.conditions = ConditionResultList.from_json(json.get('conditions', []) or [])
         self.extras = json.get('extras', {}) or {}
 
+    def get_evidences(self):
+        return self.symptoms + self.lab_tests + self.risk_factors
+
     def get_api_request(self):
         """
         Based on current Diagnosis object construct
@@ -203,7 +234,7 @@ class Diagnosis(ModelCommon):
             "sex": self.patient_sex,
             "age": self.patient_age,
 
-            "evidence": self.observations + self.symptoms + self.lab_tests + self.risk_factors,
+            "evidence": self.get_evidences(),
 
             "extras": self.extras
         }

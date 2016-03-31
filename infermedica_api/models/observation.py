@@ -6,6 +6,8 @@ infermedica_api.models.observation
 
 This module contains observation models for data returned from api.
 """
+import warnings
+
 from .base import BaseModel, BaseModelList
 
 
@@ -23,6 +25,8 @@ class Observation(BaseModel):
         :returns: Observation details object
         :rtype: :class:`infermedica_api.models.Observation`
         """
+        warnings.warn("Class Observation is deprecated, please use Symptom.",
+                      category=DeprecationWarning)
         return Observation(**json)
 
 
@@ -40,6 +44,8 @@ class ObservationList(BaseModelList):
         :returns: Observations details list object
         :rtype: :class:`infermedica_api.models.ObservationList`
         """
+        warnings.warn("Class ObservationList is deprecated, please use SymptomList.",
+                      category=DeprecationWarning)
         mapping = {}
         for i, item in enumerate(json):
             item = Observation(**item)

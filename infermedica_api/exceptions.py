@@ -71,3 +71,13 @@ class MethodNotAvailableInAPIVersion(Exception):
 
     def __str__(self):
         return "Method '%s' is not available in the %s api version." % (self.method, self.api_version)
+
+
+class InvalidSearchFilter(Exception):
+    """API not configured."""
+
+    def __init__(self, filter):
+        self.filter = filter
+
+    def __str__(self):
+        return "Invalid search filter: '%s'." % self.filter

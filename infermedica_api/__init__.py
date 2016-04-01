@@ -84,4 +84,4 @@ from .models.lab_test import LabTest, LabTestList
 from .models.observation import Observation, ObservationList
 from .models.risk_factor import RiskFactor, RiskFactorList
 from .models.symptom import Symptom, SymptomList
-from .webservice import configure, get_api, API
+from .webservice import configure, get_api, API, SEARCH_FILTERS

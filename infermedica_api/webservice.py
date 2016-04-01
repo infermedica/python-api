@@ -17,6 +17,17 @@ if platform.python_version_tuple()[0] == '3':
     basestring = (str,bytes)
 
 
+class SearchFilters(object):
+    """Simple class to hold search filter constants."""
+    SYMPTOMS = "symptom"
+    RISK_FACTORS = "risk_factor"
+    LAB_TESTS = "lab_test"
+
+    ALL = [SYMPTOMS, RISK_FACTORS, LAB_TESTS]
+
+SEARCH_FILTERS = SearchFilters()
+
+
 class API(object):
     """Class which handles requests to the Infermedica API."""
 
@@ -133,10 +144,11 @@ class API(object):
         except KeyError as e:
             raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'info')
 
-    def search(self, phrase, sex=None, max_results=8):
+    def search(self, phrase, sex=None, max_results=8, filters=None):
         """
-        Makes an API search request and returns list of dicts with two keys 'id' and 'label'.
-        Each dict represent an observation (symptom, lab test or risk factor).
+        Makes an API search request and returns list of dicts containing keys: 'id', 'label' and 'type'.
+        Each dict represent an evidence (symptom, lab test or risk factor).
+        By default only symptoms are returned, to include other evidence types use filters.
 
         :param phrase: Phrase to look for.
         :type phrase: str
@@ -147,6 +159,9 @@ class API(object):
         :param max_results: Maximum number of result to return, default is 8.
         :type max_results: int
 
+        :param filters: List of search filters, taken from SEARCH_FILTERS variable.
+        :type filters: list
+
         :returns: A List of dicts with 'id' and 'label' keys.
         :rtype: list
         """
@@ -155,8 +170,20 @@ class API(object):
                 'phrase': phrase,
                 'max_results': max_results
             }
+
             if sex:
                 params['sex'] = sex
+
+            if filters:
+                if isinstance(filters, (list, tuple)):
+                    params['type'] = filters
+                elif isinstance(filters, basestring):
+                    params['type'] = [filters]
+
+                for filter in filters:
+                    if filter not in SEARCH_FILTERS.ALL:
+                        raise exceptions.InvalidSearchFilter(filter)
+
             return self.__get(self.api_methods['search'], params=params)
         except KeyError as e:
             raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'search')

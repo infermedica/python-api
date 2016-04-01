@@ -76,7 +76,30 @@ request.set_pursued_conditions(['c_33', 'c_49'])  # Optional
 # call diagnosis
 request = api.diagnosis(request)
 
-print(request)
+# Access question asked by API
+print(request.question)
+print(request.question.text)  # actual text of the question
+print(request.question.items)  # list of related evidences with possible answers
+print(request.question.items[0]['id'])
+print(request.question.items[0]['name'])
+print(request.question.items[0]['choices'])  # list of possible answers
+print(request.question.items[0]['choices'][0]['id'])  # answer id
+print(request.question.items[0]['choices'][0]['label'])  # answer label
+
+# Access list of conditions with probabilities
+print(request.conditions)
+print(request.conditions[0]['id'])
+print(request.conditions[0]['name'])
+print(request.conditions[0]['probability'])
+
+# Next update the request and get next question:
+# Just example, the id and answer shall be taken from the real user answer
+request.add_symptom(request.question.items[0]['id'], request.question.items[0]['choices'][1]['id'])
+
+# call diagnosis method again
+request = api.diagnosis(request)
+
+# ... and so on, until you decide to stop the diagnostic interview.
 ```
 
 Note that after each diagnosis call, the request object gets updated and you can obtain a diagnostic question to ask.

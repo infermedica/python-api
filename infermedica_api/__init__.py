@@ -48,6 +48,7 @@ API_CONFIG = {
         'endpoint': 'https://api.infermedica.com/',
         'methods': {
             'info': '/info',
+            'lookup': '/lookup',
             'diagnosis': '/diagnosis',
             'observations': '/observations',
             'observation_details': '/observations/{id}',
@@ -62,6 +63,7 @@ API_CONFIG = {
         'methods': {
             'info': '/info',
             'search': '/search',
+            'lookup': '/lookup',
             'diagnosis': '/diagnosis',
             'conditions': '/conditions',
             'condition_details': '/conditions/{id}',

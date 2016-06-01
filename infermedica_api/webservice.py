@@ -161,6 +161,29 @@ class API(object):
         except KeyError as e:
             raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'search')
 
+    def lookup(self, phrase, sex=None):
+        """
+        Makes an API lookup request and returns evidence details object.
+
+        :param phrase: Phrase to look for.
+        :type phrase: str
+
+        :param sex: Sex of the patient 'female' or 'male'.
+        :type sex: str
+
+        :returns: Dictionary with details.
+        :rtype: dict
+        """
+        try:
+            params = {
+                'phrase': phrase
+            }
+            if sex:
+                params['sex'] = sex
+            return self.__get(self.api_methods['lookup'], params=params)
+        except KeyError as e:
+            raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'lookup')
+
     def diagnosis(self, diagnosis_request):
         """
         Makes an diagnosis API request with provided diagnosis data

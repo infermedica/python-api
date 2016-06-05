@@ -111,9 +111,13 @@ For more take a look at provided examples.
 
 To easily run examples edit `examples/config.py` file and enter your account credentials.
 Then go to `examples` folder and just run the following:
+
+ ```bash
+$ python search.py
+```
  
 ```bash
-$ python observations.py
+$ python symptoms.py
 ```
 
 ```bash
@@ -125,7 +129,15 @@ $ python conditions.py
 ```
 
 ```bash
+$ python lab_tests.py
+```
+
+```bash
 $ python diagnosis.py
+```
+
+```bash
+$ python explain.py
 ```
 
 ### Contributing ###

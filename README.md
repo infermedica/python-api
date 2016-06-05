@@ -52,7 +52,7 @@ print(api.info())
 ```
 
 ### Api version
-Both of the above options to configure API object take an optional parameter `api_version`, which determines the version of Infermedica API to be used. For the current version the default API version is set automatically set to `v2` and this is the recommended version to use.
+Both of the above options to configure API object take an optional parameter `api_version`, which determines the version of Infermedica API to be used. For the current version the default API version is set automatically to `v2` and this is the recommended version to use.
 
 ## Usage
 
@@ -136,7 +136,7 @@ Pull requests are always welcome. Before submitting a pull request, please ensur
 
 ### Legal ###
 
-Copyright 2015 by [Infermedica](http://infermedica.com).
+Copyright 2016 by [Infermedica](http://infermedica.com).
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 

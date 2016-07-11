@@ -180,7 +180,7 @@ class API(object):
                 elif isinstance(filters, basestring):
                     params['type'] = [filters]
 
-                for filter in filters:
+                for filter in params['type']:
                     if filter not in SEARCH_FILTERS.ALL:
                         raise exceptions.InvalidSearchFilter(filter)
 

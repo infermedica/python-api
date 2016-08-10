@@ -64,7 +64,7 @@ class API(object):
 
         if parameters.get("dev_mode", None) and parameters["dev_mode"] == True:
             headers.update({
-                "Dev-Mode": True
+                "Dev-Mode": "true"
             })
 
         return headers

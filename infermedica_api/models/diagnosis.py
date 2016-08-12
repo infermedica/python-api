@@ -102,6 +102,7 @@ class Diagnosis(ModelCommon):
         self.question = None
         self.conditions = ConditionResultList()
         self.extras = {}
+        self.extras_permanent = {}
 
     @property
     def observations(self):
@@ -204,6 +205,23 @@ class Diagnosis(ModelCommon):
         """
         self.pursued = pursued
 
+    def set_extras(self, attribute, value, permanent=False):
+        """
+        Sets extras attributes to be sent with the diagnosis requests.
+
+        :param attribute: String with the attribute name
+        :type attribute: str
+        :param value: Value to set for the attribute
+        :type value: bool | str | number
+        :param permanent: Conditions if the attribute shall be sent only in the next diagnosis request
+        or should persists through multiple diagnosis calls.
+        :type permanent: bool
+        """
+        if permanent:
+            self.extras_permanent[attribute] = value
+        else:
+            self.extras[attribute] = value
+
     def update_from_api(self, json):
         """
         Updates current object by diagnosis response from the API.
@@ -236,7 +254,7 @@ class Diagnosis(ModelCommon):
 
             "evidence": self.get_evidences(),
 
-            "extras": self.extras
+            "extras": dict(self.extras_permanent, **self.extras)
         }
 
         if self.pursued:

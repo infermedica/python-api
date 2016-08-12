@@ -280,3 +280,15 @@ class Diagnosis(ModelCommon):
         request['target'] = target_id
 
         return request
+
+    def to_dict(self):
+        """
+        Transform object to dict.
+
+        :return: Diagnosis object as dict.
+        :rtype: dict
+        """
+        return dict(self.get_api_request(), **{
+            "question": self.question.to_dict() if hasattr(self.question, 'to_dict') else None,
+            "conditions": self.conditions.to_dict() if hasattr(self.question, 'to_dict') else None
+        })

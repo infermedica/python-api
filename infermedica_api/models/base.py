@@ -36,6 +36,15 @@ class ModelCommon(object):
             return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
         return json.dumps(self, default=lambda o: o.__dict__)
 
+    def to_dict(self):
+        """
+        Transform class object to dict.
+
+        :return: Class object as dict.
+        :rtype: dict
+        """
+        return dict({key: val.to_dict() if hasattr(val, 'to_dict') else val for key, val in self.__dict__.items()})
+
 
 class BaseModel(ModelCommon):
     """
@@ -80,3 +89,22 @@ class BaseModelList(list, ModelCommon):
             return self[self.mapping[_id]]
         except (IndexError, KeyError) as e:
             return None
+
+    def to_list(self):
+        """
+        Transform class object to simple list.
+
+        :return: Class object as simple list.
+        :rtype: list
+        """
+        return [val.to_dict() if hasattr(val, 'to_dict') else val for val in self]
+
+    def to_dict(self):
+        """
+        Transform class object to list.
+        It does not return dict as the name suggest, but it's created for consistency reasons.
+
+        :return: Class object as list.
+        :rtype: list
+        """
+        return self.to_list()

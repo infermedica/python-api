@@ -77,7 +77,7 @@ class Diagnosis(ModelCommon):
     It will contain diagnosis questions, as well as results.
     """
 
-    def __init__(self, sex, age, time=None):
+    def __init__(self, sex, age, time=None, case_id=None):
         """
         Initialize diagnosis object with basic information about patient
         and optionally with examination time.
@@ -88,6 +88,8 @@ class Diagnosis(ModelCommon):
         :type age: int
         :param time: (optional) Time of diagnosis evaluation (ISO8601 formatted)
         :type time: str
+        :param case_id: Unique case id for diagnosis
+        :type case_id: str
         """
         self.patient_sex = sex
         self.patient_age = age
@@ -103,6 +105,8 @@ class Diagnosis(ModelCommon):
         self.conditions = ConditionResultList()
         self.extras = {}
         self.extras_permanent = {}
+
+        self.case_id = case_id
 
     @property
     def observations(self):
@@ -204,6 +208,15 @@ class Diagnosis(ModelCommon):
         :type pursued: list of strings
         """
         self.pursued = pursued
+
+    def set_case_id(self, value):
+        """
+        Sets case id for diagnosis.
+
+        :param value: Unique case id for diagnosis
+        :type value: str
+        """
+        self.case_id = value
 
     def set_extras(self, attribute, value, permanent=False):
         """

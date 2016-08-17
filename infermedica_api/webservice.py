@@ -211,7 +211,7 @@ class API(object):
         except KeyError as e:
             raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'lookup')
 
-    def diagnosis(self, diagnosis_request):
+    def diagnosis(self, diagnosis_request, case_id=None):
         """
         Makes an diagnosis API request with provided diagnosis data
         and returns diagnosis question with possible conditions.
@@ -219,19 +219,31 @@ class API(object):
         :param diagnosis_request: Diagnosis request object or json request for diagnosis method.
         :type diagnosis_request: :class:`infermedica_api.models.Diagnosis` or dict
 
+        :param case_id: Unique case id for diagnosis
+        :type case_id: str
+
         :returns: A Diagnosis object with api response
         :rtype: :class:`infermedica_api.models.Diagnosis`
         """
         try:
-            if isinstance(diagnosis_request, models.Diagnosis):
-                response = self.__post(self.api_methods['diagnosis'], json.dumps(diagnosis_request.get_api_request()))
-                diagnosis_request.update_from_api(response)
-
-                return diagnosis_request
-
-            return self.__post(self.api_methods['diagnosis'], json.dumps(diagnosis_request))
+            method = self.api_methods['diagnosis']
         except KeyError as e:
             raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'diagnosis')
+
+        headers = {}
+        if case_id:
+            headers['Case-Id'] = case_id
+
+        if isinstance(diagnosis_request, models.Diagnosis):
+            if not case_id and diagnosis_request.case_id:
+                headers['Case-Id'] = diagnosis_request.case_id
+
+            response = self.__post(method, json.dumps(diagnosis_request.get_api_request()), headers=headers)
+            diagnosis_request.update_from_api(response)
+
+            return diagnosis_request
+
+        return self.__post(method, json.dumps(diagnosis_request), headers=headers)
 
     def explain(self, diagnosis_request, target_id):
         """

@@ -16,7 +16,8 @@ def setup_examples():
     # !!! ENTER YOUR CREDENTIALS HERE !!!
     infermedica_api.configure({
         'app_id': 'YOUR_APP_ID',
-        'app_key': 'YOUR_APP_KEY'
+        'app_key': 'YOUR_APP_KEY',
+        'dev_mode': True
     })
 
     import logging

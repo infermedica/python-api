@@ -23,6 +23,18 @@ class ExplainResults(BaseModel):
         """
         return ExplainResults(**json)
 
+    def to_dict(self):
+        """
+        Transform object to dict.
+
+        :return: ExplainResults object as dict.
+        :rtype: dict
+        """
+        return {
+            "supporting_evidence": [result.to_dict() for result in self.supporting_evidence],
+            "conflicting_evidence": [result.to_dict() for result in self.conflicting_evidence]
+        }
+
 
 class ExplainResult(BaseModel):
     """Model class for handling single explain result object."""

@@ -212,6 +212,32 @@ class API(object):
         except KeyError as e:
             raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'lookup')
 
+    def parse(self, text, include_tokens=False):
+        """
+        Makes an parse API request with provided text and include_tokens parameter.
+        Returns parse results with detailed list of mentions found in the text.
+
+        :param phrase: Text to parse.
+        :type phrase: str
+
+        :param include_tokens: Switch to manipulate the include_tokens parameter.
+        :type include_tokens: bool
+
+        :returns: A ParseResults object
+        :rtype: :class:`infermedica_api.models.ParseResults`
+        """
+        request = {
+            'text': text,
+            'include_tokens': include_tokens
+        }
+
+        try:
+            response = self.__post(self.api_methods['parse'], json.dumps(request))
+        except KeyError as e:
+            raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'parse')
+
+        return models.ParseResults.from_json(response)
+
     def diagnosis(self, diagnosis_request, case_id=None):
         """
         Makes an diagnosis API request with provided diagnosis data

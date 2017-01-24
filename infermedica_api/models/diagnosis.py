@@ -303,5 +303,5 @@ class Diagnosis(ModelCommon):
         """
         return dict(self.get_api_request(), **{
             "question": self.question.to_dict() if hasattr(self.question, 'to_dict') else None,
-            "conditions": self.conditions.to_dict() if hasattr(self.question, 'to_dict') else None
+            "conditions": self.conditions.to_dict() if hasattr(self.conditions, 'to_dict') else None
         })

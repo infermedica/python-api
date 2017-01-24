@@ -30,7 +30,7 @@ First configure the API:
 The other requests are presented in `examples` and are described in our documentation. Full documentation
 is available at <https://developer.infermedica.com>.
 
-:copyright: (c) 2016 by Infermedica.
+:copyright: (c) 2017 by Infermedica.
 :license: Apache 2.0, see LICENSE for more details.
 
 """
@@ -39,7 +39,7 @@ __title__ = 'Infermedica API'
 __version__ = '0.0.6'
 __author__ = 'Arkadiusz Szydelko'
 __license__ = 'Apache 2.0'
-__copyright__ = 'Copyright 2016 Infermedica'
+__copyright__ = 'Copyright 2017 Infermedica'
 
 DEFAULT_API_VERSION = 'v2'
 DEFAULT_API_ENDPOINT = 'https://api.infermedica.com/'

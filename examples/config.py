@@ -17,7 +17,7 @@ def setup_examples():
     infermedica_api.configure({
         'app_id': 'YOUR_APP_ID',
         'app_key': 'YOUR_APP_KEY',
-        'dev_mode': True
+        'dev_mode': True  # Use only during development on production remove this parameter
     })
 
     import logging

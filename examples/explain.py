@@ -22,7 +22,7 @@ if __name__ == '__main__':
     request.add_symptom('s_188', 'present')
 
     # call the explain method
-    request = api.explain(request, target_id='c_371')
+    request = api.explain(request, target_id='c_62')
 
     # and see the results
     print('\n\n', request)

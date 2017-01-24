@@ -11,7 +11,7 @@ import json
 import platform
 
 import requests
-from . import __version__, exceptions, models, API_CONFIG, DEFAULT_API_VERSION
+from . import __version__, exceptions, models, API_CONFIG, DEFAULT_API_VERSION, DEFAULT_API_ENDPOINT
 
 if platform.python_version_tuple()[0] == '3':
     basestring = (str,bytes)
@@ -43,17 +43,18 @@ class API(object):
             >>> import infermedica_api
             >>> api = infermedica_api.API(app_id='YOUR_APP_ID', app_key='YOUR_APP_KEY')
         """
+        self.endpoint = kwargs.get("endpoint", DEFAULT_API_ENDPOINT)
         self.api_version = kwargs.get("api_version", DEFAULT_API_VERSION)
         self.app_id = kwargs["app_id"]  # Mandatory parameter, so not using `dict.get`
         self.app_key = kwargs["app_key"]  # Mandatory parameter, so not using `dict.get`
         self.default_headers = self.__calculate_headers(kwargs)
 
         if self.api_version in kwargs.get("api_definitions", {}) or {}:
-            self.endpoint = kwargs["api_definitions"][self.api_version]['endpoint']
             self.api_methods = kwargs["api_definitions"][self.api_version]['methods']
-        else:
-            self.endpoint = API_CONFIG[self.api_version]['endpoint']
+        elif self.api_version in API_CONFIG:
             self.api_methods = API_CONFIG[self.api_version]['methods']
+        else:
+            self.api_methods = API_CONFIG[DEFAULT_API_VERSION]['methods']
 
     def __calculate_headers(self, parameters):
         headers = parameters.get("default_headers", {})

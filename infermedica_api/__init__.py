@@ -42,10 +42,10 @@ __license__ = 'Apache 2.0'
 __copyright__ = 'Copyright 2016 Infermedica'
 
 DEFAULT_API_VERSION = 'v2'
+DEFAULT_API_ENDPOINT = 'https://api.infermedica.com/'
 
 API_CONFIG = {
     'v1': {
-        'endpoint': 'https://api.infermedica.com/',
         'methods': {
             'info': '/info',
             'lookup': '/lookup',
@@ -59,7 +59,6 @@ API_CONFIG = {
         }
     },
     'v2': {
-        'endpoint': 'https://api.infermedica.com/',
         'methods': {
             'info': '/info',
             'search': '/search',

@@ -115,6 +115,10 @@ Then go to `examples` folder and just run the following:
  ```bash
 $ python search.py
 ```
+
+ ```bash
+$ python parse.py
+```
  
 ```bash
 $ python symptoms.py

@@ -1,3 +1,5 @@
+[![API Testing](https://img.shields.io/badge/API%20Test-RapidAPI-blue.svg)](https://rapidapi.com/package/Infermedica/functions?utm_source=InfermedicaGithub&utm_medium=button&utm_content=Vender_Github)
+
 Python client for Infermedica API 
 =================================
 

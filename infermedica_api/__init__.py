@@ -36,7 +36,7 @@ is available at <https://developer.infermedica.com>.
 """
 
 __title__ = 'Infermedica API'
-__version__ = '0.0.7'
+__version__ = '0.0.8'
 __author__ = 'Arkadiusz Szydelko'
 __license__ = 'Apache 2.0'
 __copyright__ = 'Copyright 2017 Infermedica'

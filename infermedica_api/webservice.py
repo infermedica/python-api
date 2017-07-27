@@ -146,7 +146,7 @@ class API(object):
         except KeyError as e:
             raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'info')
 
-    def search(self, phrase, sex=None, max_results=8, filters=None):
+    def search(self, phrase, sex=None, max_results=8, filters=None, **kwargs):
         """
         Makes an API search request and returns list of dicts containing keys: 'id', 'label' and 'type'.
         Each dict represent an evidence (symptom, lab test or risk factor).
@@ -172,6 +172,7 @@ class API(object):
                 'phrase': phrase,
                 'max_results': max_results
             }
+            params.update(kwargs.get('params', {}))
 
             if sex:
                 params['sex'] = sex

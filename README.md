@@ -107,6 +107,29 @@ You can also update the request object with new observations or risk factors to 
 
 For more take a look at provided examples.
 
+## Exceptions
+
+The library provide it's own set of exceptions, which may be raised on any of the API calls. The following methods `info`, `search`, `lookup`, `parse`, `diagnosis`, `explain`, `condition_details`, `condition_list`, `symptom_details`, `symptom_list`, `lab_test_details`, `lab_test_list`, `risk_factor_details` and `risk_factor_list` may raise one of the following exceptions:
+
+```
+infermedica_api.exceptions.BadRequest
+infermedica_api.exceptions.UnauthorizedAccess
+infermedica_api.exceptions.ForbiddenAccess
+infermedica_api.exceptions.ResourceNotFound
+infermedica_api.exceptions.MethodNotAllowed
+infermedica_api.exceptions.ServerError
+infermedica_api.exceptions.ConnectionError
+```
+
+There are also three additional exception that may occur:
+
+`MissingConfiguration` is raised during the `get_api` call if the API for given alias was not configured or the default API has not been configured, while calling `get_api` without alias parameter.
+
+`MethodNotAvailableInAPIVersion` is raised if one try to use method from different API version.
+
+`InvalidSearchFilter` is raised when wrong filters are applied to the `search` API call.
+
+
 ## Examples
 
 To easily run examples edit `examples/config.py` file and enter your account credentials.

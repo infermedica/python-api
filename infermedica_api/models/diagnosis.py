@@ -77,7 +77,7 @@ class Diagnosis(ModelCommon):
     It will contain diagnosis questions, as well as results.
     """
 
-    def __init__(self, sex, age, time=None, case_id=None):
+    def __init__(self, sex, age, time=None, interview_id=None, **kwargs):
         """
         Initialize diagnosis object with basic information about patient
         and optionally with examination time.
@@ -88,8 +88,8 @@ class Diagnosis(ModelCommon):
         :type age: int
         :param time: (optional) Time of diagnosis evaluation (ISO8601 formatted)
         :type time: str
-        :param case_id: Unique case id for diagnosis
-        :type case_id: str
+        :param interview_id: Unique interview id for diagnosis
+        :type interview_id: str
         """
         self.patient_sex = sex
         self.patient_age = age
@@ -106,7 +106,11 @@ class Diagnosis(ModelCommon):
         self.extras = {}
         self.extras_permanent = {}
 
-        self.case_id = case_id
+        self.interview_id = interview_id or kwargs.get('case_id', None)
+
+        if kwargs.get('case_id', None) is not None:
+            warnings.warn("Parameter case_id is deprecated, please use interview_id.",
+                          category=DeprecationWarning)
 
     @property
     def observations(self):
@@ -210,13 +214,18 @@ class Diagnosis(ModelCommon):
         self.pursued = pursued
 
     def set_case_id(self, value):
-        """
-        Sets case id for diagnosis.
+        warnings.warn("Function set_case_id is deprecated, please use set_interview_id.",
+                      category=DeprecationWarning)
+        self.set_interview_id(value)
 
-        :param value: Unique case id for diagnosis
+    def set_interview_id(self, value):
+        """
+        Sets interview id for diagnosis.
+
+        :param value: Unique interview id for diagnosis
         :type value: str
         """
-        self.case_id = value
+        self.interview_id = value
 
     def set_extras(self, attribute, value, permanent=False):
         """

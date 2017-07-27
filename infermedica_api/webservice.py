@@ -9,6 +9,7 @@ This module contains classes and function responsible for making API requests.
 
 import json
 import platform
+import warnings
 
 import requests
 from . import __version__, exceptions, models, API_CONFIG, DEFAULT_API_VERSION, DEFAULT_API_ENDPOINT
@@ -238,7 +239,7 @@ class API(object):
 
         return models.ParseResults.from_json(response)
 
-    def diagnosis(self, diagnosis_request, case_id=None):
+    def diagnosis(self, diagnosis_request, interview_id=None, **kwargs):
         """
         Makes an diagnosis API request with provided diagnosis data
         and returns diagnosis question with possible conditions.
@@ -246,8 +247,8 @@ class API(object):
         :param diagnosis_request: Diagnosis request object or json request for diagnosis method.
         :type diagnosis_request: :class:`infermedica_api.models.Diagnosis` or dict
 
-        :param case_id: Unique case id for diagnosis
-        :type case_id: str
+        :param interview_id: Unique interview id for diagnosis
+        :type interview_id: str
 
         :returns: A Diagnosis object with api response
         :rtype: :class:`infermedica_api.models.Diagnosis`
@@ -257,13 +258,18 @@ class API(object):
         except KeyError as e:
             raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'diagnosis')
 
+        if kwargs.get('case_id', None) is not None:
+            warnings.warn("Parameter case_id is deprecated, please use interview_id.",
+                          category=DeprecationWarning)
+
         headers = {}
-        if case_id:
-            headers['Case-Id'] = case_id
+        interview_id = interview_id or kwargs.get('case_id', None)
+        if interview_id:
+            headers['Interview-Id'] = interview_id
 
         if isinstance(diagnosis_request, models.Diagnosis):
-            if not case_id and diagnosis_request.case_id:
-                headers['Case-Id'] = diagnosis_request.case_id
+            if not interview_id and diagnosis_request.interview_id:
+                headers['Interview-Id'] = diagnosis_request.interview_id
 
             response = self.__post(method, json.dumps(diagnosis_request.get_api_request()), headers=headers)
             diagnosis_request.update_from_api(response)

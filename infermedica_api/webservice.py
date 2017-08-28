@@ -135,9 +135,9 @@ class API(object):
         """Wrapper for a GET API call."""
         return self.__api_call(self.__get_url(method), "GET", headers=headers, params=params)
 
-    def __post(self, method, data, headers=None):
+    def __post(self, method, data, params=None, headers=None):
         """Wrapper for a GET API call."""
-        return self.__api_call(self.__get_url(method), "POST", headers=headers, data=data)
+        return self.__api_call(self.__get_url(method), "POST", headers=headers, data=data, params=params)
 
     def info(self):
         """Makes an API request and returns basic API model information."""
@@ -213,6 +213,34 @@ class API(object):
             return self.__get(self.api_methods['lookup'], params=params)
         except KeyError as e:
             raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'lookup')
+
+    def suggest(self, sex=None, age=None, selected=None, max_results=8):
+        """
+        Makes an API suggest request and returns a list of suggested evidence.
+
+        :param sex: Sex of the patient 'female' or 'male'.
+        :type sex: str
+
+        :param age: Age of the patient.
+        :type age: int
+
+        :param selected: A list of already selected evidence, used to calculate other suggestions.
+        :type selected: int
+
+        :returns: A list of suggestions, dicts with 'id', 'name' and 'common_name' keys.
+        :rtype: list
+        """
+        try:
+            data = {}
+            if isinstance(sex, basestring) and sex:
+                data['sex'] = sex
+            if isinstance(age, int):
+                data['age'] = age
+            if isinstance(selected, (list, tuple)) and selected:
+                data['selected'] = selected
+            return self.__post(self.api_methods['suggest'], json.dumps(data), params={'max_results': max_results})
+        except KeyError as e:
+            raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'suggest')
 
     def parse(self, text, include_tokens=False):
         """

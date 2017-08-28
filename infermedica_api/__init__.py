@@ -63,6 +63,7 @@ API_CONFIG = {
             'info': '/info',
             'search': '/search',
             'lookup': '/lookup',
+            'suggest': '/suggest',
             'parse': '/parse',
             'diagnosis': '/diagnosis',
             'explain': '/explain',

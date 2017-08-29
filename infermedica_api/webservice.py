@@ -214,7 +214,7 @@ class API(object):
         except KeyError as e:
             raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'lookup')
 
-    def suggest(self, sex=None, age=None, selected=None, max_results=8):
+    def suggest(self, sex=None, age=None, selected=None, max_results=8, interview_id=None):
         """
         Makes an API suggest request and returns a list of suggested evidence.
 
@@ -231,6 +231,10 @@ class API(object):
         :rtype: list
         """
         try:
+            headers = {}
+            if interview_id:
+                headers['Interview-Id'] = interview_id
+
             data = {}
             if isinstance(sex, basestring) and sex:
                 data['sex'] = sex
@@ -238,7 +242,7 @@ class API(object):
                 data['age'] = age
             if isinstance(selected, (list, tuple)) and selected:
                 data['selected'] = selected
-            return self.__post(self.api_methods['suggest'], json.dumps(data), params={'max_results': max_results})
+            return self.__post(self.api_methods['suggest'], headers=headers, data=json.dumps(data), params={'max_results': max_results})
         except KeyError as e:
             raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'suggest')
 

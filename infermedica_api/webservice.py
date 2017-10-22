@@ -147,6 +147,15 @@ class API(object):
         except KeyError as e:
             raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, name)
 
+    def __get_interview_id_headers(self, diagnosis_request=None, interview_id=None):
+        headers = {}
+        if interview_id:
+            headers['Interview-Id'] = interview_id
+        elif isinstance(diagnosis_request, models.Diagnosis) and diagnosis_request.interview_id:
+            headers['Interview-Id'] = diagnosis_request.interview_id
+
+        return headers
+
     def info(self):
         """Makes an API request and returns basic API model information."""
         return self.__get(self.__get_method('info'))
@@ -233,10 +242,8 @@ class API(object):
         :returns: A list of suggestions, dicts with 'id', 'name' and 'common_name' keys.
         :rtype: list
         """
-            headers = {}
-            if interview_id:
-                headers['Interview-Id'] = interview_id
         method = self.__get_method('suggest')
+        headers = self.__get_interview_id_headers(interview_id=interview_id)
 
         data = {}
         if isinstance(sex, basestring) and sex:
@@ -248,7 +255,7 @@ class API(object):
 
         return self.__post(method, headers=headers, data=json.dumps(data), params={'max_results': max_results})
 
-    def parse(self, text, include_tokens=False):
+    def parse(self, text, include_tokens=False, interview_id=None):
         """
         Makes an parse API request with provided text and include_tokens parameter.
         Returns parse results with detailed list of mentions found in the text.
@@ -263,12 +270,14 @@ class API(object):
         :rtype: :class:`infermedica_api.models.ParseResults`
         """
         method = self.__get_method('parse')
+        headers = self.__get_interview_id_headers(interview_id=interview_id)
+
         request = {
             'text': text,
             'include_tokens': include_tokens
         }
 
-        response = self.__post(method, json.dumps(request))
+        response = self.__post(method, json.dumps(request), headers=headers)
 
         return models.ParseResults.from_json(response)
 
@@ -292,15 +301,10 @@ class API(object):
             warnings.warn("Parameter case_id is deprecated, please use interview_id.",
                           category=DeprecationWarning)
 
-        headers = {}
-        interview_id = interview_id or kwargs.get('case_id', None)
-        if interview_id:
-            headers['Interview-Id'] = interview_id
+        headers = self.__get_interview_id_headers(
+            diagnosis_request=diagnosis_request, interview_id=interview_id or kwargs.get('case_id', None))
 
         if isinstance(diagnosis_request, models.Diagnosis):
-            if not interview_id and diagnosis_request.interview_id:
-                headers['Interview-Id'] = diagnosis_request.interview_id
-
             response = self.__post(method, json.dumps(diagnosis_request.get_api_request()), headers=headers)
             diagnosis_request.update_from_api(response)
 
@@ -308,7 +312,7 @@ class API(object):
 
         return self.__post(method, json.dumps(diagnosis_request), headers=headers)
 
-    def explain(self, diagnosis_request, target_id):
+    def explain(self, diagnosis_request, target_id, interview_id=None):
         """
         Makes an explain API request with provided diagnosis data and target condition.
         Returns explain results with supporting and conflicting evidences.
@@ -323,12 +327,14 @@ class API(object):
         :rtype: :class:`infermedica_api.models.Diagnosis`
         """
         method = self.__get_method('explain')
+        headers = self.__get_interview_id_headers(diagnosis_request=diagnosis_request, interview_id=interview_id)
 
-        request = dict(diagnosis_request, **{'target': target_id})
         if isinstance(diagnosis_request, models.Diagnosis):
             request = diagnosis_request.get_explain_request(target_id)
+        else:
+            request = dict(diagnosis_request, **{'target': target_id})
 
-        response = self.__post(method, json.dumps(request))
+        response = self.__post(method, json.dumps(request), headers=headers)
 
         return models.ExplainResults.from_json(response)
 
@@ -346,16 +352,11 @@ class API(object):
         """
         method = self.__get_method('triage')
 
-        headers = {}
-        if interview_id:
-            headers['Interview-Id'] = interview_id
+        headers = self.__get_interview_id_headers(diagnosis_request=diagnosis_request, interview_id=interview_id)
 
         request = diagnosis_request
         if isinstance(diagnosis_request, models.Diagnosis):
             request = diagnosis_request.get_api_request()
-
-            if not interview_id and diagnosis_request.interview_id:
-                headers['Interview-Id'] = diagnosis_request.interview_id
 
         return self.__post(method, json.dumps(request), headers=headers)
 

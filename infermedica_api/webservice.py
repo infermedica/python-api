@@ -12,10 +12,11 @@ import platform
 import warnings
 
 import requests
+
 from . import __version__, exceptions, models, API_CONFIG, DEFAULT_API_VERSION, DEFAULT_API_ENDPOINT
 
 if platform.python_version_tuple()[0] == '3':
-    basestring = (str,bytes)
+    basestring = (str, bytes)
 
 
 class SearchFilters(object):
@@ -25,6 +26,7 @@ class SearchFilters(object):
     LAB_TESTS = "lab_test"
 
     ALL = [SYMPTOMS, RISK_FACTORS, LAB_TESTS]
+
 
 SEARCH_FILTERS = SearchFilters()
 
@@ -139,12 +141,15 @@ class API(object):
         """Wrapper for a GET API call."""
         return self.__api_call(self.__get_url(method), "POST", headers=headers, data=data, params=params)
 
+    def __get_method(self, name):
+        try:
+            return self.api_methods[name]
+        except KeyError as e:
+            raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, name)
+
     def info(self):
         """Makes an API request and returns basic API model information."""
-        try:
-            return self.__get(self.api_methods['info'])
-        except KeyError as e:
-            raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'info')
+        return self.__get(self.__get_method('info'))
 
     def search(self, phrase, sex=None, max_results=8, filters=None, **kwargs):
         """
@@ -167,29 +172,27 @@ class API(object):
         :returns: A List of dicts with 'id' and 'label' keys.
         :rtype: list
         """
-        try:
-            params = {
-                'phrase': phrase,
-                'max_results': max_results
-            }
-            params.update(kwargs.get('params', {}))
+        method = self.__get_method('search')
+        params = {
+            'phrase': phrase,
+            'max_results': max_results
+        }
+        params.update(kwargs.get('params', {}))
 
-            if sex:
-                params['sex'] = sex
+        if sex:
+            params['sex'] = sex
 
-            if filters:
-                if isinstance(filters, (list, tuple)):
-                    params['type'] = filters
-                elif isinstance(filters, basestring):
-                    params['type'] = [filters]
+        if filters:
+            if isinstance(filters, (list, tuple)):
+                params['type'] = filters
+            elif isinstance(filters, basestring):
+                params['type'] = [filters]
 
-                for filter in params['type']:
-                    if filter not in SEARCH_FILTERS.ALL:
-                        raise exceptions.InvalidSearchFilter(filter)
+            for filter in params['type']:
+                if filter not in SEARCH_FILTERS.ALL:
+                    raise exceptions.InvalidSearchFilter(filter)
 
-            return self.__get(self.api_methods['search'], params=params)
-        except KeyError as e:
-            raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'search')
+        return self.__get(method, params=params)
 
     def lookup(self, phrase, sex=None):
         """
@@ -204,15 +207,15 @@ class API(object):
         :returns: Dictionary with details.
         :rtype: dict
         """
-        try:
-            params = {
-                'phrase': phrase
-            }
-            if sex:
-                params['sex'] = sex
-            return self.__get(self.api_methods['lookup'], params=params)
-        except KeyError as e:
-            raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'lookup')
+        method = self.__get_method('lookup')
+
+        params = {
+            'phrase': phrase
+        }
+        if sex:
+            params['sex'] = sex
+
+        return self.__get(method, params=params)
 
     def suggest(self, sex=None, age=None, selected=None, max_results=8, interview_id=None):
         """
@@ -230,21 +233,20 @@ class API(object):
         :returns: A list of suggestions, dicts with 'id', 'name' and 'common_name' keys.
         :rtype: list
         """
-        try:
             headers = {}
             if interview_id:
                 headers['Interview-Id'] = interview_id
+        method = self.__get_method('suggest')
 
-            data = {}
-            if isinstance(sex, basestring) and sex:
-                data['sex'] = sex
-            if isinstance(age, int):
-                data['age'] = age
-            if isinstance(selected, (list, tuple)) and selected:
-                data['selected'] = selected
-            return self.__post(self.api_methods['suggest'], headers=headers, data=json.dumps(data), params={'max_results': max_results})
-        except KeyError as e:
-            raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'suggest')
+        data = {}
+        if isinstance(sex, basestring) and sex:
+            data['sex'] = sex
+        if isinstance(age, int):
+            data['age'] = age
+        if isinstance(selected, (list, tuple)) and selected:
+            data['selected'] = selected
+
+        return self.__post(method, headers=headers, data=json.dumps(data), params={'max_results': max_results})
 
     def parse(self, text, include_tokens=False):
         """
@@ -260,15 +262,13 @@ class API(object):
         :returns: A ParseResults object
         :rtype: :class:`infermedica_api.models.ParseResults`
         """
+        method = self.__get_method('parse')
         request = {
             'text': text,
             'include_tokens': include_tokens
         }
 
-        try:
-            response = self.__post(self.api_methods['parse'], json.dumps(request))
-        except KeyError as e:
-            raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'parse')
+        response = self.__post(method, json.dumps(request))
 
         return models.ParseResults.from_json(response)
 
@@ -286,10 +286,7 @@ class API(object):
         :returns: A Diagnosis object with api response
         :rtype: :class:`infermedica_api.models.Diagnosis`
         """
-        try:
-            method = self.api_methods['diagnosis']
-        except KeyError as e:
-            raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'diagnosis')
+        method = self.__get_method('diagnosis')
 
         if kwargs.get('case_id', None) is not None:
             warnings.warn("Parameter case_id is deprecated, please use interview_id.",
@@ -325,17 +322,15 @@ class API(object):
         :returns: A Diagnosis object with api response
         :rtype: :class:`infermedica_api.models.Diagnosis`
         """
-        try:
-            if isinstance(diagnosis_request, models.Diagnosis):
-                request = diagnosis_request.get_explain_request(target_id)
-            else:
-                request = dict(diagnosis_request, **{'target': target_id})
+        method = self.__get_method('explain')
 
-            response = self.__post(self.api_methods['explain'], json.dumps(request))
+        request = dict(diagnosis_request, **{'target': target_id})
+        if isinstance(diagnosis_request, models.Diagnosis):
+            request = diagnosis_request.get_explain_request(target_id)
 
-            return models.ExplainResults.from_json(response)
-        except KeyError as e:
-            raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'explain')
+        response = self.__post(method, json.dumps(request))
+
+        return models.ExplainResults.from_json(response)
 
     def triage(self, diagnosis_request, interview_id=None):
         """
@@ -349,10 +344,7 @@ class API(object):
         :returns: A dict object with api response
         :rtype: dict
         """
-        try:
-            method = self.api_methods['triage']
-        except KeyError as e:
-            raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'triage')
+        method = self.__get_method('triage')
 
         headers = {}
         if interview_id:
@@ -377,11 +369,8 @@ class API(object):
         :returns: A Observation object
         :rtype: :class:`infermedica_api.models.Observation`
         """
-        try:
-            url = self.api_methods['observation_details'].format(**{'id': _id})
-            response = self.__get(url)
-        except KeyError as e:
-            raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'observation_details')
+        method = self.__get_method('observation_details')
+        response = self.__get(method.format(**{'id': _id}))
 
         return models.Observation.from_json(response)
 
@@ -392,10 +381,7 @@ class API(object):
         :returns: A ObservationList list object with Observation objects
         :rtype: :class:`infermedica_api.models.ObservationList`
         """
-        try:
-            response = self.__get(self.api_methods['observations'])
-        except KeyError as e:
-            raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'observations_list')
+        response = self.__get(self.__get_method('observations'))
 
         return models.ObservationList.from_json(response)
 
@@ -409,11 +395,8 @@ class API(object):
         :returns:A Condition object
         :rtype: :class:`infermedica_api.models.Condition`
         """
-        try:
-            url = self.api_methods['condition_details'].format(**{'id': _id})
-            response = self.__get(url)
-        except KeyError as e:
-            raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'condition_details')
+        method = self.__get_method('condition_details')
+        response = self.__get(method.format(**{'id': _id}))
 
         return models.Condition.from_json(response)
 
@@ -424,10 +407,7 @@ class API(object):
         :returns: A ConditionList list object with Condition objects
         :rtype: :class:`infermedica_api.models.ConditionList`
         """
-        try:
-            response = self.__get(self.api_methods['conditions'])
-        except KeyError as e:
-            raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'conditions_list')
+        response = self.__get(self.__get_method('conditions'))
 
         return models.ConditionList.from_json(response)
 
@@ -441,11 +421,8 @@ class API(object):
         :returns: A Symptom object
         :rtype: :class:`infermedica_api.models.Symptom`
         """
-        try:
-            url = self.api_methods['symptom_details'].format(**{'id': _id})
-            response = self.__get(url)
-        except KeyError as e:
-            raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'symptom_details')
+        method = self.__get_method('symptom_details')
+        response = self.__get(method.format(**{'id': _id}))
 
         return models.Symptom.from_json(response)
 
@@ -456,10 +433,7 @@ class API(object):
         :returns: A SymptomList list object with Symptom objects
         :rtype: :class:`infermedica_api.models.SymptomList`
         """
-        try:
-            response = self.__get(self.api_methods['symptoms'])
-        except KeyError as e:
-            raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'symptoms_list')
+        response = self.__get(self.__get_method('symptoms'))
 
         return models.SymptomList.from_json(response)
 
@@ -473,11 +447,8 @@ class API(object):
         :returns: A LabTest object
         :rtype: :class:`infermedica_api.models.LabTest`
         """
-        try:
-            url = self.api_methods['lab_test_details'].format(**{'id': _id})
-            response = self.__get(url)
-        except KeyError as e:
-            raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'lab_test_details')
+        method = self.__get_method('lab_test_details')
+        response = self.__get(method.format(**{'id': _id}))
 
         return models.LabTest.from_json(response)
 
@@ -488,10 +459,7 @@ class API(object):
         :returns: A LabTestList list object with LabTest objects
         :rtype: :class:`infermedica_api.models.LabTestList`
         """
-        try:
-            response = self.__get(self.api_methods['lab_tests'])
-        except KeyError as e:
-            raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'lab_tests_list')
+        response = self.__get(self.__get_method('lab_tests'))
 
         return models.LabTestList.from_json(response)
 
@@ -505,11 +473,8 @@ class API(object):
         :returns: A RiskFactor object
         :rtype: :class:`infermedica_api.models.RiskFactor`
         """
-        try:
-            url = self.api_methods['risk_factor_details'].format(**{'id': _id})
-            response = self.__get(url)
-        except KeyError as e:
-            raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'risk_factor_details')
+        method = self.__get_method('risk_factor_details')
+        response = self.__get(method.format(**{'id': _id}))
 
         return models.RiskFactor.from_json(response)
 
@@ -520,10 +485,7 @@ class API(object):
         :returns: A RiskFactorList list object with RiskFactor objects
         :rtype: :class:`infermedica_api.models.RiskFactorList`
         """
-        try:
-            response = self.__get(self.api_methods['risk_factors'])
-        except KeyError as e:
-            raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'risk_factors_list')
+        response = self.__get(self.__get_method('risk_factors'))
 
         return models.RiskFactorList.from_json(response)
 

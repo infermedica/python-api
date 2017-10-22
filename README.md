@@ -71,8 +71,6 @@ request.add_symptom('s_21', 'present')
 request.add_symptom('s_98', 'present')
 request.add_symptom('s_107', 'absent')
 
-request.set_pursued_conditions(['c_33', 'c_49'])  # Optional
-
 # call diagnosis
 request = api.diagnosis(request)
 
@@ -109,7 +107,7 @@ For more take a look at provided examples.
 
 ## Exceptions
 
-The library provide it's own set of exceptions, which may be raised on any of the API calls. The following methods `info`, `search`, `lookup`, `parse`, `diagnosis`, `explain`, `condition_details`, `condition_list`, `symptom_details`, `symptom_list`, `lab_test_details`, `lab_test_list`, `risk_factor_details` and `risk_factor_list` may raise one of the following exceptions:
+The library provide it's own set of exceptions, which may be raised on any of the API calls. The following methods `info`, `search`, `lookup`, `parse`, `diagnosis`, `explain`, `triage`, `condition_details`, `condition_list`, `symptom_details`, `symptom_list`, `lab_test_details`, `lab_test_list`, `risk_factor_details` and `risk_factor_list` may raise one of the following exceptions:
 
 ```
 infermedica_api.exceptions.BadRequest
@@ -165,6 +163,10 @@ $ python diagnosis.py
 
 ```bash
 $ python explain.py
+```
+
+```bash
+$ python triage.py
 ```
 
 ### Contributing ###

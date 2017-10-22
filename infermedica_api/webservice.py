@@ -337,6 +337,36 @@ class API(object):
         except KeyError as e:
             raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'explain')
 
+    def triage(self, diagnosis_request, interview_id=None):
+        """
+        Makes an triage API request with provided diagnosis data.
+        Returns triage results dict.
+        See the docs: https://developer.infermedica.com/docs/triage.
+
+        :param diagnosis_request: Diagnosis request object or json request for diagnosis method.
+        :type diagnosis_request: :class:`infermedica_api.models.Diagnosis` or dict
+
+        :returns: A dict object with api response
+        :rtype: dict
+        """
+        try:
+            method = self.api_methods['triage']
+        except KeyError as e:
+            raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, 'triage')
+
+        headers = {}
+        if interview_id:
+            headers['Interview-Id'] = interview_id
+
+        request = diagnosis_request
+        if isinstance(diagnosis_request, models.Diagnosis):
+            request = diagnosis_request.get_api_request()
+
+            if not interview_id and diagnosis_request.interview_id:
+                headers['Interview-Id'] = diagnosis_request.interview_id
+
+        return self.__post(method, json.dumps(request), headers=headers)
+
     def observation_details(self, _id):
         """
         Makes an API request and returns observation details object.

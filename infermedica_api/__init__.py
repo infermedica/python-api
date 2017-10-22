@@ -67,6 +67,7 @@ API_CONFIG = {
             'parse': '/parse',
             'diagnosis': '/diagnosis',
             'explain': '/explain',
+            'triage': '/triage',
             'conditions': '/conditions',
             'condition_details': '/conditions/{id}',
             'symptoms': '/symptoms',

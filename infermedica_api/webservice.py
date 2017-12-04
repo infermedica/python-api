@@ -226,7 +226,7 @@ class API(object):
 
         return self.__get(method, params=params)
 
-    def suggest(self, sex=None, age=None, selected=None, max_results=8, interview_id=None):
+    def suggest(self, sex=None, age=None, selected=None, max_results=8, interview_id=None, extras=None):
         """
         Makes an API suggest request and returns a list of suggested evidence.
 
@@ -252,6 +252,8 @@ class API(object):
             data['age'] = age
         if isinstance(selected, (list, tuple)) and selected:
             data['selected'] = selected
+        if isinstance(extras, dict):
+            data['extras'] = extras
 
         return self.__post(method, headers=headers, data=json.dumps(data), params={'max_results': max_results})
 

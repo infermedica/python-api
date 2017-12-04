@@ -103,6 +103,7 @@ class Diagnosis(ModelCommon):
 
         self.question = None
         self.conditions = ConditionResultList()
+        self.should_stop = None
         self.extras = {}
         self.extras_permanent = {}
 
@@ -260,6 +261,7 @@ class Diagnosis(ModelCommon):
             self.question = None
 
         self.conditions = ConditionResultList.from_json(json.get('conditions', []) or [])
+        self.should_stop = json.get('should_stop', None)
         self.extras = json.get('extras', {}) or {}
 
     def get_evidences(self):
@@ -315,5 +317,6 @@ class Diagnosis(ModelCommon):
         """
         return dict(self.get_api_request(), **{
             "question": self.question.to_dict() if hasattr(self.question, 'to_dict') else None,
-            "conditions": self.conditions.to_dict() if hasattr(self.conditions, 'to_dict') else None
+            "conditions": self.conditions.to_dict() if hasattr(self.conditions, 'to_dict') else None,
+            "should_stop": self.should_stop
         })

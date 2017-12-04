@@ -10,8 +10,8 @@ if __name__ == '__main__':
 
     request = infermedica_api.Diagnosis(sex='female', age=35)
 
-    request.add_symptom('s_21', 'present')
-    request.add_symptom('s_98', 'present')
+    request.add_symptom('s_21', 'present', initial=True)
+    request.add_symptom('s_98', 'present', initial=True)
     request.add_symptom('s_107', 'absent')
 
     # call diagnosis

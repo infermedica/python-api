@@ -169,6 +169,10 @@ $ python explain.py
 $ python triage.py
 ```
 
+```bash
+$ python suggest.py
+```
+
 ### Contributing ###
 
 Arkadiusz Szydełko ([akszydelko](https://github.com/akszydelko)) and Paweł Iwaszko ([iwaszko](https://github.com/iwaszko)) are the creators and current maintainers of the Infermedica API Python client. 

@@ -226,18 +226,12 @@ class API(object):
 
         return self.__get(method, params=params)
 
-    def suggest(self, sex=None, age=None, selected=None, max_results=8, interview_id=None, extras=None):
+    def suggest(self, diagnosis_request, max_results=8, interview_id=None):
         """
         Makes an API suggest request and returns a list of suggested evidence.
 
-        :param sex: Sex of the patient 'female' or 'male'.
-        :type sex: str
-
-        :param age: Age of the patient.
-        :type age: int
-
-        :param selected: A list of already selected evidence, used to calculate other suggestions.
-        :type selected: int
+        :param diagnosis_request: Diagnosis request object or json request for diagnosis method.
+        :type diagnosis_request: :class:`infermedica_api.models.Diagnosis` or dict
 
         :returns: A list of suggestions, dicts with 'id', 'name' and 'common_name' keys.
         :rtype: list
@@ -245,17 +239,11 @@ class API(object):
         method = self.__get_method('suggest')
         headers = self.__get_interview_id_headers(interview_id=interview_id)
 
-        data = {}
-        if isinstance(sex, basestring) and sex:
-            data['sex'] = sex
-        if isinstance(age, int):
-            data['age'] = age
-        if isinstance(selected, (list, tuple)) and selected:
-            data['selected'] = selected
-        if isinstance(extras, dict):
-            data['extras'] = extras
+        request = diagnosis_request
+        if isinstance(diagnosis_request, models.Diagnosis):
+            request = diagnosis_request.get_api_request()
 
-        return self.__post(method, headers=headers, data=json.dumps(data), params={'max_results': max_results})
+        return self.__post(method, headers=headers, data=json.dumps(request), params={'max_results': max_results})
 
     def parse(self, text, include_tokens=False, interview_id=None):
         """
@@ -353,7 +341,6 @@ class API(object):
         :rtype: dict
         """
         method = self.__get_method('triage')
-
         headers = self.__get_interview_id_headers(diagnosis_request=diagnosis_request, interview_id=interview_id)
 
         request = diagnosis_request

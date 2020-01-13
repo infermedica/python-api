@@ -107,7 +107,7 @@ For more take a look at provided examples.
 
 ## Exceptions
 
-The library provide it's own set of exceptions, which may be raised on any of the API calls. The following methods `info`, `search`, `lookup`, `parse`, `diagnosis`, `explain`, `triage`, `condition_details`, `condition_list`, `symptom_details`, `symptom_list`, `lab_test_details`, `lab_test_list`, `risk_factor_details` and `risk_factor_list` may raise one of the following exceptions:
+The library provide it's own set of exceptions, which may be raised on any of the API calls. The following methods `info`, `search`, `lookup`, `parse`, `diagnosis`, `explain`, `triage`, `condition_details`, `condition_list`, `symptom_details`, `symptom_list`, `lab_test_details`, `lab_test_list`, `risk_factor_details`, `red_flags`, `rationale` and `risk_factor_list` may raise one of the following exceptions:
 
 ```
 infermedica_api.exceptions.BadRequest
@@ -171,6 +171,14 @@ $ python triage.py
 
 ```bash
 $ python suggest.py
+```
+
+```bash
+$ python rationale.py
+```
+
+```bash
+$ python red_flags.py
 ```
 
 ### Contributing ###

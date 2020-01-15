@@ -479,7 +479,7 @@ class API(object):
 
         return models.RiskFactorList.from_json(response)
 
-    def red_flags(self, diagnosis_request, interview_id=None):
+    def red_flags(self, diagnosis_request, interview_id=None, max_results=8):
         """
         Makes an API request with provided diagnosis data and returns a list
         of observations that may be related to potentially life-threatening
@@ -504,7 +504,12 @@ class API(object):
         if isinstance(diagnosis_request, models.Diagnosis):
             request = diagnosis_request.get_api_request()
 
-        response = self.__post(method, json.dumps(request), headers=headers)
+        response = self.__post(
+            method,
+            json.dumps(request),
+            headers=headers,
+            params={'max_results': max_results},
+        )
 
         return models.RedFlagList.from_json(response)
 

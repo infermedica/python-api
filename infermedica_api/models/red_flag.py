@@ -46,5 +46,5 @@ class RedFlagList(BaseModelList):
             mapping[item.id] = i
         return RedFlagList(json, mapping=mapping)
 
-    def get_RedFlag_details(self, _id):
+    def get_red_flag_details(self, _id):
         return self._get_details(_id)

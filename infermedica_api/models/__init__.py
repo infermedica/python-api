@@ -7,4 +7,4 @@ from .symptom import Symptom, SymptomList
 from .explain import ExplainResults, ExplainResult
 from .parse import ParseResults, ParseMention
 from .rationale import RationaleResult
-from .red_flag import RedFlagList
+from .red_flag import RedFlag, RedFlagList

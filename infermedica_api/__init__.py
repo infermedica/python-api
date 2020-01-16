@@ -75,15 +75,19 @@ API_CONFIG = {
             'lab_tests': '/lab_tests',
             'lab_test_details': '/lab_tests/{id}',
             'risk_factors': '/risk_factors',
-            'risk_factor_details': '/risk_factors/{id}'
-        }
-    }
+            'risk_factor_details': '/risk_factors/{id}',
+            'red_flags': '/red_flags',
+            'rationale': '/rationale',
+        },
+    },
 }
 
 from .models.condition import Condition, ConditionList
 from .models.diagnosis import Diagnosis, DiagnosisQuestion, ConditionResult, ConditionResultList
 from .models.lab_test import LabTest, LabTestList
 from .models.observation import Observation, ObservationList
+from .models.rationale import RationaleResult
+from .models.red_flag import RedFlagList
 from .models.risk_factor import RiskFactor, RiskFactorList
 from .models.symptom import Symptom, SymptomList
 from .webservice import configure, get_api, API, SEARCH_FILTERS

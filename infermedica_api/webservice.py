@@ -273,7 +273,7 @@ class API(object):
 
     def diagnosis(self, diagnosis_request, interview_id=None, **kwargs):
         """
-        Makes an diagnosis API request with provided diagnosis data
+        Makes a diagnosis API request with provided diagnosis data
         and returns diagnosis question with possible conditions.
 
         :param diagnosis_request: Diagnosis request object or json request for diagnosis method.
@@ -330,7 +330,7 @@ class API(object):
 
     def triage(self, diagnosis_request, interview_id=None):
         """
-        Makes an triage API request with provided diagnosis data.
+        Makes a triage API request with provided diagnosis data.
         Returns triage results dict.
         See the docs: https://developer.infermedica.com/docs/triage.
 
@@ -478,6 +478,64 @@ class API(object):
         response = self.__get(self.__get_method('risk_factors'))
 
         return models.RiskFactorList.from_json(response)
+
+    def red_flags(self, diagnosis_request, max_results=8, interview_id=None):
+        """
+        Makes an API request with provided diagnosis data and returns a list
+        of observations that may be related to potentially life-threatening
+        conditions.
+
+        :param diagnosis_request: Diagnosis request object or diagnosis json.
+        :type diagnosis_request: :class:`infermedica_api.models.Diagnosis` or dict
+
+        :param interview_id: Unique interview id for diagnosis
+        :type interview_id: str
+
+        :returns: A list of RedFlag objects
+        :rtype: :class:`infermedica_api.models.RedFlagList`
+        """
+        method = self.__get_method('red_flags')
+        headers = self.__get_interview_id_headers(
+            diagnosis_request=diagnosis_request,
+            interview_id=interview_id,
+        )
+
+        request = diagnosis_request
+        if isinstance(diagnosis_request, models.Diagnosis):
+            request = diagnosis_request.get_api_request()
+
+        response = self.__post(method, json.dumps(request), headers=headers, params={'max_results': max_results})
+
+        return models.RedFlagList.from_json(response)
+
+    def rationale(self, diagnosis_request, interview_id=None):
+        """
+        Makes an API request with provided diagnosis data and returns
+        an explenation of why the given question has been selected by
+        the reasoning engine.
+
+        :param diagnosis_request: Diagnosis request object or diagnosis json.
+        :type diagnosis_request: :class:`infermedica_api.models.Diagnosis` or dict
+
+        :param interview_id: Unique interview id for diagnosis
+        :type interview_id: str
+
+        :returns: An instance of the RationaleResult
+        :rtype: :class:`infermedica_api.models.RationaleResult`
+        """
+        method = self.__get_method('rationale')
+        headers = self.__get_interview_id_headers(
+            diagnosis_request=diagnosis_request,
+            interview_id=interview_id,
+        )
+
+        request = diagnosis_request
+        if isinstance(diagnosis_request, models.Diagnosis):
+            request = diagnosis_request.get_api_request()
+
+        response = self.__post(method, json.dumps(request), headers=headers)
+
+        return models.RationaleResult.from_json(response)
 
 
 __api__ = None

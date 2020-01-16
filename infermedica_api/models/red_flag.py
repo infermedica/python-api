@@ -4,20 +4,20 @@
 infermedica_api.models.red_flag
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This module contains RedFlag models for data returned from api.
+This module contains red flag models for data returned from api.
 """
 from .base import BaseModel, BaseModelList
 
 
 class RedFlag(BaseModel):
-    """Model class for API RedFlag object."""
+    """Model class for API red flag object."""
 
     @staticmethod
     def from_json(json):
         """
         Constructs RedFlag object from given dict and returns it.
 
-        :param json: Dict with RedFlag values
+        :param json: Dict with red flag values
         :type json: dict
 
         :returns: RedFlag details object
@@ -27,17 +27,17 @@ class RedFlag(BaseModel):
 
 
 class RedFlagList(BaseModelList):
-    """Model class for API list of RedFlag objects."""
+    """Model class for API list of red flag objects."""
 
     @staticmethod
     def from_json(json):
         """
         Constructs RedFlagList object from list of dicts and returns it.
 
-        :param json: List with RedFlag details dict values
+        :param json: List with red flag details dict values
         :type json: list
 
-        :returns: RedFlags details list object
+        :returns: RedFlagList list object
         :rtype: :class:`infermedica_api.models.RedFlagList`
         """
         mapping = {}

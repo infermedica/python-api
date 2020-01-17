@@ -36,10 +36,10 @@ is available at <https://developer.infermedica.com>.
 """
 
 __title__ = 'Infermedica API'
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 __author__ = 'Arkadiusz Szydelko'
 __license__ = 'Apache 2.0'
-__copyright__ = 'Copyright 2017 Infermedica'
+__copyright__ = 'Copyright 2020 Infermedica'
 
 DEFAULT_API_VERSION = 'v2'
 DEFAULT_API_ENDPOINT = 'https://api.infermedica.com/'

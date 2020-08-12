@@ -10,8 +10,8 @@ if __name__ == '__main__':
 
     request = infermedica_api.Diagnosis(sex='female', age=35)
 
-    request.add_symptom('s_21', 'present', initial=True)
-    request.add_symptom('s_98', 'present', initial=True)
+    request.add_symptom('s_21', 'present', source='initial')
+    request.add_symptom('s_98', 'present', source='initial')
     request.add_symptom('s_107', 'absent')
 
     # call diagnosis
@@ -23,6 +23,9 @@ if __name__ == '__main__':
     request.add_symptom('s_99', 'present')
     request.add_symptom('s_8', 'absent')
     request.add_symptom('s_25', 'present')
+    request.add_symptom('s_418', 'present', source='suggest')
+    request.add_symptom('s_18', 'present', source='predefined')
+    request.add_symptom('s_10', 'present', source='red_flags')
     # ... and so on until you decided that enough question have been asked
     # or you have sufficient results in request.conditions
 

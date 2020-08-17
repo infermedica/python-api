@@ -117,16 +117,17 @@ class Diagnosis(ModelCommon):
     def observations(self):
         return self.symptoms
 
-    def __add_evidence(self, collection, _id, state, time, source):
+    def __add_evidence(self, collection, _id, state, time, initial=None, source=None):
         """Helper function to update evidence list."""
         evidence = {
             "id": _id,
             "choice_id": state
         }
-
+        if initial is not None:
+            warnings.warn("Parameter initial is deprecated, please use source.",
+                          category=DeprecationWarning)
         if time:
             evidence['observed_at'] = time
-
         if source:
             evidence['source'] = source
 
@@ -160,7 +161,7 @@ class Diagnosis(ModelCommon):
         :param source: (optional) All symptoms and risk factors: initial, suggest, predefined, red_flags
         :type source: str
         """
-        self.__add_evidence(self.symptoms, _id, state, time, source)
+        self.__add_evidence(self.symptoms, _id, state, time, source=source)
 
     def add_lab_test(self, _id, state, time=None, source=None):
         """
@@ -173,7 +174,7 @@ class Diagnosis(ModelCommon):
         :param time: (optional) Laboratory test occurrence time (ISO8601 formatted)
         :type time: str
         """
-        self.__add_evidence(self.lab_tests, _id, state, time, source)
+        self.__add_evidence(self.lab_tests, _id, state, time, source=source)
 
     def add_risk_factor(self, _id, state, time=None, source=None):
         """
@@ -187,7 +188,7 @@ class Diagnosis(ModelCommon):
         :param time: (optional) Risk factor occurrence time (ISO8601 formatted)
         :type time: str
         """
-        self.__add_evidence(self.risk_factors, _id, state, time, source)
+        self.__add_evidence(self.risk_factors, _id, state, time, source=source)
 
     def add_evidence(self, _id, state, time=None, source=None):
         """

@@ -124,8 +124,10 @@ class Diagnosis(ModelCommon):
             "choice_id": state
         }
         if initial is not None:
-            warnings.warn("Parameter initial is deprecated, please use source.",
-                          category=DeprecationWarning)
+            warnings.warn(
+                "Parameter initial is deprecated, please use source with following parameter: initial, suggest, "
+                "predefined, red_flags.", category=DeprecationWarning
+            )
         if time:
             evidence['observed_at'] = time
         if source:

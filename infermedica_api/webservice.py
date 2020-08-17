@@ -182,11 +182,11 @@ class API(object):
         :rtype: list
         """
         method = self.__get_method('search')
-        params = {
+        params = kwargs.pop('params', kwargs)
+        params.update({
             'phrase': phrase,
             'max_results': max_results
-        }
-        params.update(kwargs.get('params', {}))
+        })
 
         if sex:
             params['sex'] = sex
@@ -226,7 +226,7 @@ class API(object):
 
         return self.__get(method, params=params)
 
-    def suggest(self, diagnosis_request, max_results=8, interview_id=None):
+    def suggest(self, diagnosis_request, max_results=8, interview_id=None, **kwargs):
         """
         Makes an API suggest request and returns a list of suggested evidence.
 
@@ -238,14 +238,21 @@ class API(object):
         """
         method = self.__get_method('suggest')
         headers = self.__get_interview_id_headers(interview_id=interview_id)
+        params = kwargs
+        params.update({'max_results': max_results})
 
         request = diagnosis_request
         if isinstance(diagnosis_request, models.Diagnosis):
             request = diagnosis_request.get_api_request()
 
-        return self.__post(method, headers=headers, data=json.dumps(request), params={'max_results': max_results})
+        return self.__post(
+            method,
+            params=params,
+            headers=headers,
+            data=json.dumps(request)
+        )
 
-    def parse(self, text, include_tokens=False, interview_id=None):
+    def parse(self, text, include_tokens=False, interview_id=None, **kwargs):
         """
         Makes an parse API request with provided text and include_tokens parameter.
         Returns parse results with detailed list of mentions found in the text.
@@ -261,13 +268,19 @@ class API(object):
         """
         method = self.__get_method('parse')
         headers = self.__get_interview_id_headers(interview_id=interview_id)
+        params = kwargs
 
         request = {
             'text': text,
             'include_tokens': include_tokens
         }
 
-        response = self.__post(method, json.dumps(request), headers=headers)
+        response = self.__post(
+            method,
+            json.dumps(request),
+            params=params,
+            headers=headers
+        )
 
         return models.ParseResults.from_json(response)
 
@@ -292,17 +305,30 @@ class API(object):
                           category=DeprecationWarning)
 
         headers = self.__get_interview_id_headers(
-            diagnosis_request=diagnosis_request, interview_id=interview_id or kwargs.get('case_id', None))
+            diagnosis_request=diagnosis_request,
+            interview_id=interview_id or kwargs.pop('case_id', None)
+        )
+        params = kwargs
 
         if isinstance(diagnosis_request, models.Diagnosis):
-            response = self.__post(method, json.dumps(diagnosis_request.get_api_request()), headers=headers)
+            response = self.__post(
+                method,
+                json.dumps(diagnosis_request.get_api_request()),
+                params=params,
+                headers=headers
+            )
             diagnosis_request.update_from_api(response)
 
             return diagnosis_request
 
-        return self.__post(method, json.dumps(diagnosis_request), headers=headers)
+        return self.__post(
+            method,
+            json.dumps(diagnosis_request),
+            params=params,
+            headers=headers
+        )
 
-    def explain(self, diagnosis_request, target_id, interview_id=None):
+    def explain(self, diagnosis_request, target_id, interview_id=None, **kwargs):
         """
         Makes an explain API request with provided diagnosis data and target condition.
         Returns explain results with supporting and conflicting evidences.
@@ -318,17 +344,23 @@ class API(object):
         """
         method = self.__get_method('explain')
         headers = self.__get_interview_id_headers(diagnosis_request=diagnosis_request, interview_id=interview_id)
+        params = kwargs
 
         if isinstance(diagnosis_request, models.Diagnosis):
             request = diagnosis_request.get_explain_request(target_id)
         else:
             request = dict(diagnosis_request, **{'target': target_id})
 
-        response = self.__post(method, json.dumps(request), headers=headers)
+        response = self.__post(
+            method,
+            json.dumps(request),
+            params=params,
+            headers=headers
+        )
 
         return models.ExplainResults.from_json(response)
 
-    def triage(self, diagnosis_request, interview_id=None):
+    def triage(self, diagnosis_request, interview_id=None, **kwargs):
         """
         Makes a triage API request with provided diagnosis data.
         Returns triage results dict.
@@ -342,12 +374,18 @@ class API(object):
         """
         method = self.__get_method('triage')
         headers = self.__get_interview_id_headers(diagnosis_request=diagnosis_request, interview_id=interview_id)
+        params = kwargs
 
         request = diagnosis_request
         if isinstance(diagnosis_request, models.Diagnosis):
             request = diagnosis_request.get_api_request()
 
-        return self.__post(method, json.dumps(request), headers=headers)
+        return self.__post(
+            method,
+            json.dumps(request),
+            params=params,
+            headers=headers
+        )
 
     def observation_details(self, _id):
         """
@@ -479,7 +517,7 @@ class API(object):
 
         return models.RiskFactorList.from_json(response)
 
-    def red_flags(self, diagnosis_request, max_results=8, interview_id=None):
+    def red_flags(self, diagnosis_request, max_results=8, interview_id=None, **kwargs):
         """
         Makes an API request with provided diagnosis data and returns a list
         of observations that may be related to potentially life-threatening
@@ -499,16 +537,23 @@ class API(object):
             diagnosis_request=diagnosis_request,
             interview_id=interview_id,
         )
+        params = kwargs
+        params.update({'max_results': max_results})
 
         request = diagnosis_request
         if isinstance(diagnosis_request, models.Diagnosis):
             request = diagnosis_request.get_api_request()
 
-        response = self.__post(method, json.dumps(request), headers=headers, params={'max_results': max_results})
+        response = self.__post(
+            method,
+            json.dumps(request),
+            params=params,
+            headers=headers
+        )
 
         return models.RedFlagList.from_json(response)
 
-    def rationale(self, diagnosis_request, interview_id=None):
+    def rationale(self, diagnosis_request, interview_id=None, **kwargs):
         """
         Makes an API request with provided diagnosis data and returns
         an explenation of why the given question has been selected by
@@ -528,12 +573,18 @@ class API(object):
             diagnosis_request=diagnosis_request,
             interview_id=interview_id,
         )
+        params = kwargs
 
         request = diagnosis_request
         if isinstance(diagnosis_request, models.Diagnosis):
             request = diagnosis_request.get_api_request()
 
-        response = self.__post(method, json.dumps(request), headers=headers)
+        response = self.__post(
+            method,
+            json.dumps(request),
+            params=params,
+            headers=headers
+        )
 
         return models.RationaleResult.from_json(response)
 

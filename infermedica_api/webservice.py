@@ -182,7 +182,7 @@ class API(object):
         :rtype: list
         """
         method = self.__get_method('search')
-        params = kwargs.pop('params', kwargs)
+        params = kwargs.pop('params', {})
         params.update({
             'phrase': phrase,
             'max_results': max_results
@@ -238,7 +238,7 @@ class API(object):
         """
         method = self.__get_method('suggest')
         headers = self.__get_interview_id_headers(interview_id=interview_id)
-        params = kwargs
+        params = kwargs.pop('params', {})
         params.update({'max_results': max_results})
 
         request = diagnosis_request
@@ -268,7 +268,7 @@ class API(object):
         """
         method = self.__get_method('parse')
         headers = self.__get_interview_id_headers(interview_id=interview_id)
-        params = kwargs
+        params = kwargs.pop('params', {})
 
         request = {
             'text': text,
@@ -308,7 +308,7 @@ class API(object):
             diagnosis_request=diagnosis_request,
             interview_id=interview_id or kwargs.pop('case_id', None)
         )
-        params = kwargs
+        params = kwargs.pop('params', {})
 
         if isinstance(diagnosis_request, models.Diagnosis):
             response = self.__post(
@@ -344,7 +344,7 @@ class API(object):
         """
         method = self.__get_method('explain')
         headers = self.__get_interview_id_headers(diagnosis_request=diagnosis_request, interview_id=interview_id)
-        params = kwargs
+        params = kwargs.pop('params', {})
 
         if isinstance(diagnosis_request, models.Diagnosis):
             request = diagnosis_request.get_explain_request(target_id)
@@ -374,7 +374,7 @@ class API(object):
         """
         method = self.__get_method('triage')
         headers = self.__get_interview_id_headers(diagnosis_request=diagnosis_request, interview_id=interview_id)
-        params = kwargs
+        params = kwargs.pop('params', {})
 
         request = diagnosis_request
         if isinstance(diagnosis_request, models.Diagnosis):
@@ -537,7 +537,7 @@ class API(object):
             diagnosis_request=diagnosis_request,
             interview_id=interview_id,
         )
-        params = kwargs
+        params = kwargs.pop('params', {})
         params.update({'max_results': max_results})
 
         request = diagnosis_request
@@ -573,7 +573,7 @@ class API(object):
             diagnosis_request=diagnosis_request,
             interview_id=interview_id,
         )
-        params = kwargs
+        params = kwargs.pop('params', {})
 
         request = diagnosis_request
         if isinstance(diagnosis_request, models.Diagnosis):

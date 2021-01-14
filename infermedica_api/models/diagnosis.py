@@ -77,23 +77,19 @@ class Diagnosis(ModelCommon):
     It will contain diagnosis questions, as well as results.
     """
 
-    def __init__(self, sex, age, time=None, interview_id=None, **kwargs):
+    def __init__(self, sex, age, interview_id=None, **kwargs):
         """
-        Initialize diagnosis object with basic information about patient
-        and optionally with examination time.
+        Initialize diagnosis object with basic information about patient.
 
         :param sex: Patient's sex ("female" or "male")
         :type sex: str
         :param age: Patient's age
         :type age: int
-        :param time: (optional) Time of diagnosis evaluation (ISO8601 formatted)
-        :type time: str
         :param interview_id: Unique interview id for diagnosis
         :type interview_id: str
         """
         self.patient_sex = sex
         self.patient_age = age
-        self.evaluation_time = time
 
         self.symptoms = []
         self.lab_tests = []
@@ -117,7 +113,7 @@ class Diagnosis(ModelCommon):
     def observations(self):
         return self.symptoms
 
-    def __add_evidence(self, collection, _id, state, time, initial=None, source=None):
+    def __add_evidence(self, collection, _id, state, initial=None, source=None):
         """Helper function to update evidence list."""
         evidence = {
             "id": _id,
@@ -129,14 +125,12 @@ class Diagnosis(ModelCommon):
                 "Parameter initial=True is deprecated, please use source='initial' instead.",
                 category=DeprecationWarning
             )
-        if time:
-            evidence['observed_at'] = time
         if source:
             evidence['source'] = source
 
         collection.append(evidence)
 
-    def add_observation(self, _id, state, time=None, initial=None, source=None):
+    def add_observation(self, _id, state, initial=None, source=None):
         """
         Adds observation with given presence to evidence list.
 
@@ -144,14 +138,12 @@ class Diagnosis(ModelCommon):
         :type _id: str
         :param state: Observation presence, one of three values ("present", "absent" or "unknown")
         :type state: str
-        :param time: (optional) Observation occurrence time (ISO8601 formatted)
-        :type time: str
         """
         warnings.warn("Function add_observation is deprecated, please use add_symptom.",
                       category=DeprecationWarning)
-        self.add_symptom(_id, state, time, initial, source)
+        self.add_symptom(_id, state, initial, source)
 
-    def add_symptom(self, _id, state, time=None, initial=None, source=None):
+    def add_symptom(self, _id, state, initial=None, source=None):
         """
         Adds symptom with given presence to evidence list.
 
@@ -159,14 +151,12 @@ class Diagnosis(ModelCommon):
         :type _id: str
         :param state: Symptom presence, one of three values ("present", "absent" or "unknown")
         :type state: str
-        :param time: (optional) Symptom occurrence time (ISO8601 formatted)
-        :type time: str
         :param source: (optional) All symptoms and risk factors: initial, suggest, predefined, red_flags
         :type source: str
         """
-        self.__add_evidence(self.symptoms, _id, state, time, initial=initial, source=source)
+        self.__add_evidence(self.symptoms, _id, state, initial=initial, source=source)
 
-    def add_lab_test(self, _id, state, time=None, initial=None, source=None):
+    def add_lab_test(self, _id, state, initial=None, source=None):
         """
         Adds laboratory test with given presence to evidence list.
 
@@ -174,12 +164,10 @@ class Diagnosis(ModelCommon):
         :type _id: str
         :param state: Laboratory test presence, one of three values ("present", "absent" or "unknown")
         :type state: str
-        :param time: (optional) Laboratory test occurrence time (ISO8601 formatted)
-        :type time: str
         """
-        self.__add_evidence(self.lab_tests, _id, state, time, initial=initial, source=source)
+        self.__add_evidence(self.lab_tests, _id, state, initial=initial, source=source)
 
-    def add_risk_factor(self, _id, state, time=None, initial=None, source=None):
+    def add_risk_factor(self, _id, state, initial=None, source=None):
         """
         Adds risk factor with given presence to evidence list.
 
@@ -188,12 +176,10 @@ class Diagnosis(ModelCommon):
         :param state: Risk factor presence,
         one of three values ("present", "absent" or "unknown")
         :type state: str
-        :param time: (optional) Risk factor occurrence time (ISO8601 formatted)
-        :type time: str
         """
-        self.__add_evidence(self.risk_factors, _id, state, time, initial=initial, source=source)
+        self.__add_evidence(self.risk_factors, _id, state, initial=initial, source=source)
 
-    def add_evidence(self, _id, state, time=None, initial=None, source=None):
+    def add_evidence(self, _id, state, initial=None, source=None):
         """
         Adds evidence with given presence to evidence list.
 
@@ -202,8 +188,6 @@ class Diagnosis(ModelCommon):
         :param state: Evidence presence,
         one of three values ("present", "absent" or "unknown")
         :type state: str
-        :param time: (optional) Evidence occurrence time (ISO8601 formatted)
-        :type time: str
         """
         evidence_list = self.symptoms
 
@@ -212,7 +196,7 @@ class Diagnosis(ModelCommon):
         elif _id.startswith("lt_"):
             evidence_list = self.lab_tests
 
-        self.__add_evidence(evidence_list, _id, state, time, initial=initial, source=source)
+        self.__add_evidence(evidence_list, _id, state, initial=initial, source=source)
 
     def set_pursued_conditions(self, pursued):
         """
@@ -292,9 +276,6 @@ class Diagnosis(ModelCommon):
 
         if self.pursued:
             request['pursued'] = self.pursued
-
-        if self.evaluation_time:
-            request['evaluated_at'] = self.evaluation_time
 
         return request
 

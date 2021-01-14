@@ -9,7 +9,7 @@ This module contains common models for data returned from api.
 import json
 
 
-class ModelCommon(object):
+class ModelCommon:
     """Abstract class with implementation of commonly used functions."""
 
     class Meta:
@@ -74,7 +74,7 @@ class BaseModelList(list, ModelCommon):
         else:
             self.mapping = {}
 
-        super(BaseModelList, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _get_details(self, _id):
         """

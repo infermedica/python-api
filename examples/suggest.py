@@ -1,4 +1,3 @@
-from __future__ import print_function
 import config
 
 config.setup_examples()

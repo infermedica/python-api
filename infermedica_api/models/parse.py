@@ -22,7 +22,7 @@ class ParseResults(BaseModel):
     """Model class for API parse response object."""
 
     def __init__(self, **kwargs):
-        super(ParseResults, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.mentions = [ParseMention.from_json(val) for val in self.mentions]
 

@@ -101,7 +101,7 @@ request = api.diagnosis(request)
 ```
 
 Note that after each diagnosis call, the request object gets updated and you can obtain a diagnostic question to ask.
-You can also update the request object with new observations or risk factors to get even more precise diagnostic insights and new questions to verify. 
+You can also update the request object with new symptoms or risk factors to get even more precise diagnostic insights and new questions to verify. 
 
 For more take a look at provided examples.
 

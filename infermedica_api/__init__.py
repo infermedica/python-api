@@ -11,9 +11,11 @@ Basic usage:
    >>> api = infermedica_api.API(app_id='YOUR_APP_ID', app_key='YOUR_APP_KEY')
    >>> print(api.info())
    {
-     "updated_at": "2015-03-12T00:39:34+01:00",
-     "conditions_count": 385,
-     "observations_count": 875
+      "updated_at": "2016-09-27T07:08:25Z",
+      "conditions_count": 504,
+      "symptoms_count": 1114,
+      "risk_factors_count": 41,
+      "lab_tests_count": 448
    }
 
 ... you can also configure API object globally and use it without initialization in any module.
@@ -45,19 +47,6 @@ DEFAULT_API_VERSION = 'v2'
 DEFAULT_API_ENDPOINT = 'https://api.infermedica.com/'
 
 API_CONFIG = {
-    'v1': {
-        'methods': {
-            'info': '/info',
-            'lookup': '/lookup',
-            'diagnosis': '/diagnosis',
-            'observations': '/observations',
-            'observation_details': '/observations/{id}',
-            'conditions': '/conditions',
-            'condition_details': '/conditions/{id}',
-            'risk_factors': '/risk_factors',
-            'risk_factor_details': '/risk_factors/{id}'
-        }
-    },
     'v2': {
         'methods': {
             'info': '/info',
@@ -85,7 +74,6 @@ API_CONFIG = {
 from .models.condition import Condition, ConditionList
 from .models.diagnosis import Diagnosis, DiagnosisQuestion, ConditionResult, ConditionResultList
 from .models.lab_test import LabTest, LabTestList
-from .models.observation import Observation, ObservationList
 from .models.rationale import RationaleResult
 from .models.red_flag import RedFlagList
 from .models.risk_factor import RiskFactor, RiskFactorList

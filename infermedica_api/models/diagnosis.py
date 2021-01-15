@@ -107,11 +107,7 @@ class Diagnosis(ModelCommon):
         self.extras = {}
         self.extras_permanent = {}
 
-        self.interview_id = interview_id or kwargs.get('case_id', None)
-
-        if kwargs.get('case_id', None) is not None:
-            warnings.warn("Parameter case_id is deprecated, please use interview_id.",
-                          category=DeprecationWarning)
+        self.interview_id = interview_id
 
     def __add_evidence(self, collection, _id, state, time, source=None):
         """Helper function to update evidence list."""
@@ -207,11 +203,6 @@ class Diagnosis(ModelCommon):
         :type pursued: list of strings
         """
         self.pursued = pursued
-
-    def set_case_id(self, value):
-        warnings.warn("Function set_case_id is deprecated, please use set_interview_id.",
-                      category=DeprecationWarning)
-        self.set_interview_id(value)
 
     def set_interview_id(self, value):
         """

@@ -300,13 +300,9 @@ class API(object):
         """
         method = self.__get_method('diagnosis')
 
-        if kwargs.get('case_id', None) is not None:
-            warnings.warn("Parameter case_id is deprecated, please use interview_id.",
-                          category=DeprecationWarning)
-
         headers = self.__get_interview_id_headers(
             diagnosis_request=diagnosis_request,
-            interview_id=interview_id or kwargs.pop('case_id', None)
+            interview_id=interview_id
         )
         params = kwargs.pop('params', {})
 

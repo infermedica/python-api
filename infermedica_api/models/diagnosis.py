@@ -113,18 +113,12 @@ class Diagnosis(ModelCommon):
             warnings.warn("Parameter case_id is deprecated, please use interview_id.",
                           category=DeprecationWarning)
 
-    def __add_evidence(self, collection, _id, state, time, initial=None, source=None):
+    def __add_evidence(self, collection, _id, state, time, source=None):
         """Helper function to update evidence list."""
         evidence = {
             "id": _id,
             "choice_id": state
         }
-        if initial:
-            evidence['initial'] = True
-            warnings.warn(
-                "Parameter initial=True is deprecated, please use source='initial' instead.",
-                category=DeprecationWarning
-            )
         if time:
             evidence['observed_at'] = time
         if source:
@@ -132,7 +126,7 @@ class Diagnosis(ModelCommon):
 
         collection.append(evidence)
 
-    def add_symptom(self, _id, state, time=None, initial=None, source=None):
+    def add_symptom(self, _id, state, time=None, source=None):
         """
         Adds symptom with given presence to evidence list.
 
@@ -142,12 +136,13 @@ class Diagnosis(ModelCommon):
         :type state: str
         :param time: (optional) Symptom occurrence time (ISO8601 formatted)
         :type time: str
-        :param source: (optional) All symptoms and risk factors: initial, suggest, predefined, red_flags
+        :param source: (optional) Symptom source,
+                       one of values: ("initial", "suggest", "predefined", "red_flags")
         :type source: str
         """
-        self.__add_evidence(self.symptoms, _id, state, time, initial=initial, source=source)
+        self.__add_evidence(self.symptoms, _id, state, time, source=source)
 
-    def add_lab_test(self, _id, state, time=None, initial=None, source=None):
+    def add_lab_test(self, _id, state, time=None, source=None):
         """
         Adds laboratory test with given presence to evidence list.
 
@@ -157,10 +152,13 @@ class Diagnosis(ModelCommon):
         :type state: str
         :param time: (optional) Laboratory test occurrence time (ISO8601 formatted)
         :type time: str
+        :param source: (optional) Laboratory test source,
+                       one of values: ("initial", "suggest", "predefined", "red_flags")
+        :type source: str
         """
-        self.__add_evidence(self.lab_tests, _id, state, time, initial=initial, source=source)
+        self.__add_evidence(self.lab_tests, _id, state, time, source=source)
 
-    def add_risk_factor(self, _id, state, time=None, initial=None, source=None):
+    def add_risk_factor(self, _id, state, time=None, source=None):
         """
         Adds risk factor with given presence to evidence list.
 
@@ -171,10 +169,13 @@ class Diagnosis(ModelCommon):
         :type state: str
         :param time: (optional) Risk factor occurrence time (ISO8601 formatted)
         :type time: str
+        :param source: (optional) Risk factor source,
+                       one of values: ("initial", "suggest", "predefined", "red_flags")
+        :type source: str
         """
-        self.__add_evidence(self.risk_factors, _id, state, time, initial=initial, source=source)
+        self.__add_evidence(self.risk_factors, _id, state, time, source=source)
 
-    def add_evidence(self, _id, state, time=None, initial=None, source=None):
+    def add_evidence(self, _id, state, time=None, source=None):
         """
         Adds evidence with given presence to evidence list.
 
@@ -185,6 +186,9 @@ class Diagnosis(ModelCommon):
         :type state: str
         :param time: (optional) Evidence occurrence time (ISO8601 formatted)
         :type time: str
+        :param source: (optional) Evidence source,
+                       one of values: ("initial", "suggest", "predefined", "red_flags")
+        :type source: str
         """
         evidence_list = self.symptoms
 
@@ -193,7 +197,7 @@ class Diagnosis(ModelCommon):
         elif _id.startswith("lt_"):
             evidence_list = self.lab_tests
 
-        self.__add_evidence(evidence_list, _id, state, time, initial=initial, source=source)
+        self.__add_evidence(evidence_list, _id, state, time, source=source)
 
     def set_pursued_conditions(self, pursued):
         """

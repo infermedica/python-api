@@ -387,32 +387,6 @@ class API(object):
             headers=headers
         )
 
-    def observation_details(self, _id):
-        """
-        Makes an API request and returns observation details object.
-
-        :param _id: Observation id
-        :type _id: str
-
-        :returns: A Observation object
-        :rtype: :class:`infermedica_api.models.Observation`
-        """
-        method = self.__get_method('observation_details')
-        response = self.__get(method.format(**{'id': _id}))
-
-        return models.Observation.from_json(response)
-
-    def observations_list(self):
-        """
-        Makes an API request and returns list of observation details objects.
-
-        :returns: A ObservationList list object with Observation objects
-        :rtype: :class:`infermedica_api.models.ObservationList`
-        """
-        response = self.__get(self.__get_method('observations'))
-
-        return models.ObservationList.from_json(response)
-
     def condition_details(self, _id):
         """
         Makes an API request and returns condition details object.
@@ -520,7 +494,7 @@ class API(object):
     def red_flags(self, diagnosis_request, max_results=8, interview_id=None, **kwargs):
         """
         Makes an API request with provided diagnosis data and returns a list
-        of observations that may be related to potentially life-threatening
+        of evidence that may be related to potentially life-threatening
         conditions.
 
         :param diagnosis_request: Diagnosis request object or diagnosis json.

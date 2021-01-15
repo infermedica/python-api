@@ -113,10 +113,6 @@ class Diagnosis(ModelCommon):
             warnings.warn("Parameter case_id is deprecated, please use interview_id.",
                           category=DeprecationWarning)
 
-    @property
-    def observations(self):
-        return self.symptoms
-
     def __add_evidence(self, collection, _id, state, time, initial=None, source=None):
         """Helper function to update evidence list."""
         evidence = {
@@ -135,21 +131,6 @@ class Diagnosis(ModelCommon):
             evidence['source'] = source
 
         collection.append(evidence)
-
-    def add_observation(self, _id, state, time=None, initial=None, source=None):
-        """
-        Adds observation with given presence to evidence list.
-
-        :param _id: Observation id
-        :type _id: str
-        :param state: Observation presence, one of three values ("present", "absent" or "unknown")
-        :type state: str
-        :param time: (optional) Observation occurrence time (ISO8601 formatted)
-        :type time: str
-        """
-        warnings.warn("Function add_observation is deprecated, please use add_symptom.",
-                      category=DeprecationWarning)
-        self.add_symptom(_id, state, time, initial, source)
 
     def add_symptom(self, _id, state, time=None, initial=None, source=None):
         """

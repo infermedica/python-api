@@ -64,7 +64,6 @@ import infermedica_api
 api = infermedica_api.get_api()
 
 # Create diagnosis object with initial patient information.
-# Note that time argument is optional here as well as in the add_symptom function
 request = infermedica_api.Diagnosis(sex='male', age=35)
 
 request.add_symptom('s_21', 'present')

@@ -5,7 +5,7 @@ class ExplainResults(BaseModel):
     """Model class for API explain object."""
 
     def __init__(self, **kwargs):
-        super(ExplainResults, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.supporting_evidence = [ExplainResult.from_json(val) for val in self.supporting_evidence]
         self.conflicting_evidence = [ExplainResult.from_json(val) for val in self.conflicting_evidence]

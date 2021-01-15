@@ -18,11 +18,11 @@ class ConnectionError(Exception):
     def __str__(self):
         message = "Failed."
         if hasattr(self.response, 'status_code'):
-            message += " Response status: %s." % (self.response.status_code)
+            message += f" Response status: {self.response.status_code}."
         if hasattr(self.response, 'reason'):
-            message += " Reason: %s." % (self.response.reason)
+            message += f" Reason: {self.response.reason}."
         if self.content is not None:
-            message += " Error message: " + str(self.content)
+            message += f" Error message: {self.content}"
         return message
 
 
@@ -54,7 +54,7 @@ class MissingConfiguration(Exception):
 
     def __str__(self):
         if self.alias:
-            return "API credentials for alias '%s' has not been configured." % self.alias
+            return f"API credentials for alias '{self.alias}' has not been configured."
         return "API credentials has not been configured."
 
 
@@ -70,7 +70,7 @@ class MethodNotAvailableInAPIVersion(Exception):
         self.method = method
 
     def __str__(self):
-        return "Method '%s' is not available in the %s api version." % (self.method, self.api_version)
+        return f"Method '{self.method}' is not available in the {self.api_version} api version."
 
 
 class InvalidSearchFilter(Exception):
@@ -80,4 +80,4 @@ class InvalidSearchFilter(Exception):
         self.filter = filter
 
     def __str__(self):
-        return "Invalid search filter: '%s'." % self.filter
+        return f"Invalid search filter: '{self.filter}'."

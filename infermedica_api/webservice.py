@@ -15,11 +15,8 @@ import requests
 
 from . import __version__, exceptions, models, API_CONFIG, DEFAULT_API_VERSION, DEFAULT_API_ENDPOINT
 
-if platform.python_version_tuple()[0] == '3':
-    basestring = (str, bytes)
 
-
-class SearchFilters(object):
+class SearchFilters:
     """Simple class to hold search filter constants."""
     SYMPTOMS = "symptom"
     RISK_FACTORS = "risk_factor"
@@ -31,12 +28,12 @@ class SearchFilters(object):
 SEARCH_FILTERS = SearchFilters()
 
 
-class API(object):
+class API:
     """Class which handles requests to the Infermedica API."""
 
     # User-Agent for HTTP request
-    library_details = "requests %s; python %s" % (requests.__version__, platform.python_version())
-    user_agent = "Infermedica-API-Python %s (%s)" % (__version__, library_details)
+    library_details = f"requests {requests.__version__}; python {platform.python_version()}"
+    user_agent = f"Infermedica-API-Python {__version__} ({library_details})"
 
     def __init__(self, **kwargs):
         """
@@ -82,15 +79,14 @@ class API(object):
             "Content-Type": "application/json",
             "Accept": "application/json",
             "User-Agent": self.user_agent,
-            "app_id": self.app_id,
-            "app_key": self.app_key
+            "App-Id": self.app_id,
+            "App-Key": self.app_key
         }
         headers.update(self.default_headers)
         headers.update(override)
         return headers
 
     def __api_call(self, url, method, **kwargs):
-
         kwargs['headers'] = self.__get_headers(kwargs['headers'] or {})
 
         response = requests.request(method, url, **kwargs)
@@ -194,7 +190,7 @@ class API(object):
         if filters:
             if isinstance(filters, (list, tuple)):
                 params['type'] = filters
-            elif isinstance(filters, basestring):
+            elif isinstance(filters, str):
                 params['type'] = [filters]
 
             for filter in params['type']:
@@ -578,7 +574,7 @@ def get_api(alias=None):
     global __api__
     global __api_aliased__
 
-    if isinstance(alias, basestring):
+    if isinstance(alias, str):
         try:
             return __api_aliased__[alias]
         except KeyError:
@@ -615,7 +611,7 @@ def configure(options=None, **config):
 
     configuration = dict(options or {}, **config)
 
-    if 'alias' in configuration and isinstance(configuration['alias'], basestring):
+    if 'alias' in configuration and isinstance(configuration['alias'], str):
         __api_aliased__[configuration['alias']] = API(**configuration)
 
         if configuration.get('default', False):

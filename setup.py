@@ -43,7 +43,7 @@ setup(
     ],
     keywords='infermedica medical api library rest http',
     author='Infermedica',
-    author_email='office@infermedica.com',
+    author_email='support@infermedica.com',
     url='https://github.com/infermedica/python-api',
     license='Apache 2.0',
     packages=find_packages(exclude=['examples']),

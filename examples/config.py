@@ -1,3 +1,5 @@
+import os
+
 def setup_examples():
     """
     Setup environment to easily run examples.
@@ -8,15 +10,14 @@ def setup_examples():
         import infermedica_api
     except ImportError:
         import sys
-        import os
 
         sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
         import infermedica_api
 
     # !!! ENTER YOUR CREDENTIALS HERE !!!
     infermedica_api.configure({
-        'app_id': 'YOUR_APP_ID',
-        'app_key': 'YOUR_APP_KEY',
+        'app_id': os.getenv('APP_ID', 'YOUR_APP_ID'),
+        'app_key': os.getenv('APP_KEY', 'YOUR_APP_KEY'),
         'dev_mode': True  # Use only during development on production remove this parameter
     })
 

@@ -41,7 +41,7 @@ __title__ = 'Infermedica API'
 __version__ = '0.1.1'
 __author__ = 'Arkadiusz Szydelko'
 __license__ = 'Apache 2.0'
-__copyright__ = 'Copyright 2020 Infermedica'
+__copyright__ = 'Copyright 2021 Infermedica'
 
 DEFAULT_API_VERSION = 'v2'
 DEFAULT_API_ENDPOINT = 'https://api.infermedica.com/'
@@ -78,4 +78,11 @@ from .models.rationale import RationaleResult
 from .models.red_flag import RedFlagList
 from .models.risk_factor import RiskFactor, RiskFactorList
 from .models.symptom import Symptom, SymptomList
-from .webservice import configure, get_api, API, SEARCH_FILTERS
+from .webservice import (
+    SEARCH_FILTERS,
+    configure,
+    get_api,
+    APIConnector,
+    APIv2Connector,
+    APIv2ModelConnector
+)

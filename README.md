@@ -46,7 +46,7 @@ Configure through a non-global API object:
 
 ```python
 import infermedica_api
-api = infermedica_api.API(app_id='YOUR_APP_ID', app_key='YOUR_APP_KEY')
+api = infermedica_api.APIv2Connector(app_id='YOUR_APP_ID', app_key='YOUR_APP_KEY')
 
 print(api.info())
 ```
@@ -188,7 +188,7 @@ Pull requests are always welcome. Before submitting a pull request, please ensur
 
 ### Legal ###
 
-Copyright 2017 by [Infermedica](http://infermedica.com).
+Copyright 2021 by [Infermedica](http://infermedica.com).
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 

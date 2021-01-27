@@ -47,5 +47,5 @@ setup(
     url='https://github.com/infermedica/python-api',
     license='Apache 2.0',
     packages=find_packages(exclude=['examples']),
-    install_requires=['requests>=2.0.0'],
+    install_requires=['requests>=2.4.2'],
 )

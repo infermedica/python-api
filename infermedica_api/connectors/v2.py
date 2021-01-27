@@ -1,31 +1,43 @@
+from typing import Optional, List, Dict
+
 from .common import APIConnector, SEARCH_FILTERS
 from .. import exceptions, models
 
 
 class APIv2Connector(APIConnector):
-    def __init__(self, api_version='v2', *args, **kwargs):
-        super().__init__(api_version=api_version, *args, **kwargs)  # TODO: Will it work?
+    """
+    Intermediate level class which handles requests to the Infermedica API,
+    provides methods with detailed parameters, but still works on simple data structures.
+    """
 
-    def search(self, phrase, sex=None, max_results=8, filters=None, **kwargs):
+    def __init__(self, *args, api_version='v2', **kwargs: Dict):
+        """
+        Initialize API connector.
+
+        :param args: (optional) Arguments passed to lower level parent :class:`APIConnector` method
+        :param api_version: (optional) API version, default is 'v2'
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+
+        Usage::
+            >>> import infermedica_api
+            >>> api = infermedica_api.APIv2Connector(app_id='YOUR_APP_ID', app_key='YOUR_APP_KEY')
+        """
+        super().__init__(*args, api_version=api_version, **kwargs)
+
+    def search(self, phrase: str, sex: Optional[str] = None, max_results: Optional[int] = 8,
+               filters: Optional[List] = None, **kwargs: Dict) -> List[Dict[str, str]]:
         """
         Makes an API search request and returns list of dicts containing keys: 'id', 'label' and 'type'.
         Each dict represent an evidence (symptom, lab test or risk factor).
         By default only symptoms are returned, to include other evidence types use filters.
 
-        :param phrase: Phrase to look for.
-        :type phrase: str
+        :param phrase: Phrase to look for
+        :param sex: (optional) Sex of the patient 'female' or 'male' to narrow results
+        :param max_results: (optional) Maximum number of result to return, default is 8
+        :param filters: (optional) List of search filters, taken from SEARCH_FILTERS variable
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
 
-        :param sex: Sex of the patient 'female' or 'male'.
-        :type sex: str
-
-        :param max_results: Maximum number of result to return, default is 8.
-        :type max_results: int
-
-        :param filters: List of search filters, taken from SEARCH_FILTERS variable.
-        :type filters: list
-
-        :returns: A List of dicts with 'id' and 'label' keys.
-        :rtype: list
+        :returns: A List of dicts with 'id' and 'label' keys
         """
         params = kwargs.pop('params', {})
         params.update({
@@ -51,64 +63,18 @@ class APIv2Connector(APIConnector):
             **kwargs
         )
 
-    def suggest(self, data, max_results=8, interview_id=None, **kwargs):
-        """
-        Makes an API suggest request and returns a list of suggested evidence.
-
-        :param diagnosis_request: Diagnosis request object or json request for diagnosis method.
-        :type diagnosis_request: :class:`infermedica_api.models.Diagnosis` or dict
-
-        :returns: A list of suggestions, dicts with 'id', 'name' and 'common_name' keys.
-        :rtype: list
-        """
-        params = kwargs.pop('params', {})
-        params.update({'max_results': max_results})
-
-        return super().suggest(
-            data=data,
-            params=params,
-            interview_id=interview_id,
-            **kwargs
-        )
-
-    def red_flags(self, data, max_results=8, interview_id=None, **kwargs):
-        """
-        Makes an API request with provided diagnosis data and returns a list
-        of evidence that may be related to potentially life-threatening
-        conditions.
-
-        :param diagnosis_request: Diagnosis request object or diagnosis json.
-        :type diagnosis_request: :class:`infermedica_api.models.Diagnosis` or dict
-
-        :param interview_id: Unique interview id for diagnosis
-        :type interview_id: str
-
-        :returns: A list of RedFlag objects
-        :rtype: :class:`infermedica_api.models.RedFlagList`
-        """
-        params = kwargs.pop('params', {})
-        params.update({'max_results': max_results})
-
-        return super().red_flags(
-            data=data,
-            params=params,
-            interview_id=interview_id,
-            **kwargs
-        )
-
-    def parse(self, text, include_tokens=False, interview_id=None, **kwargs):
+    def parse(self, text: str, include_tokens: Optional[bool] = False, interview_id: Optional[str] = None,
+              **kwargs: Dict) -> Dict:
         """
         Makes an parse API request with provided text and include_tokens parameter.
         Returns parse results with detailed list of mentions found in the text.
 
-        :param phrase: Text to parse.
-        :type phrase: str
+        :param phrase: Text to parse
+        :param include_tokens: (optional) Switch to manipulate the include_tokens parameter
+        :param interview_id: (optional) Unique interview id for diagnosis session
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
 
-        :param include_tokens: Switch to manipulate the include_tokens parameter.
-        :type include_tokens: bool
-
-        :returns: A ParseResults object
-        :rtype: :class:`infermedica_api.models.ParseResults`
+        :returns: A dict object with api response
         """
         params = kwargs.pop('params', {})
         data = {
@@ -123,19 +89,63 @@ class APIv2Connector(APIConnector):
             **kwargs
         )
 
-    def explain(self, data, target_id, interview_id=None, **kwargs):
+    def suggest(self, data: Dict, max_results: Optional[int] = 8, interview_id: Optional[str] = None,
+                **kwargs: Dict) -> List[Dict[str, str]]:
+        """
+        Makes an API suggest request and returns a list of suggested evidence.
+
+        :param data: Diagnosis request data
+        :param max_results: (optional) Maximum number of result to return, default is 8
+        :param interview_id: (optional) Unique interview id for diagnosis session
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+
+        :returns: A list of dicts with 'id', 'name' and 'common_name' keys
+        """
+        params = kwargs.pop('params', {})
+        params.update({'max_results': max_results})
+
+        return super().suggest(
+            data=data,
+            params=params,
+            interview_id=interview_id,
+            **kwargs
+        )
+
+    def red_flags(self, data: Dict, max_results: Optional[int] = 8, interview_id: Optional[str] = None,
+                  **kwargs: Dict) -> List[Dict[str, str]]:
+        """
+        Makes an API request with provided diagnosis data and returns a list
+        of evidence that may be related to potentially life-threatening
+        conditions.
+
+        :param data: Diagnosis request data
+        :param max_results: (optional) Maximum number of result to return, default is 8
+        :param interview_id: (optional) Unique interview id for diagnosis session
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+
+        :returns: A list of dicts with 'id', 'name' and 'common_name' keys
+        """
+        params = kwargs.pop('params', {})
+        params.update({'max_results': max_results})
+
+        return super().red_flags(
+            data=data,
+            params=params,
+            interview_id=interview_id,
+            **kwargs
+        )
+
+    def explain(self, data: Dict, target_id: str, interview_id: Optional[str] = None, **kwargs: Dict) -> Dict:
         """
         Makes an explain API request with provided diagnosis data and target condition.
         Returns explain results with supporting and conflicting evidences.
 
-        :param diagnosis_request: Diagnosis request object or json request for diagnosis method.
-        :type diagnosis_request: :class:`infermedica_api.models.Diagnosis` or dict
+        :param data: Diagnosis request data
+        :param target_id: Condition id for which explain shall be calculated
+        :param interview_id: (optional) Unique interview id for diagnosis session
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
 
-        :param target_id: Condition id for which explain shall be calculated.
-        :type target_id: str
-
-        :returns: A Diagnosis object with api response
-        :rtype: :class:`infermedica_api.models.Diagnosis`
+        :returns: A dict object with api response
         """
         data_with_target = dict(data, **{'target': target_id})
 
@@ -147,15 +157,22 @@ class APIv2Connector(APIConnector):
 
 
 class APIv2ModelConnector(APIv2Connector):
-    def suggest(self, diagnosis_request, max_results=8, interview_id=None, **kwargs):
+    """
+    High level class which handles requests to the Infermedica API,
+    provides methods that operates on data models.
+    """
+
+    def suggest(self, diagnosis_request: models.Diagnosis, max_results: Optional[int] = 8,
+                interview_id: Optional[str] = None, **kwargs: Dict) -> List[Dict[str, str]]:
         """
         Makes an API suggest request and returns a list of suggested evidence.
 
-        :param diagnosis_request: Diagnosis request object or json request for diagnosis method.
-        :type diagnosis_request: :class:`infermedica_api.models.Diagnosis` or dict
+        :param diagnosis_request: Diagnosis request object
+        :param max_results: (optional) Maximum number of result to return, default is 8
+        :param interview_id: (optional) Unique interview id for diagnosis session
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
 
-        :returns: A list of suggestions, dicts with 'id', 'name' and 'common_name' keys.
-        :rtype: list
+        :returns: A list of suggestions, dicts with 'id', 'name' and 'common_name' keys
         """
         data = diagnosis_request.get_api_request()
 
@@ -167,44 +184,40 @@ class APIv2ModelConnector(APIv2Connector):
 
         return response  # TODO: Pack response into model class
 
-    def red_flags(self, diagnosis_request, max_results=8, interview_id=None, **kwargs):
+    def red_flags(self, diagnosis_request: models.Diagnosis, max_results: Optional[int] = 8,
+                  **kwargs: Dict) -> models.RedFlagList:
         """
         Makes an API request with provided diagnosis data and returns a list
         of evidence that may be related to potentially life-threatening
         conditions.
 
-        :param diagnosis_request: Diagnosis request object or diagnosis json.
-        :type diagnosis_request: :class:`infermedica_api.models.Diagnosis` or dict
-
-        :param interview_id: Unique interview id for diagnosis
-        :type interview_id: str
+        :param diagnosis_request: Diagnosis request object
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
 
         :returns: A list of RedFlag objects
-        :rtype: :class:`infermedica_api.models.RedFlagList`
         """
         data = diagnosis_request.get_api_request()
 
         response = super().red_flags(
             data=data,
             max_results=max_results,
-            interview_id=interview_id
+            interview_id=diagnosis_request.interview_id
         )
 
         return models.RedFlagList.from_json(response)
 
-    def parse(self, text, include_tokens=False, interview_id=None, **kwargs):
+    def parse(self, text: str, include_tokens: Optional[bool] = False, interview_id: Optional[str] = None,
+              **kwargs: Dict) -> models.ParseResults:
         """
         Makes an parse API request with provided text and include_tokens parameter.
         Returns parse results with detailed list of mentions found in the text.
 
-        :param phrase: Text to parse.
-        :type phrase: str
-
-        :param include_tokens: Switch to manipulate the include_tokens parameter.
-        :type include_tokens: bool
+        :param phrase: Text to parse
+        :param include_tokens: (optional) Switch to manipulate the include_tokens parameter
+        :param interview_id: (optional) Unique interview id for diagnosis session
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
 
         :returns: A ParseResults object
-        :rtype: :class:`infermedica_api.models.ParseResults`
         """
         response = super().parse(
             text=text,
@@ -215,19 +228,16 @@ class APIv2ModelConnector(APIv2Connector):
 
         return models.ParseResults.from_json(response)
 
-    def diagnosis(self, diagnosis_request, **kwargs):
+    def diagnosis(self, diagnosis_request: models.Diagnosis, **kwargs: Dict) -> models.Diagnosis:
         """
         Makes a diagnosis API request with provided diagnosis data
         and returns diagnosis question with possible conditions.
 
-        :param diagnosis_request: Diagnosis request object or json request for diagnosis method.
-        :type diagnosis_request: :class:`infermedica_api.models.Diagnosis` or dict
-
+        :param diagnosis_request: Diagnosis request object
         :param interview_id: Unique interview id for diagnosis
-        :type interview_id: str
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
 
         :returns: A Diagnosis object with api response
-        :rtype: :class:`infermedica_api.models.Diagnosis`
         """
         data = diagnosis_request.get_api_request()
 
@@ -240,20 +250,17 @@ class APIv2ModelConnector(APIv2Connector):
 
         return diagnosis_request
 
-    def rationale(self, diagnosis_request, **kwargs):
+    def rationale(self, diagnosis_request: models.Diagnosis, **kwargs: Dict) -> models.RationaleResult:
         """
         Makes an API request with provided diagnosis data and returns
-        an explenation of why the given question has been selected by
+        an explanation of why the given question has been selected by
         the reasoning engine.
 
-        :param diagnosis_request: Diagnosis request object or diagnosis json.
-        :type diagnosis_request: :class:`infermedica_api.models.Diagnosis` or dict
-
+        :param diagnosis_request: Diagnosis request object
         :param interview_id: Unique interview id for diagnosis
-        :type interview_id: str
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
 
         :returns: An instance of the RationaleResult
-        :rtype: :class:`infermedica_api.models.RationaleResult`
         """
         data = diagnosis_request.get_api_request()
 
@@ -265,19 +272,16 @@ class APIv2ModelConnector(APIv2Connector):
 
         return models.RationaleResult.from_json(response)
 
-    def explain(self, diagnosis_request, target_id, **kwargs):
+    def explain(self, diagnosis_request: models.Diagnosis, target_id, **kwargs: Dict) -> models.ExplainResults:
         """
         Makes an explain API request with provided diagnosis data and target condition.
         Returns explain results with supporting and conflicting evidences.
 
-        :param diagnosis_request: Diagnosis request object or json request for diagnosis method.
-        :type diagnosis_request: :class:`infermedica_api.models.Diagnosis` or dict
-
-        :param target_id: Condition id for which explain shall be calculated.
-        :type target_id: str
+        :param diagnosis_request: Diagnosis request object
+        :param target_id: Condition id for which explain shall be calculated
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
 
         :returns: A Diagnosis object with api response
-        :rtype: :class:`infermedica_api.models.Diagnosis`
         """
         data = diagnosis_request.get_api_request()
 
@@ -290,17 +294,16 @@ class APIv2ModelConnector(APIv2Connector):
 
         return models.ExplainResults.from_json(response)
 
-    def triage(self, diagnosis_request, **kwargs):
+    def triage(self, diagnosis_request: models.Diagnosis, **kwargs: Dict) -> Dict:
         """
         Makes a triage API request with provided diagnosis data.
         Returns triage results dict.
         See the docs: https://developer.infermedica.com/docs/triage.
 
-        :param diagnosis_request: Diagnosis request object or json request for diagnosis method.
-        :type diagnosis_request: :class:`infermedica_api.models.Diagnosis` or dict
+        :param diagnosis_request: Diagnosis request object
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
 
         :returns: A dict object with api response
-        :rtype: dict
         """
         data = diagnosis_request.get_api_request()
 
@@ -312,15 +315,14 @@ class APIv2ModelConnector(APIv2Connector):
 
         return response  # TODO:  Pack response into model class
 
-    def condition_details(self, condition_id, **kwargs):
+    def condition_details(self, condition_id: str, **kwargs: Dict) -> models.Condition:
         """
         Makes an API request and returns condition details object.
 
-        :param _id: Condition id
-        :type _id: str
+        :param condition_id: Condition id
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
 
         :returns:A Condition object
-        :rtype: :class:`infermedica_api.models.Condition`
         """
         response = super().condition_details(
             condition_id=condition_id,
@@ -329,26 +331,26 @@ class APIv2ModelConnector(APIv2Connector):
 
         return models.Condition.from_json(response)
 
-    def conditions_list(self, **kwargs):
+    def conditions_list(self, **kwargs: Dict) -> models.ConditionList:
         """
         Makes an API request and returns list of condition details objects.
 
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
+
         :returns: A ConditionList list object with Condition objects
-        :rtype: :class:`infermedica_api.models.ConditionList`
         """
         response = super().conditions_list(**kwargs)
 
         return models.ConditionList.from_json(response)
 
-    def symptom_details(self, symptom_id, **kwargs):
+    def symptom_details(self, symptom_id: str, **kwargs: Dict) -> models.Symptom:
         """
         Makes an API request and returns symptom details object.
 
-        :param _id: Symptom id
-        :type _id: str
+        :param symptom_id: Symptom id
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
 
         :returns: A Symptom object
-        :rtype: :class:`infermedica_api.models.Symptom`
         """
         response = super().symptom_details(
             symptom_id=symptom_id,
@@ -357,26 +359,26 @@ class APIv2ModelConnector(APIv2Connector):
 
         return models.Symptom.from_json(response)
 
-    def symptoms_list(self, **kwargs):
+    def symptoms_list(self, **kwargs: Dict) -> models.SymptomList:
         """
         Makes an API request and returns list of symptom details objects.
 
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
+
         :returns: A SymptomList list object with Symptom objects
-        :rtype: :class:`infermedica_api.models.SymptomList`
         """
         response = super().symptoms_list(**kwargs)
 
         return models.SymptomList.from_json(response)
 
-    def risk_factor_details(self, risk_factor_id, **kwargs):
+    def risk_factor_details(self, risk_factor_id: str, **kwargs: Dict) -> models.RiskFactor:
         """
         Makes an API request and returns risk factor details object.
 
-        :param _id: risk factor id
-        :type _id: str
+        :param risk_factor_id: Risk factor id
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
 
         :returns: A RiskFactor object
-        :rtype: :class:`infermedica_api.models.RiskFactor`
         """
         response = super().risk_factor_details(
             risk_factor_id=risk_factor_id,
@@ -385,26 +387,26 @@ class APIv2ModelConnector(APIv2Connector):
 
         return models.RiskFactor.from_json(response)
 
-    def risk_factors_list(self, **kwargs):
+    def risk_factors_list(self, **kwargs: Dict) -> models.RiskFactorList:
         """
         Makes an API request and returns list of risk factors details objects.
 
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
+
         :returns: A RiskFactorList list object with RiskFactor objects
-        :rtype: :class:`infermedica_api.models.RiskFactorList`
         """
         response = super().risk_factors_list(**kwargs)
 
         return models.RiskFactorList.from_json(response)
 
-    def lab_test_details(self, lab_test_id, **kwargs):
+    def lab_test_details(self, lab_test_id: str, **kwargs: Dict) -> models.LabTest:
         """
         Makes an API request and returns lab_test details object.
 
-        :param _id: LabTest id
-        :type _id: str
+        :param lab_test_id: Lab test id
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
 
         :returns: A LabTest object
-        :rtype: :class:`infermedica_api.models.LabTest`
         """
         response = super().lab_test_details(
             lab_test_id=lab_test_id,
@@ -413,12 +415,13 @@ class APIv2ModelConnector(APIv2Connector):
 
         return models.LabTest.from_json(response)
 
-    def lab_tests_list(self, **kwargs):
+    def lab_tests_list(self, **kwargs: Dict) -> models.LabTestList:
         """
         Makes an API request and returns list of lab_test details objects.
 
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
+
         :returns: A LabTestList list object with LabTest objects
-        :rtype: :class:`infermedica_api.models.LabTestList`
         """
         response = super().lab_tests_list(**kwargs)
 

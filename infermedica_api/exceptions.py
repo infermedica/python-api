@@ -81,3 +81,13 @@ class InvalidSearchFilter(Exception):
 
     def __str__(self):
         return f"Invalid search filter: '{self.filter}'."
+
+
+class InvalidAgeUnit(Exception):
+    """API not configured."""
+
+    def __init__(self, filter):
+        self.filter = filter
+
+    def __str__(self):
+        return f"Invalid age unit: '{self.filter}', use 'year' or 'month'."

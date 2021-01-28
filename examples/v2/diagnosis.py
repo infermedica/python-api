@@ -1,11 +1,10 @@
-import config
+from .. import config
 
 config.setup_examples()
 import infermedica_api
 
-
 if __name__ == '__main__':
-    api = infermedica_api.get_api()
+    api = infermedica_api.get_api('v2')
 
     request = infermedica_api.Diagnosis(sex='female', age=35)
 

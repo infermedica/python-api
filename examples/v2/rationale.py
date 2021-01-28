@@ -1,10 +1,10 @@
-import config
+from .. import config
 
 config.setup_examples()
 import infermedica_api
 
 if __name__ == '__main__':
-    api = infermedica_api.get_api()
+    api = infermedica_api.get_api('v2')
 
     # Prepare diagnosis request it need to have sufficient amount of evidences
     # The most appropriate way to get a request way for rationale method is to

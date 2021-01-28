@@ -1,11 +1,10 @@
-import config
+from .. import config
 
 config.setup_examples()
 import infermedica_api
 
-
 if __name__ == '__main__':
-    api = infermedica_api.get_api()
+    api = infermedica_api.get_api('v2')
 
     # Prepare the diagnosis request object
     request = infermedica_api.Diagnosis(sex='male', age=30)
@@ -25,7 +24,7 @@ if __name__ == '__main__':
     # }
 
     # call triage method
-    request = api.triage(request)
+    request = api.suggest(request)
 
     # and see the results
     print('\n\n', request)

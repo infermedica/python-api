@@ -43,7 +43,7 @@ __author__ = 'Arkadiusz Szydelko'
 __license__ = 'Apache 2.0'
 __copyright__ = 'Copyright 2021 Infermedica'
 
-DEFAULT_API_VERSION = 'v2'
+DEFAULT_API_VERSION = 'v3'
 DEFAULT_API_ENDPOINT = 'https://api.infermedica.com/'
 
 API_CONFIG = {
@@ -66,6 +66,26 @@ API_CONFIG = {
             'risk_factors': '/risk_factors',
             'risk_factor_details': '/risk_factors/{id}',
             'red_flags': '/red_flags',
+            'rationale': '/rationale',
+        },
+    },
+    'v3': {
+        'methods': {
+            'info': '/info',
+            'search': '/search',
+            'suggest': '/suggest',
+            'parse': '/parse',
+            'diagnosis': '/diagnosis',
+            'explain': '/explain',
+            'triage': '/triage',
+            'conditions': '/conditions',
+            'condition_details': '/conditions/{id}',
+            'symptoms': '/symptoms',
+            'symptom_details': '/symptoms/{id}',
+            'lab_tests': '/lab_tests',
+            'lab_test_details': '/lab_tests/{id}',
+            'risk_factors': '/risk_factors',
+            'risk_factor_details': '/risk_factors/{id}',
             'rationale': '/rationale',
         },
     },

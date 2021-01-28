@@ -38,6 +38,8 @@ class APIv2Connector(APIConnector):
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
 
         :returns: A List of dicts with 'id' and 'label' keys
+
+        :raises: :class:`infermedica_api.exceptions.InvalidSearchFilter`
         """
         params = kwargs.pop('params', {})
         params.update({

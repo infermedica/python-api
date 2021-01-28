@@ -1,10 +1,23 @@
 from typing import Optional, List, Dict
 
-from .common import APIConnector, SEARCH_FILTERS
+from .common import APISharedConnector
 from .. import exceptions
 
 
-class APIv3Connector(APIConnector):
+class ConceptTypes:
+    """Simple class to hold search filter constants."""
+    CONDITION = "condition"
+    SYMPTOM = "symptom"
+    RISK_FACTOR = "risk_factor"
+    LAB_TEST = "lab_test"
+
+    ALL = [CONDITION, SYMPTOM, RISK_FACTOR, LAB_TEST]
+
+
+CONCEPT_TYPES = ConceptTypes()
+
+
+class APIv3Connector(APISharedConnector):
     """
     Intermediate level class which handles requests to the Infermedica API,
     provides methods with detailed parameters, but still works on simple data structures.
@@ -64,9 +77,7 @@ class APIv3Connector(APIConnector):
             for key, value in age_obj.items()
         }
 
-    def search(self, phrase: str, age: int, age_unit: Optional[str] = None, sex: Optional[str] = None,
-               max_results: Optional[int] = 8, filters: Optional[List] = None,
-               **kwargs: Dict) -> List[Dict[str, str]]:
+    def search(self, phrase: str, age: int, age_unit: Optional[str] = None, **kwargs: Dict) -> List[Dict[str, str]]:
         """
         Makes an API search request and returns list of dicts containing keys: 'id', 'label' and 'type'.
         Each dict represent an evidence (symptom, lab test or risk factor).
@@ -75,42 +86,22 @@ class APIv3Connector(APIConnector):
         :param phrase: Phrase to look for
         :param age: Age value
         :param age_unit: (optional) Age unit, one of values 'year' or 'month'
-        :param sex: (optional) Sex of the patient 'female' or 'male' to narrow results
-        :param max_results: (optional) Maximum number of result to return, default is 8
-        :param filters: (optional) List of search filters, taken from SEARCH_FILTERS variable
-        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APISharedConnector` method
 
         :returns: A List of dicts with 'id' and 'label' keys
 
         :raises: :class:`infermedica_api.exceptions.InvalidSearchFilter`
         """
         params = kwargs.pop('params', {})
-        params.update({
-            'phrase': phrase,
-            'max_results': max_results
-        })
         params.update(self.get_age_query_params(age=age, age_unit=age_unit))
 
-        if sex:
-            params['sex'] = sex
-
-        if filters:
-            if isinstance(filters, (list, tuple)):
-                params['type'] = filters
-            elif isinstance(filters, str):
-                params['type'] = [filters]
-
-            for filter_type in params['type']:
-                if filter_type not in SEARCH_FILTERS.ALL:
-                    raise exceptions.InvalidSearchFilter(filter_type)
-
         return super().search(
+            phrase=phrase,
             params=params,
             **kwargs
         )
 
-    def parse(self, text: str, age: int, age_unit: Optional[str] = None, include_tokens: Optional[bool] = False,
-              interview_id: Optional[str] = None, **kwargs: Dict) -> Dict:
+    def parse(self, text: str, age: int, age_unit: Optional[str] = None, **kwargs: Dict) -> Dict:
         """
         Makes an parse API request with provided text and include_tokens parameter.
         Returns parse results with detailed list of mentions found in the text.
@@ -118,89 +109,39 @@ class APIv3Connector(APIConnector):
         :param phrase: Text to parse
         :param age: Age value
         :param age_unit: (optional) Age unit, one of values 'year' or 'month'
-        :param include_tokens: (optional) Switch to manipulate the include_tokens parameter
-        :param interview_id: (optional) Unique interview id for diagnosis session
-        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APISharedConnector` method
 
         :returns: A dict object with api response
         """
-        params = kwargs.pop('params', {})
-        data = {
-            'text': text,
+        data = kwargs.pop('data', {})
+        data.update({
             'age': self.get_age_object(age=age, age_unit=age_unit),
-            'include_tokens': include_tokens
-        }
+        })
 
         return super().parse(
+            text=text,
             data=data,
-            params=params,
-            interview_id=interview_id,
             **kwargs
         )
 
-    def suggest(self, data: Dict, max_results: Optional[int] = 8, interview_id: Optional[str] = None,
-                **kwargs: Dict) -> List[Dict[str, str]]:
-        """
-        Makes an API suggest request and returns a list of suggested evidence.
-
-        :param data: Diagnosis request data
-        :param max_results: (optional) Maximum number of result to return, default is 8
-        :param interview_id: (optional) Unique interview id for diagnosis session
-        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
-
-        :returns: A list of dicts with 'id', 'name' and 'common_name' keys
-        """
-        params = kwargs.pop('params', {})
-        params.update({'max_results': max_results})
-
-        return super().suggest(
-            data=data,
-            params=params,
-            interview_id=interview_id,
-            **kwargs
-        )
-
-    def red_flags(self, data: Dict, max_results: Optional[int] = 8, interview_id: Optional[str] = None,
-                  **kwargs: Dict) -> List[Dict[str, str]]:
+    def red_flags(self, data: Dict, **kwargs: Dict) -> List[Dict[str, str]]:
         """
         Makes an API request with provided diagnosis data and returns a list
         of evidence that may be related to potentially life-threatening
         conditions.
 
         :param data: Diagnosis request data
-        :param max_results: (optional) Maximum number of result to return, default is 8
-        :param interview_id: (optional) Unique interview id for diagnosis session
-        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APISharedConnector` method
 
         :returns: A list of dicts with 'id', 'name' and 'common_name' keys
         """
-        data['suggest_method'] = 'red_flags'
+        data.update({
+            'suggest_method': 'suggest_method'
+        })
 
         return self.suggest(
             data=data,
-            max_results=max_results,
-            interview_id=interview_id,
             **kwargs
-        )
-
-    def explain(self, data: Dict, target_id: str, interview_id: Optional[str] = None, **kwargs: Dict) -> Dict:
-        """
-        Makes an explain API request with provided diagnosis data and target condition.
-        Returns explain results with supporting and conflicting evidences.
-
-        :param data: Diagnosis request data
-        :param target_id: Condition id for which explain shall be calculated
-        :param interview_id: (optional) Unique interview id for diagnosis session
-        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
-
-        :returns: A dict object with api response
-        """
-        data_with_target = dict(data, **{'target': target_id})
-
-        return super().explain(
-            data=data_with_target,
-            interview_id=interview_id,
-            **kwargs,
         )
 
     def condition_details(self, condition_id: str, age: int, age_unit: Optional[str] = None, **kwargs) -> Dict:
@@ -339,7 +280,7 @@ class APIv3Connector(APIConnector):
 
     def lab_tests_list(self, age: int, age_unit: Optional[str] = None, **kwargs) -> List:
         """
-        Makes an API request and returns list of lab_test details objects.
+        Makes an API request and returns list of lab test details objects.
 
         :param age: Age value
         :param age_unit: (optional) Age unit, one of values 'year' or 'month'
@@ -351,6 +292,56 @@ class APIv3Connector(APIConnector):
         params.update(self.get_age_query_params(age=age, age_unit=age_unit))
 
         return super().lab_tests_list(
+            params=params,
+            **kwargs
+        )
+
+
+    def concept_details(self, concept_id: str, age: int, age_unit: Optional[str] = None, **kwargs) -> Dict:
+        """
+        Makes an API request and returns lab test details object.
+
+        :param concept_id: Concept id
+        :param age: Age value
+        :param age_unit: (optional) Age unit, one of values 'year' or 'month'
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+
+        :returns: A dict object with concept details
+        """
+        params = kwargs.pop('params', {})
+        params.update(self.get_age_query_params(age=age, age_unit=age_unit))
+
+        return super().concept_details(
+            concept_id=concept_id,
+            params=params,
+            **kwargs
+        )
+
+
+    def concept_list(self, age: int, age_unit: Optional[str] = None, ids: Optional[List[str]] = None,
+                     types: Optional[List[str]] = None, **kwargs) -> List:
+        """
+        Makes an API request and returns list of concept details objects.
+
+        :param age: Age value
+        :param age_unit: (optional) Age unit, one of values 'year' or 'month'
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+
+        :returns: A list of dict objects with concept details
+        """
+        params = kwargs.pop('params', {})
+        params.update(self.get_age_query_params(age=age, age_unit=age_unit))
+
+        if ids:
+            params['ids'] = ','.join(ids)
+
+        if types:
+            for concept_type in types:
+                if concept_type not in CONCEPT_TYPES.ALL:
+                    raise exceptions.InvalidConceptType(concept_type)
+            params['types'] = ','.join(types)
+
+        return super().concept_list(
             params=params,
             **kwargs
         )

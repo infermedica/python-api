@@ -106,7 +106,7 @@ For more take a look at provided examples.
 
 ## Exceptions
 
-The library provide it's own set of exceptions, which may be raised on any of the API calls. The following methods `info`, `search`, `lookup`, `parse`, `diagnosis`, `explain`, `triage`, `condition_details`, `condition_list`, `symptom_details`, `symptom_list`, `lab_test_details`, `lab_test_list`, `risk_factor_details`, `red_flags`, `rationale` and `risk_factor_list` may raise one of the following exceptions:
+The library provide it's own set of exceptions, which may be raised on any of the API calls. The following methods `info`, `search`, `parse`, `diagnosis`, `explain`, `triage`, `condition_details`, `condition_list`, `symptom_details`, `symptom_list`, `lab_test_details`, `lab_test_list`, `risk_factor_details`, `red_flags`, `rationale` and `risk_factor_list` may raise one of the following exceptions:
 
 ```
 infermedica_api.exceptions.BadRequest
@@ -129,55 +129,24 @@ There are also three additional exception that may occur:
 
 ## Examples
 
-To easily run examples edit `examples/config.py` file and enter your account credentials.
-Then go to `examples` folder and just run the following:
+One may easily check out and run examples, first define environmental variables with credentials and run selected example:
 
  ```bash
-$ python search.py
-```
+export APP_ID=<YOUR_APP_ID>
+export APP_KEY=<YOUR_APP_KEY>st_recommender
 
- ```bash
-$ python parse.py
-```
- 
-```bash
-$ python symptoms.py
-```
-
-```bash
-$ python risk_factors.py
-```
-
-```bash
-$ python conditions.py
-```
-
-```bash
-$ python lab_tests.py
-```
-
-```bash
-$ python diagnosis.py
-```
-
-```bash
-$ python explain.py
-```
-
-```bash
-$ python triage.py
-```
-
-```bash
-$ python suggest.py
-```
-
-```bash
-$ python rationale.py
-```
-
-```bash
-$ python red_flags.py
+python -m examples.v3.search
+python -m examples.v3.parse
+python -m examples.v3.symptoms
+python -m examples.v3.risk_factors
+python -m examples.v3.conditions
+python -m examples.v3.lab_tests
+python -m examples.v3.concepts
+python -m examples.v3.diagnosis
+python -m examples.v3.explain
+python -m examples.v3.triage
+python -m examples.v3.suggest
+python -m examples.v3.specialist_recommender
 ```
 
 ### Contributing ###

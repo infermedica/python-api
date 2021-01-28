@@ -74,8 +74,6 @@ class MethodNotAvailableInAPIVersion(Exception):
 
 
 class InvalidSearchFilter(Exception):
-    """API not configured."""
-
     def __init__(self, filter):
         self.filter = filter
 
@@ -84,10 +82,16 @@ class InvalidSearchFilter(Exception):
 
 
 class InvalidAgeUnit(Exception):
-    """API not configured."""
-
     def __init__(self, filter):
         self.filter = filter
 
     def __str__(self):
         return f"Invalid age unit: '{self.filter}', use 'year' or 'month'."
+
+
+class InvalidConceptType(Exception):
+    def __init__(self, filter):
+        self.filter = filter
+
+    def __str__(self):
+        return f"Invalid concept type: '{self.filter}'."

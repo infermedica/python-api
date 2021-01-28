@@ -51,7 +51,6 @@ API_CONFIG = {
         'methods': {
             'info': '/info',
             'search': '/search',
-            'lookup': '/lookup',
             'suggest': '/suggest',
             'parse': '/parse',
             'diagnosis': '/diagnosis',
@@ -73,11 +72,13 @@ API_CONFIG = {
         'methods': {
             'info': '/info',
             'search': '/search',
-            'suggest': '/suggest',
             'parse': '/parse',
+            'suggest': '/suggest',
             'diagnosis': '/diagnosis',
+            'rationale': '/rationale',
             'explain': '/explain',
             'triage': '/triage',
+            'specialist_recommender': '/recommend_specialist',
             'conditions': '/conditions',
             'condition_details': '/conditions/{id}',
             'symptoms': '/symptoms',
@@ -86,7 +87,9 @@ API_CONFIG = {
             'lab_test_details': '/lab_tests/{id}',
             'risk_factors': '/risk_factors',
             'risk_factor_details': '/risk_factors/{id}',
-            'rationale': '/rationale',
+            'red_flags': '/red_flags',
+            'concepts': '/concepts',
+            'concept_details': '/concepts/{id}',
         },
     },
 }

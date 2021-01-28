@@ -363,6 +363,30 @@ class APIConnector:
             headers=headers
         )
 
+    def specialist_recommender(self, data: Dict, interview_id: Optional[str] = None, params: Optional[Dict] = None,
+                               headers: Optional[Dict] = None) -> Dict:
+        """
+        Makes a specialist recommendation API request with provided diagnosis data.
+
+        :param data: Request data
+        :param interview_id: (optional) Unique interview id for diagnosis session
+        :param params: (optional) URL query params
+        :param headers: (optional) HTTP request headers
+
+        :returns: A dict object with api response
+        """
+        method = self.__get_method('specialist_recommender')
+        if headers is None:
+            headers = {}
+        headers.update(self.__get_interview_id_headers(interview_id=interview_id))
+
+        return self.call_api_post(
+            method=method,
+            data=data,
+            params=params,
+            headers=headers
+        )
+
     def rationale(self, data: Dict, interview_id: Optional[str] = None, params: Optional[Dict] = None,
                   headers: Optional[Dict] = None) -> Dict:
         """
@@ -502,7 +526,7 @@ class APIConnector:
     def lab_test_details(self, lab_test_id: str, params: Optional[Dict] = None,
                          headers: Optional[Dict] = None) -> Dict:
         """
-        Makes an API request and returns lab_test details object.
+        Makes an API request and returns lab test details object.
 
         :param lab_test_id: LabTest id
         :param params: (optional) URL query params
@@ -521,7 +545,7 @@ class APIConnector:
 
     def lab_tests_list(self, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> List:
         """
-        Makes an API request and returns list of lab_test details objects.
+        Makes an API request and returns list of lab test details objects.
 
         :param params: (optional) URL query params
         :param headers: (optional) HTTP request headers
@@ -536,4 +560,178 @@ class APIConnector:
             headers=headers
         )
 
-    # TODO: Add /concepts methods
+    def concept_details(self, concept_id: str, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> Dict:
+        """
+        Makes an API request and returns concept details object.
+
+        :param concept_id: Concept id
+        :param params: (optional) URL query params
+        :param headers: (optional) HTTP request headers
+
+        :returns: A dict object with concept details
+        """
+        method = self.__get_method('concept_details')
+        method = method.format(**{'id': concept_id})
+
+        return self.call_api_get(
+            method=method,
+            params=params,
+            headers=headers
+        )
+
+    def concept_list(self, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> List:
+        """
+        Makes an API request and returns list of concept details objects.
+
+        :param params: (optional) URL query params
+        :param headers: (optional) HTTP request headers
+
+        :returns: A list of dict objects with concept details
+        """
+        method = self.__get_method('concepts')
+
+        return self.call_api_get(
+            method=method,
+            params=params,
+            headers=headers
+        )
+
+
+class APISharedConnector(APIConnector):
+    """
+    Intermediate level API Connector with methods shared between different API versions (mostly v2 and v3).
+    """
+
+    def search(self, phrase: str, sex: Optional[str] = None, max_results: Optional[int] = 8,
+               filters: Optional[List[str]] = None, **kwargs: Dict) -> List[Dict[str, str]]:
+        """
+        Makes an API search request and returns list of dicts containing keys: 'id', 'label' and 'type'.
+        Each dict represent an evidence (symptom, lab test or risk factor).
+        By default only symptoms are returned, to include other evidence types use filters.
+
+        :param phrase: Phrase to look for
+        :param sex: (optional) Sex of the patient 'female' or 'male' to narrow results
+        :param max_results: (optional) Maximum number of result to return, default is 8
+        :param filters: (optional) List of search filters, taken from SEARCH_FILTERS variable
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+
+        :returns: A List of dicts with 'id' and 'label' keys
+
+        :raises: :class:`infermedica_api.exceptions.InvalidSearchFilter`
+        """
+        params = kwargs.pop('params', {})
+        params.update({
+            'phrase': phrase,
+            'max_results': max_results
+        })
+
+        if sex:
+            params['sex'] = sex
+
+        if filters:
+            if isinstance(filters, (list, tuple)):
+                params['type'] = filters
+            elif isinstance(filters, str):
+                params['type'] = [filters]
+
+            for filter_type in params['type']:
+                if filter_type not in SEARCH_FILTERS.ALL:
+                    raise exceptions.InvalidSearchFilter(filter_type)
+
+        return super().search(
+            params=params,
+            **kwargs
+        )
+
+    def parse(self, text: str, include_tokens: Optional[bool] = False, interview_id: Optional[str] = None,
+              **kwargs: Dict) -> Dict:
+        """
+        Makes an parse API request with provided text and include_tokens parameter.
+        Returns parse results with detailed list of mentions found in the text.
+
+        :param phrase: Text to parse
+        :param include_tokens: (optional) Switch to manipulate the include_tokens parameter
+        :param interview_id: (optional) Unique interview id for diagnosis session
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+
+        :returns: A dict object with api response
+        """
+        params = kwargs.pop('params', {})
+        data = kwargs.pop('data', {})
+        data.update({
+            'text': text,
+            'include_tokens': include_tokens
+        })
+
+        return super().parse(
+            data=data,
+            params=params,
+            interview_id=interview_id,
+            **kwargs
+        )
+
+    def suggest(self, data: Dict, max_results: Optional[int] = 8, interview_id: Optional[str] = None,
+                **kwargs: Dict) -> List[Dict[str, str]]:
+        """
+        Makes an API suggest request and returns a list of suggested evidence.
+
+        :param data: Diagnosis request data
+        :param max_results: (optional) Maximum number of result to return, default is 8
+        :param interview_id: (optional) Unique interview id for diagnosis session
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+
+        :returns: A list of dicts with 'id', 'name' and 'common_name' keys
+        """
+        params = kwargs.pop('params', {})
+        params.update({'max_results': max_results})
+
+        return super().suggest(
+            data=data,
+            params=params,
+            interview_id=interview_id,
+            **kwargs
+        )
+
+    def red_flags(self, data: Dict, max_results: Optional[int] = 8, interview_id: Optional[str] = None,
+                  **kwargs: Dict) -> List[Dict[str, str]]:
+        """
+        Makes an API request with provided diagnosis data and returns a list
+        of evidence that may be related to potentially life-threatening
+        conditions.
+
+        :param data: Diagnosis request data
+        :param max_results: (optional) Maximum number of result to return, default is 8
+        :param interview_id: (optional) Unique interview id for diagnosis session
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+
+        :returns: A list of dicts with 'id', 'name' and 'common_name' keys
+        """
+        params = kwargs.pop('params', {})
+        params.update({'max_results': max_results})
+
+        return super().red_flags(
+            data=data,
+            params=params,
+            interview_id=interview_id,
+            **kwargs
+        )
+
+    def explain(self, data: Dict, target_id: str, interview_id: Optional[str] = None, **kwargs: Dict) -> Dict:
+        """
+        Makes an explain API request with provided diagnosis data and target condition.
+        Returns explain results with supporting and conflicting evidences.
+
+        :param data: Diagnosis request data
+        :param target_id: Condition id for which explain shall be calculated
+        :param interview_id: (optional) Unique interview id for diagnosis session
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+
+        :returns: A dict object with api response
+        """
+        data_with_target = dict(data, **{'target': target_id})
+
+        return super().explain(
+            data=data_with_target,
+            interview_id=interview_id,
+            **kwargs,
+        )

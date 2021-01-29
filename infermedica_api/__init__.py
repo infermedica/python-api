@@ -102,11 +102,12 @@ from .models.red_flag import RedFlagList
 from .models.risk_factor import RiskFactor, RiskFactorList
 from .models.symptom import Symptom, SymptomList
 from .connectors import (
-    SearchFilter,
+    SearchConceptType,
     ConceptType,
-    APIConnector,
+    BasicAPIv2Connector,
     APIv2Connector,
-    APIv2ModelConnector,
+    BasicAPIv3Connector,
+    ModelAPIv2Connector,
     APIv3Connector
 )
 from .webservice import (

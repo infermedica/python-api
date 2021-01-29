@@ -83,7 +83,7 @@ class MethodNotAvailableInAPIVersion(Exception):
         return f"Method '{self.method}' is not available in the {self.api_version} api version."
 
 
-class InvalidSearchFilter(Exception):
+class InvalidSearchConceptType(Exception):
     def __init__(self, filter_name):
         self.filter_name = filter_name
 

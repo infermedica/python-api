@@ -6,21 +6,15 @@ infermedica_api.webservice
 
 This module contains function responsible for manging a global handlers for API Connector classes.
 """
-from typing import Union, Optional, Any
+from typing import Optional, Any
 
 from . import exceptions, connectors
-from .connectors import (
-    APIConnector,
-    APIv2Connector,
-    APIv2ModelConnector,
-    APIv3Connector
-)
 
 __api__ = None
 __api_aliased__ = {}
 
 
-def get_api(alias: str = None) -> Union[APIConnector, APIv2Connector, APIv2ModelConnector, APIv3Connector]:
+def get_api(alias: str = None) -> connectors.APIConnectorType:
     """
     Returns global API object if present,
     otherwise raise MissingConfiguration exception.
@@ -47,8 +41,7 @@ def get_api(alias: str = None) -> Union[APIConnector, APIv2Connector, APIv2Model
 
 
 def configure(app_id: str, app_key: str, alias: Optional[str] = None, default: Optional[bool] = False,
-              api_connector: Optional[str] = 'APIv3Connector', **kwargs: Any
-              ) -> Union[APIConnector, APIv2Connector, APIv2ModelConnector, APIv3Connector]:
+              api_connector: Optional[str] = 'APIv3Connector', **kwargs: Any) -> connectors.APIConnectorType:
     """
     Configure and create new global API object with given configuration. Many global configurations can be created
     upfront (e.g. with different credentials or language models configured) by providing a unique alias

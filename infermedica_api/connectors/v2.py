@@ -7,34 +7,120 @@ infermedica_api.connectors.v2
 This module contains API Connector classes for API v2 version.
 """
 
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Union
 
-from .common import APISharedConnector
-from .. import models
+from .common import (
+    SearchConceptType,
+
+    BaseAPIConnector,
+    BasicAPIInfoMixin,
+    BasicAPISearchMixin,
+    BasicAPIParseMixin,
+    BasicAPISuggestMixin,
+    BasicAPIRedFlagsMixin,
+    BasicAPIDiagnosisMixin,
+    BasicAPIRationaleMixin,
+    BasicAPIExplainMixin,
+    BasicAPITriageMixin,
+    BasicAPIConditionMixin,
+    BasicAPISymptomMixin,
+    BasicAPIRiskFactorMixin,
+    BasicAPILabTestMixin,
+
+    APIParseMixin,
+    APISuggestMixin,
+    APIRedFlagsMixin,
+    APIDiagnosisMixin,
+    APIRationaleMixin,
+    APIExplainMixin,
+    APITriageMixin,
+)
+from .. import models, exceptions
 
 
-class APIv2Connector(APISharedConnector):
-    """
-    Intermediate level class which handles requests to the Infermedica API,
-    provides methods with detailed parameters, but still works on simple data structures.
-    """
-
+class BasicAPIv2Connector(
+    BasicAPIInfoMixin,
+    BasicAPISearchMixin,
+    BasicAPIParseMixin,
+    BasicAPISuggestMixin,
+    BasicAPIRedFlagsMixin,
+    BasicAPIDiagnosisMixin,
+    BasicAPIRationaleMixin,
+    BasicAPIExplainMixin,
+    BasicAPITriageMixin,
+    BasicAPIConditionMixin,
+    BasicAPISymptomMixin,
+    BasicAPIRiskFactorMixin,
+    BasicAPILabTestMixin,
+    BaseAPIConnector
+):
     def __init__(self, *args, api_version='v2', **kwargs: Any):
         """
         Initialize API connector.
 
-        :param args: (optional) Arguments passed to lower level parent :class:`APIConnector` method
+        :param args: (optional) Arguments passed to lower level parent :class:`BaseAPIConnector` method
         :param api_version: (optional) API version, default is 'v2'
-        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`BaseAPIConnector` method
 
         Usage::
             >>> import infermedica_api
-            >>> api = infermedica_api.APIv2Connector(app_id='YOUR_APP_ID', app_key='YOUR_APP_KEY')
+            >>> api = infermedica_api.BasicAPIv2Connector(app_id='YOUR_APP_ID', app_key='YOUR_APP_KEY')
         """
         super().__init__(*args, api_version=api_version, **kwargs)
 
 
-class APIv2ModelConnector(APIv2Connector):
+class APIv2Connector(
+    APIParseMixin,
+    APISuggestMixin,
+    APIRedFlagsMixin,
+    APIDiagnosisMixin,
+    APIRationaleMixin,
+    APIExplainMixin,
+    APITriageMixin,
+    BasicAPIv2Connector
+):
+    def search(self, phrase: str, sex: Optional[str] = None, max_results: Optional[int] = 8,
+               types: Optional[List[Union[SearchConceptType, str]]] = None, **kwargs: Any) -> List[Dict[str, str]]:
+        """
+        Makes an API search request and returns list of dicts containing keys: 'id', 'label' and 'type'.
+        Each dict represent an evidence (symptom, lab test or risk factor).
+        By default only symptoms are returned, to include other evidence types use filters.
+
+        :param phrase: Phrase to look for
+        :param sex: (optional) Sex of the patient 'female' or 'male' to narrow results
+        :param max_results: (optional) Maximum number of result to return, default is 8
+        :param types: (optional) List of search filters (enums SearchConceptType or str) to narrow the response
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`BasicAPIv2Connector` method
+
+        :returns: A List of dicts with 'id' and 'label' keys
+
+        :raises: :class:`infermedica_api.exceptions.InvalidSearchConceptType`
+        """
+        params = kwargs.pop('params', {})
+        params.update({
+            'phrase': phrase,
+            'max_results': max_results
+        })
+
+        if sex:
+            params['sex'] = sex
+
+        if types:
+            types_as_str_list = [SearchConceptType.get_value(concept_type) for concept_type in types]
+
+            for concept_type in types_as_str_list:
+                if not SearchConceptType.has_value(concept_type):
+                    raise exceptions.InvalidSearchConceptType(concept_type)
+
+            params['type'] = types_as_str_list
+
+        return super().search(
+            params=params,
+            **kwargs
+        )
+
+
+class ModelAPIv2Connector(APIv2Connector):
     """
     High level class which handles requests to the Infermedica API,
     provides methods that operates on data models.

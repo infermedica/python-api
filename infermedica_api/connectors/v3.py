@@ -11,12 +11,34 @@ from enum import Enum
 from typing import Optional, List, Dict, Union, Any
 
 from .common import (
-    APISharedConnector,
+    SearchConceptType,
+
     ConceptDetails,
     ConditionDetails,
     SymptomDetails,
     RiskFactorDetails,
     LabTestDetails,
+
+    BaseAPIConnector,
+    BasicAPIInfoMixin,
+    BasicAPISearchMixin,
+    BasicAPIParseMixin,
+    BasicAPISuggestMixin,
+    BasicAPIDiagnosisMixin,
+    BasicAPIRationaleMixin,
+    BasicAPIExplainMixin,
+    BasicAPITriageMixin,
+    BasicAPIConditionMixin,
+    BasicAPISymptomMixin,
+    BasicAPIRiskFactorMixin,
+    BasicAPILabTestMixin,
+
+    APIParseMixin,
+    APISuggestMixin,
+    APIDiagnosisMixin,
+    APIRationaleMixin,
+    APIExplainMixin,
+    APITriageMixin,
 )
 from .. import exceptions
 
@@ -36,25 +58,106 @@ class ConceptType(Enum):
             return val in (item.value for item in ConceptType)
 
 
-class APIv3Connector(APISharedConnector):
-    """
-    Intermediate level class which handles requests to the Infermedica API,
-    provides methods with detailed parameters, but still works on simple data structures.
-    """
-
+class BasicAPIv3Connector(
+    BasicAPIInfoMixin,
+    BasicAPISearchMixin,
+    BasicAPIParseMixin,
+    BasicAPISuggestMixin,
+    BasicAPIDiagnosisMixin,
+    BasicAPIRationaleMixin,
+    BasicAPIExplainMixin,
+    BasicAPITriageMixin,
+    BasicAPIConditionMixin,
+    BasicAPISymptomMixin,
+    BasicAPIRiskFactorMixin,
+    BasicAPILabTestMixin,
+    BaseAPIConnector
+):
     def __init__(self, *args, api_version='v3', **kwargs: Any):
         """
         Initialize API connector.
 
-        :param args: (optional) Arguments passed to lower level parent :class:`APIConnector` method
-        :param api_version: (optional) API version, default is 'v2'
-        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+        :param args: (optional) Arguments passed to lower level parent :class:`BaseAPIConnector` method
+        :param api_version: (optional) API version, default is 'v3'
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`BaseAPIConnector` method
 
         Usage::
             >>> import infermedica_api
-            >>> api = infermedica_api.APIv2Connector(app_id='YOUR_APP_ID', app_key='YOUR_APP_KEY')
+            >>> api = infermedica_api.BasicAPIv3Connector(app_id='YOUR_APP_ID', app_key='YOUR_APP_KEY')
         """
         super().__init__(*args, api_version=api_version, **kwargs)
+
+    def specialist_recommender(self, data: Dict, params: Optional[Dict] = None,
+                               headers: Optional[Dict] = None) -> Dict:
+        """
+        Makes a specialist recommendation API request with provided diagnosis data.
+
+        :param data: Request data
+        :param params: (optional) URL query params
+        :param headers: (optional) HTTP request headers
+
+        :returns: A dict object with api response
+        """
+        method = self._get_method('specialist_recommender')
+
+        return self.call_api_post(
+            method=method,
+            data=data,
+            params=params,
+            headers=headers
+        )
+
+    def concept_details(self, concept_id: str, params: Optional[Dict] = None,
+                        headers: Optional[Dict] = None) -> ConceptDetails:
+        """
+        Makes an API request and returns concept details object.
+
+        :param concept_id: Concept id
+        :param params: (optional) URL query params
+        :param headers: (optional) HTTP request headers
+
+        :returns: A dict object with concept details
+        """
+        method = self._get_method('concept_details')
+        method = method.format(**{'id': concept_id})
+
+        return self.call_api_get(
+            method=method,
+            params=params,
+            headers=headers
+        )
+
+    def concept_list(self, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> List[ConceptDetails]:
+        """
+        Makes an API request and returns list of concept details objects.
+
+        :param params: (optional) URL query params
+        :param headers: (optional) HTTP request headers
+
+        :returns: A list of dict objects with concept details
+        """
+        method = self._get_method('concepts')
+
+        return self.call_api_get(
+            method=method,
+            params=params,
+            headers=headers
+        )
+
+
+class APIv3Connector(
+    APIParseMixin,
+    APISuggestMixin,
+    APIDiagnosisMixin,
+    APIRationaleMixin,
+    APIExplainMixin,
+    APITriageMixin,
+    BasicAPIv3Connector
+):
+    """
+    Intermediate level class which handles requests to the Infermedica API,
+    provides methods with detailed parameters, but still works on simple data structures.
+    """
 
     def get_age_object(self, age: int, age_unit: Optional[str] = None) -> Dict:
         """
@@ -96,7 +199,9 @@ class APIv3Connector(APISharedConnector):
             for key, value in age_obj.items()
         }
 
-    def search(self, phrase: str, age: int, age_unit: Optional[str] = None, **kwargs: Any) -> List[Dict[str, str]]:
+    def search(self, phrase: str, age: int, age_unit: Optional[str] = None, sex: Optional[str] = None,
+               max_results: Optional[int] = 8, types: Optional[List[Union[SearchConceptType, str]]] = None,
+               **kwargs: Any) -> List[Dict[str, str]]:
         """
         Makes an API search request and returns list of dicts containing keys: 'id', 'label' and 'type'.
         Each dict represent an evidence (symptom, lab test or risk factor).
@@ -105,17 +210,35 @@ class APIv3Connector(APISharedConnector):
         :param phrase: Phrase to look for
         :param age: Age value
         :param age_unit: (optional) Age unit, one of values 'year' or 'month'
-        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APISharedConnector` method
+        :param sex: (optional) Sex of the patient 'female' or 'male' to narrow results
+        :param max_results: (optional) Maximum number of result to return, default is 8
+        :param types: (optional) List of search concept types (enums SearchConceptType or str) to narrow the response
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`BasicAPIv3Connector` method
 
         :returns: A List of dicts with 'id' and 'label' keys
 
-        :raises: :class:`infermedica_api.exceptions.InvalidSearchFilter`
+        :raises: :class:`infermedica_api.exceptions.InvalidSearchConceptType`
         """
         params = kwargs.pop('params', {})
         params.update(self.get_age_query_params(age=age, age_unit=age_unit))
+        params.update({
+            'phrase': phrase,
+            'max_results': max_results
+        })
+
+        if sex:
+            params['sex'] = sex
+
+        if types:
+            types_as_str_list = [SearchConceptType.get_value(concept_type) for concept_type in types]
+
+            for concept_type in types_as_str_list:
+                if not SearchConceptType.has_value(concept_type):
+                    raise exceptions.InvalidSearchConceptType(concept_type)
+
+            params['types'] = ','.join(types_as_str_list)
 
         return super().search(
-            phrase=phrase,
             params=params,
             **kwargs
         )
@@ -128,7 +251,7 @@ class APIv3Connector(APISharedConnector):
         :param text: Text to parse
         :param age: Age value
         :param age_unit: (optional) Age unit, one of values 'year' or 'month'
-        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APISharedConnector` method
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`BasicAPIv3Connector` method
 
         :returns: A dict object with api response
         """
@@ -143,23 +266,22 @@ class APIv3Connector(APISharedConnector):
             **kwargs
         )
 
-    def red_flags(self, data: Dict, **kwargs: Any) -> List[Dict[str, str]]:
+    def specialist_recommender(self, data: Dict, interview_id: Optional[str] = None, **kwargs: Any) -> Dict:
         """
-        Makes an API request with provided diagnosis data and returns a list
-        of evidence that may be related to potentially life-threatening
-        conditions.
+        Makes a specialist recommendation API request with provided diagnosis data.
 
-        :param data: Diagnosis request data
-        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APISharedConnector` method
+        :param data: Request data
+        :param interview_id: (optional) Unique interview id for diagnosis session
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`BasicAPIv3Connector` method
 
-        :returns: A list of dicts with 'id', 'name' and 'common_name' keys
+        :returns: A dict object with api response
         """
-        data.update({
-            'suggest_method': 'suggest_method'
-        })
+        headers = kwargs.pop('headers', {})
+        headers.update(self._get_interview_id_headers(interview_id=interview_id))
 
-        return self.suggest(
+        return super().specialist_recommender(
             data=data,
+            headers=headers,
             **kwargs
         )
 
@@ -171,7 +293,7 @@ class APIv3Connector(APISharedConnector):
         :param condition_id: Condition id
         :param age: Age value
         :param age_unit: (optional) Age unit, one of values 'year' or 'month'
-        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`BasicAPIv3Connector` method
 
         :returns: A dict object with condition details
         """
@@ -190,7 +312,7 @@ class APIv3Connector(APISharedConnector):
 
         :param age: Age value
         :param age_unit: (optional) Age unit, one of values 'year' or 'month'
-        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`BasicAPIv3Connector` method
 
         :returns: A list of dict objects with condition details
         """
@@ -209,7 +331,7 @@ class APIv3Connector(APISharedConnector):
         :param symptom_id: Symptom id
         :param age: Age value
         :param age_unit: (optional) Age unit, one of values 'year' or 'month'
-        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`BasicAPIv3Connector` method
 
         :returns: A dict object with symptom details
         """
@@ -228,7 +350,7 @@ class APIv3Connector(APISharedConnector):
 
         :param age: Age value
         :param age_unit: (optional) Age unit, one of values 'year' or 'month'
-        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`BasicAPIv3Connector` method
 
         :returns: A list of dict objects with symptom details
         """
@@ -248,7 +370,7 @@ class APIv3Connector(APISharedConnector):
         :param risk_factor_id: risk factor id
         :param age: Age value
         :param age_unit: (optional) Age unit, one of values 'year' or 'month'
-        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`BasicAPIv3Connector` method
 
         :returns: A dict object with risk factor details
         """
@@ -267,7 +389,7 @@ class APIv3Connector(APISharedConnector):
 
         :param age: Age value
         :param age_unit: (optional) Age unit, one of values 'year' or 'month'
-        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`BasicAPIv3Connector` method
 
         :returns: A list of dict objects with risk factor details
         """
@@ -287,7 +409,7 @@ class APIv3Connector(APISharedConnector):
         :param lab_test_id: LabTest id
         :param age: Age value
         :param age_unit: (optional) Age unit, one of values 'year' or 'month'
-        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`BasicAPIv3Connector` method
 
         :returns: A dict object with lab test details
         """
@@ -306,7 +428,7 @@ class APIv3Connector(APISharedConnector):
 
         :param age: Age value
         :param age_unit: (optional) Age unit, one of values 'year' or 'month'
-        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`BasicAPIv3Connector` method
 
         :returns: A list of dict objects with lab test details
         """
@@ -325,7 +447,7 @@ class APIv3Connector(APISharedConnector):
         :param concept_id: Concept id
         :param age: Age value
         :param age_unit: (optional) Age unit, one of values 'year' or 'month'
-        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`BasicAPIv3Connector` method
 
         :returns: A dict object with concept details
         """
@@ -347,7 +469,7 @@ class APIv3Connector(APISharedConnector):
         :param age_unit: (optional) Age unit, one of values 'year' or 'month'
         :param ids: (optional) List of concept ids to fetch data only for selected ids
         :param types: (optional) List of concept types (enums ConceptType or str) to narrow the response
-        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`BasicAPIv3Connector` method
 
         :returns: A list of dict objects with concept details
         """
@@ -358,10 +480,14 @@ class APIv3Connector(APISharedConnector):
             params['ids'] = ','.join(ids)
 
         if types:
-            for concept_type in types:
+            types_as_str_list = [
+                concept_type.value if isinstance(concept_type, ConceptType) else concept_type
+                for concept_type in types
+            ]
+            for concept_type in types_as_str_list:
                 if not ConceptType.has_value(concept_type):
                     raise exceptions.InvalidConceptType(concept_type)
-            params['types'] = ','.join(types)
+            params['types'] = ','.join(types_as_str_list)
 
         return super().concept_list(
             params=params,

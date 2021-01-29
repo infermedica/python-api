@@ -124,7 +124,7 @@ There are also three additional exception that may occur:
 
 `MethodNotAvailableInAPIVersion` is raised if one try to use method from different API version.
 
-`InvalidSearchFilter` is raised when wrong filters are applied to the `search` API call.
+`InvalidSearchConceptType` is raised when wrong filters are applied to the `search` API call.
 
 
 ## Examples

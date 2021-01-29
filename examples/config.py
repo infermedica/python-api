@@ -31,7 +31,7 @@ def setup_examples():
     # Prepare API v2 connector under 'v2' alias
     infermedica_api.configure(**{
         'alias': 'v2',
-        'api_connector': 'APIv2ModelConnector',
+        'api_connector': 'ModelAPIv2Connector',
         'app_id': app_id,
         'app_key': app_key,
         'dev_mode': True,  # Use only during development or testing/staging, on production remove this parameter

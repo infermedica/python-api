@@ -18,5 +18,5 @@ if __name__ == '__main__':
     print(api.search('breast', age=age, sex='female', max_results=5), end="\n\n")
 
     print('Look for symptoms and risk factors containing phrase trauma:')
-    print(api.search('trauma', age=age, filters=[infermedica_api.SearchFilter.SYMPTOM,
-                                                 infermedica_api.SearchFilter.RISK_FACTOR]), end="\n\n")
+    print(api.search('trauma', age=age, types=[infermedica_api.SearchConceptType.SYMPTOM,
+                                               infermedica_api.SearchConceptType.RISK_FACTOR]), end="\n\n")

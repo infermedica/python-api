@@ -1,20 +1,32 @@
-from typing import Optional, List, Dict
+# -*- coding: utf-8 -*-
+
+"""
+infermedica_api.connectors.v3
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This module contains API Connector classes for API v3 version.
+"""
+
+from enum import Enum
+from typing import Optional, List, Dict, Union, Any
 
 from .common import APISharedConnector
 from .. import exceptions
 
 
-class ConceptTypes:
-    """Simple class to hold search filter constants."""
-    CONDITION = "condition"
-    SYMPTOM = "symptom"
-    RISK_FACTOR = "risk_factor"
-    LAB_TEST = "lab_test"
+class ConceptType(Enum):
+    """Enum to hold search filter constants."""
+    CONDITION = 'condition'
+    SYMPTOM = 'symptom'
+    RISK_FACTOR = 'risk_factor'
+    LAB_TEST = 'lab_test'
 
-    ALL = [CONDITION, SYMPTOM, RISK_FACTOR, LAB_TEST]
-
-
-CONCEPT_TYPES = ConceptTypes()
+    @staticmethod
+    def has_value(val: Union['ConceptType', str]) -> bool:
+        try:
+            return val in ConceptType
+        except TypeError:
+            return val in (item.value for item in ConceptType)
 
 
 class APIv3Connector(APISharedConnector):
@@ -23,7 +35,7 @@ class APIv3Connector(APISharedConnector):
     provides methods with detailed parameters, but still works on simple data structures.
     """
 
-    def __init__(self, *args, api_version='v3', **kwargs: Dict):
+    def __init__(self, *args, api_version='v3', **kwargs: Any):
         """
         Initialize API connector.
 
@@ -77,7 +89,7 @@ class APIv3Connector(APISharedConnector):
             for key, value in age_obj.items()
         }
 
-    def search(self, phrase: str, age: int, age_unit: Optional[str] = None, **kwargs: Dict) -> List[Dict[str, str]]:
+    def search(self, phrase: str, age: int, age_unit: Optional[str] = None, **kwargs: Any) -> List[Dict[str, str]]:
         """
         Makes an API search request and returns list of dicts containing keys: 'id', 'label' and 'type'.
         Each dict represent an evidence (symptom, lab test or risk factor).
@@ -101,12 +113,12 @@ class APIv3Connector(APISharedConnector):
             **kwargs
         )
 
-    def parse(self, text: str, age: int, age_unit: Optional[str] = None, **kwargs: Dict) -> Dict:
+    def parse(self, text: str, age: int, age_unit: Optional[str] = None, **kwargs: Any) -> Dict:
         """
         Makes an parse API request with provided text and include_tokens parameter.
         Returns parse results with detailed list of mentions found in the text.
 
-        :param phrase: Text to parse
+        :param text: Text to parse
         :param age: Age value
         :param age_unit: (optional) Age unit, one of values 'year' or 'month'
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APISharedConnector` method
@@ -124,7 +136,7 @@ class APIv3Connector(APISharedConnector):
             **kwargs
         )
 
-    def red_flags(self, data: Dict, **kwargs: Dict) -> List[Dict[str, str]]:
+    def red_flags(self, data: Dict, **kwargs: Any) -> List[Dict[str, str]]:
         """
         Makes an API request with provided diagnosis data and returns a list
         of evidence that may be related to potentially life-threatening
@@ -296,7 +308,6 @@ class APIv3Connector(APISharedConnector):
             **kwargs
         )
 
-
     def concept_details(self, concept_id: str, age: int, age_unit: Optional[str] = None, **kwargs) -> Dict:
         """
         Makes an API request and returns lab test details object.
@@ -317,14 +328,15 @@ class APIv3Connector(APISharedConnector):
             **kwargs
         )
 
-
     def concept_list(self, age: int, age_unit: Optional[str] = None, ids: Optional[List[str]] = None,
-                     types: Optional[List[str]] = None, **kwargs) -> List:
+                     types: Optional[List[Union[ConceptType, str]]] = None, **kwargs) -> List:
         """
         Makes an API request and returns list of concept details objects.
 
         :param age: Age value
         :param age_unit: (optional) Age unit, one of values 'year' or 'month'
+        :param ids: (optional) List of concept ids to fetch data only for selected ids
+        :param types: (optional) List of concept types (enums ConceptType or str) to narrow the response
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
 
         :returns: A list of dict objects with concept details
@@ -337,7 +349,7 @@ class APIv3Connector(APISharedConnector):
 
         if types:
             for concept_type in types:
-                if concept_type not in CONCEPT_TYPES.ALL:
+                if not ConceptType.has_value(concept_type):
                     raise exceptions.InvalidConceptType(concept_type)
             params['types'] = ','.join(types)
 

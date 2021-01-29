@@ -1,4 +1,7 @@
+import http.client
+import logging
 import os
+
 
 def setup_examples():
     """
@@ -19,14 +22,14 @@ def setup_examples():
     app_key = os.getenv('APP_KEY', 'YOUR_APP_KEY')
 
     # Prepare API v3 connector as default one
-    infermedica_api.configure({
+    infermedica_api.configure(**{
         'app_id': app_id,
         'app_key': app_key,
         'dev_mode': True  # Use only during development or testing/staging, on production remove this parameter
     })
 
     # Prepare API v2 connector under 'v2' alias
-    infermedica_api.configure({
+    infermedica_api.configure(**{
         'alias': 'v2',
         'api_connector': 'APIv2ModelConnector',
         'app_id': app_id,
@@ -34,15 +37,8 @@ def setup_examples():
         'dev_mode': True,  # Use only during development or testing/staging, on production remove this parameter
     })
 
-    import logging
-
     # enable logging of requests and responses
-    try:
-        import httplib
-        httplib.HTTPConnection.debuglevel = 1
-    except ImportError:
-        import http.client
-        http.client.HTTPConnection.debuglevel = 1
+    http.client.HTTPConnection.debuglevel = 1
 
     logging.basicConfig()
     logging.getLogger().setLevel(logging.DEBUG)

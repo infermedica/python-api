@@ -1,4 +1,13 @@
-from typing import Optional, List, Dict
+# -*- coding: utf-8 -*-
+
+"""
+infermedica_api.connectors.v2
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This module contains API Connector classes for API v2 version.
+"""
+
+from typing import Optional, List, Dict, Any
 
 from .common import APISharedConnector
 from .. import models
@@ -10,7 +19,7 @@ class APIv2Connector(APISharedConnector):
     provides methods with detailed parameters, but still works on simple data structures.
     """
 
-    def __init__(self, *args, api_version='v2', **kwargs: Dict):
+    def __init__(self, *args, api_version='v2', **kwargs: Any):
         """
         Initialize API connector.
 
@@ -32,13 +41,12 @@ class APIv2ModelConnector(APIv2Connector):
     """
 
     def suggest(self, diagnosis_request: models.Diagnosis, max_results: Optional[int] = 8,
-                interview_id: Optional[str] = None, **kwargs: Dict) -> List[Dict[str, str]]:
+                **kwargs: Any) -> List[Dict[str, str]]:
         """
         Makes an API suggest request and returns a list of suggested evidence.
 
         :param diagnosis_request: Diagnosis request object
         :param max_results: (optional) Maximum number of result to return, default is 8
-        :param interview_id: (optional) Unique interview id for diagnosis session
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
 
         :returns: A list of suggestions, dicts with 'id', 'name' and 'common_name' keys
@@ -48,19 +56,20 @@ class APIv2ModelConnector(APIv2Connector):
         response = super().suggest(
             data=data,
             max_results=max_results,
-            interview_id=interview_id
+            interview_id=diagnosis_request.interview_id
         )
 
         return response  # TODO: Pack response into model class
 
     def red_flags(self, diagnosis_request: models.Diagnosis, max_results: Optional[int] = 8,
-                  **kwargs: Dict) -> models.RedFlagList:
+                  **kwargs: Any) -> models.RedFlagList:
         """
         Makes an API request with provided diagnosis data and returns a list
         of evidence that may be related to potentially life-threatening
         conditions.
 
         :param diagnosis_request: Diagnosis request object
+        :param max_results: (optional) Maximum number of result to return, default is 8
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
 
         :returns: A list of RedFlag objects
@@ -76,12 +85,12 @@ class APIv2ModelConnector(APIv2Connector):
         return models.RedFlagList.from_json(response)
 
     def parse(self, text: str, include_tokens: Optional[bool] = False, interview_id: Optional[str] = None,
-              **kwargs: Dict) -> models.ParseResults:
+              **kwargs: Any) -> models.ParseResults:
         """
         Makes an parse API request with provided text and include_tokens parameter.
         Returns parse results with detailed list of mentions found in the text.
 
-        :param phrase: Text to parse
+        :param text: Text to parse
         :param include_tokens: (optional) Switch to manipulate the include_tokens parameter
         :param interview_id: (optional) Unique interview id for diagnosis session
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
@@ -97,13 +106,12 @@ class APIv2ModelConnector(APIv2Connector):
 
         return models.ParseResults.from_json(response)
 
-    def diagnosis(self, diagnosis_request: models.Diagnosis, **kwargs: Dict) -> models.Diagnosis:
+    def diagnosis(self, diagnosis_request: models.Diagnosis, **kwargs: Any) -> models.Diagnosis:
         """
         Makes a diagnosis API request with provided diagnosis data
         and returns diagnosis question with possible conditions.
 
         :param diagnosis_request: Diagnosis request object
-        :param interview_id: Unique interview id for diagnosis
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
 
         :returns: A Diagnosis object with api response
@@ -119,14 +127,13 @@ class APIv2ModelConnector(APIv2Connector):
 
         return diagnosis_request
 
-    def rationale(self, diagnosis_request: models.Diagnosis, **kwargs: Dict) -> models.RationaleResult:
+    def rationale(self, diagnosis_request: models.Diagnosis, **kwargs: Any) -> models.RationaleResult:
         """
         Makes an API request with provided diagnosis data and returns
         an explanation of why the given question has been selected by
         the reasoning engine.
 
         :param diagnosis_request: Diagnosis request object
-        :param interview_id: Unique interview id for diagnosis
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
 
         :returns: An instance of the RationaleResult
@@ -141,10 +148,10 @@ class APIv2ModelConnector(APIv2Connector):
 
         return models.RationaleResult.from_json(response)
 
-    def explain(self, diagnosis_request: models.Diagnosis, target_id, **kwargs: Dict) -> models.ExplainResults:
+    def explain(self, diagnosis_request: models.Diagnosis, target_id, **kwargs: Any) -> models.ExplainResults:
         """
         Makes an explain API request with provided diagnosis data and target condition.
-        Returns explain results with supporting and conflicting evidences.
+        Returns explain results with supporting and conflicting evidence.
 
         :param diagnosis_request: Diagnosis request object
         :param target_id: Condition id for which explain shall be calculated
@@ -163,7 +170,7 @@ class APIv2ModelConnector(APIv2Connector):
 
         return models.ExplainResults.from_json(response)
 
-    def triage(self, diagnosis_request: models.Diagnosis, **kwargs: Dict) -> Dict:
+    def triage(self, diagnosis_request: models.Diagnosis, **kwargs: Any) -> Dict:
         """
         Makes a triage API request with provided diagnosis data.
         Returns triage results dict.
@@ -184,7 +191,7 @@ class APIv2ModelConnector(APIv2Connector):
 
         return response  # TODO:  Pack response into model class
 
-    def condition_details(self, condition_id: str, **kwargs: Dict) -> models.Condition:
+    def condition_details(self, condition_id: str, **kwargs: Any) -> models.Condition:
         """
         Makes an API request and returns condition details object.
 
@@ -200,7 +207,7 @@ class APIv2ModelConnector(APIv2Connector):
 
         return models.Condition.from_json(response)
 
-    def conditions_list(self, **kwargs: Dict) -> models.ConditionList:
+    def conditions_list(self, **kwargs: Any) -> models.ConditionList:
         """
         Makes an API request and returns list of condition details objects.
 
@@ -212,7 +219,7 @@ class APIv2ModelConnector(APIv2Connector):
 
         return models.ConditionList.from_json(response)
 
-    def symptom_details(self, symptom_id: str, **kwargs: Dict) -> models.Symptom:
+    def symptom_details(self, symptom_id: str, **kwargs: Any) -> models.Symptom:
         """
         Makes an API request and returns symptom details object.
 
@@ -228,7 +235,7 @@ class APIv2ModelConnector(APIv2Connector):
 
         return models.Symptom.from_json(response)
 
-    def symptoms_list(self, **kwargs: Dict) -> models.SymptomList:
+    def symptoms_list(self, **kwargs: Any) -> models.SymptomList:
         """
         Makes an API request and returns list of symptom details objects.
 
@@ -240,7 +247,7 @@ class APIv2ModelConnector(APIv2Connector):
 
         return models.SymptomList.from_json(response)
 
-    def risk_factor_details(self, risk_factor_id: str, **kwargs: Dict) -> models.RiskFactor:
+    def risk_factor_details(self, risk_factor_id: str, **kwargs: Any) -> models.RiskFactor:
         """
         Makes an API request and returns risk factor details object.
 
@@ -256,7 +263,7 @@ class APIv2ModelConnector(APIv2Connector):
 
         return models.RiskFactor.from_json(response)
 
-    def risk_factors_list(self, **kwargs: Dict) -> models.RiskFactorList:
+    def risk_factors_list(self, **kwargs: Any) -> models.RiskFactorList:
         """
         Makes an API request and returns list of risk factors details objects.
 
@@ -268,7 +275,7 @@ class APIv2ModelConnector(APIv2Connector):
 
         return models.RiskFactorList.from_json(response)
 
-    def lab_test_details(self, lab_test_id: str, **kwargs: Dict) -> models.LabTest:
+    def lab_test_details(self, lab_test_id: str, **kwargs: Any) -> models.LabTest:
         """
         Makes an API request and returns lab_test details object.
 
@@ -284,7 +291,7 @@ class APIv2ModelConnector(APIv2Connector):
 
         return models.LabTest.from_json(response)
 
-    def lab_tests_list(self, **kwargs: Dict) -> models.LabTestList:
+    def lab_tests_list(self, **kwargs: Any) -> models.LabTestList:
         """
         Makes an API request and returns list of lab_test details objects.
 

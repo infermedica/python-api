@@ -4,17 +4,16 @@
 infermedica_api.webservice
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This module contains classes and function responsible for making API requests.
+This module contains function responsible for manging a global handlers for API Connector classes.
 """
-from typing import Union, Dict, Optional
+from typing import Union, Optional, Any
 
 from . import exceptions, connectors
 from .connectors import (
     APIConnector,
     APIv2Connector,
     APIv2ModelConnector,
-    APIv3Connector,
-    SEARCH_FILTERS
+    APIv3Connector
 )
 
 __api__ = None
@@ -23,7 +22,7 @@ __api_aliased__ = {}
 
 def get_api(alias: str = None) -> Union[APIConnector, APIv2Connector, APIv2ModelConnector, APIv3Connector]:
     """
-    Returns global API object and if present,
+    Returns global API object if present,
     otherwise raise MissingConfiguration exception.
 
     :param alias: Alias of the API to retrieve
@@ -35,7 +34,7 @@ def get_api(alias: str = None) -> Union[APIConnector, APIv2Connector, APIv2Model
     global __api__
     global __api_aliased__
 
-    if isinstance(alias, str):
+    if alias:
         try:
             return __api_aliased__[alias]
         except KeyError:
@@ -47,43 +46,47 @@ def get_api(alias: str = None) -> Union[APIConnector, APIv2Connector, APIv2Model
     return __api__
 
 
-def configure(options: Optional[Dict] = None, alias: Optional[str] = None,
-              api_connector: Optional[str] = 'APIv3Connector',
-              **config: Dict) -> Union[APIConnector, APIv2Connector, APIv2ModelConnector, APIv3Connector]:
+def configure(app_id: str, app_key: str, alias: Optional[str] = None, default: Optional[bool] = False,
+              api_connector: Optional[str] = 'APIv3Connector', **kwargs: Any
+              ) -> Union[APIConnector, APIv2Connector, APIv2ModelConnector, APIv3Connector]:
     """
-    Configure and create new global API object with given configuration.
-    Configuration can be passed as a dict or separate arguments.
-    Returns newly created object.
+    Configure and create new global API object with given configuration. Many global configurations can be created
+    upfront (e.g. with different credentials or language models configured) by providing a unique alias
+    for each configuration. The configrations can be latter accessed any where in the projcts by
+    simply calling `infermedica_api.get_api()` or `infermedica_api.get_api('<alias>')`.
 
     Usage:
         >>> import infermedica_api
-        >>> infermedica_api.configure({'app_id': 'YOUR_APP_ID', 'app_key': 'YOUR_APP_KEY'})
-
-    ... or:
-        >>> import infermedica_api
         >>> infermedica_api.configure(app_id='YOUR_APP_ID', app_key='YOUR_APP_KEY')
 
-    :param options: Dict with configuration data
+        # Then somewhere in the project:
+        >>> import infermedica_api
+        >>> api = infermedica_api.get_api()
+        >>> api.info()
 
-    :returns: An API object
+    :param app_id: Infermedica API App Id
+    :param app_key: Infermedica API App Key
+    :param alias: (optional) Alias for the configuration, if not provided the configuration
+                  became the default configuration when calling `get_api` without alias
+    :param default: (optional) If alias proveded determinates if this configuration
+                    should also be set as the default configuration when calling `get_api` without alias
+    :param api_connector: (optional) Name of the API connector class to be used
+    :param kwargs: (optional) Config to be used to initialise API connector class
+
+    :returns: An API connctor object
     """
     global __api__
     global __api_aliased__
 
-    configuration = dict(options or {}, **config)
-
-    api_connector = configuration.pop('api_connector', api_connector)
     api_connector_class = getattr(connectors, api_connector)
+    api_obj = api_connector_class(app_id=app_id, app_key=app_key, **kwargs)
 
-    alias = configuration.pop('alias', alias)
-    if isinstance(alias, str):
-        __api_aliased__[alias] = api_connector_class(**configuration)
+    if alias:
+        __api_aliased__[alias] = api_obj
 
-        if configuration.get('default', False):
-            __api__ = __api_aliased__[alias]
+        if default:
+            __api__ = api_obj
+    else:
+        __api__ = api_obj
 
-        return __api_aliased__[alias]
-
-    __api__ = api_connector_class(**configuration)
-
-    return __api__
+    return api_obj

@@ -7,8 +7,6 @@ infermedica_api.models.diagnosis
 This module contains models for data returned from api as well as object to construct api requests,
 related to /diagnosis method.
 """
-import warnings
-
 from .base import BaseModel, BaseModelList, ModelCommon
 
 
@@ -232,7 +230,7 @@ class Diagnosis(ModelCommon):
         self.should_stop = json.get('should_stop', None)
         self.extras = json.get('extras', {}) or {}
 
-    def get_evidences(self):
+    def get_evidence(self):
         return self.symptoms + self.lab_tests + self.risk_factors
 
     def get_api_request(self):
@@ -247,29 +245,13 @@ class Diagnosis(ModelCommon):
             "sex": self.patient_sex,
             "age": self.patient_age,
 
-            "evidence": self.get_evidences(),
+            "evidence": self.get_evidence(),
 
             "extras": dict(self.extras_permanent, **self.extras)
         }
 
         if self.pursued:
             request['pursued'] = self.pursued
-
-        return request
-
-    def get_explain_request(self, target_id):
-        """
-        Based on current Diagnosis object construct
-        dict object of the format accepted by explain API method.
-
-        :param target_id: Condition id for which explain shall be calculated.
-        :type target_id: str
-
-        :return: Diagnosis API request dict
-        :rtype: dict
-        """
-        request = self.get_api_request()
-        request['target'] = target_id
 
         return request
 

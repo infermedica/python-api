@@ -1,31 +1,34 @@
 # -*- coding: utf-8 -*-
 
 """
-infermedica_api.webservice
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+infermedica_api.connectors.common
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This module contains classes and function responsible for making API requests.
+This module contains base a set of API Connector classes responsible for making API requests.
 """
 
 import json
 import platform
-from typing import Optional, Dict, Union, List
+from enum import Enum
+from typing import Optional, Dict, Union, List, Any
 
 import requests
 
 from .. import __version__, exceptions, API_CONFIG, DEFAULT_API_VERSION, DEFAULT_API_ENDPOINT
 
 
-class SearchFilters:
-    """Simple class to hold search filter constants."""
-    SYMPTOMS = "symptom"
-    RISK_FACTORS = "risk_factor"
-    LAB_TESTS = "lab_test"
+class SearchFilter(Enum):
+    """Enum to hold search filter constants."""
+    SYMPTOM = 'symptom'
+    RISK_FACTOR = 'risk_factor'
+    LAB_TEST = 'lab_test'
 
-    ALL = [SYMPTOMS, RISK_FACTORS, LAB_TESTS]
-
-
-SEARCH_FILTERS = SearchFilters()
+    @staticmethod
+    def has_value(val: Union['SearchFilter', str]) -> bool:
+        try:
+            return val in SearchFilter
+        except TypeError:
+            return val in (item.value for item in SearchFilter)
 
 
 class APIConnector:
@@ -39,9 +42,9 @@ class APIConnector:
         Initialize API connector.
 
         :param app_id: Infermedica API App Id
-        :param app_Key: Infermedica API App Key
+        :param app_key: Infermedica API App Key
         :param endpoint: (optional) Base API URL, default is 'https://api.infermedica.com/'
-        :param api_version: (optional) API version, default is 'v2'
+        :param api_version: (optional) API version, default is 'v3'
         :param model: (optional) API model to be used
         :param dev_mode: (optional) Flag that indicates request is made in testing environment
                          and does not provide real patient case
@@ -51,6 +54,8 @@ class APIConnector:
         Usage::
             >>> import infermedica_api
             >>> api = infermedica_api.APIConnector(app_id='YOUR_APP_ID', app_key='YOUR_APP_KEY')
+
+        :raises: infermedica_api.exceptions.MissingAPIDefinition
         """
         self.app_id = app_id
         self.app_key = app_key
@@ -67,9 +72,7 @@ class APIConnector:
         elif self.api_version in API_CONFIG:
             self.api_methods = API_CONFIG[self.api_version]['methods']
         else:
-            pass
-            # TODO: Raise exception
-            # self.api_methods = API_CONFIG[DEFAULT_API_VERSION]['methods']
+            raise exceptions.MissingAPIDefinition(self.api_version)
 
     def __calculate_default_headers(self, model: Optional[str] = None, dev_mode: Optional[bool] = None,
                                     default_headers: Optional[Dict] = None) -> Dict:
@@ -78,7 +81,7 @@ class APIConnector:
         if model:
             headers["Model"] = model
 
-        if dev_mode == True:
+        if dev_mode:
             headers["Dev-Mode"] = "true"
 
         return headers
@@ -108,7 +111,7 @@ class APIConnector:
         headers.update(passed_headers)  # Make sure passed headers take precedence
         return headers
 
-    def __api_call(self, url: str, method: str, **kwargs: Dict) -> Union[Dict, List]:
+    def __api_call(self, url: str, method: str, **kwargs: Any) -> Union[Dict, List]:
         kwargs['headers'] = self.__get_headers(kwargs['headers'] or {})
 
         response = requests.request(method, url, **kwargs)
@@ -164,7 +167,7 @@ class APIConnector:
     def __get_method(self, name: str) -> str:
         try:
             return self.api_methods[name]
-        except KeyError as e:
+        except KeyError:
             raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, name)
 
     def __get_interview_id_headers(self, interview_id: Optional[str] = None) -> Dict:
@@ -316,7 +319,7 @@ class APIConnector:
                 headers: Optional[Dict] = None) -> Dict:
         """
         Makes an explain API request with provided diagnosis data and target condition.
-        Returns explain results with supporting and conflicting evidences.
+        Returns explain results with supporting and conflicting evidence.
 
         :param data: Request data
         :param interview_id: (optional) Unique interview id for diagnosis session
@@ -603,7 +606,7 @@ class APISharedConnector(APIConnector):
     """
 
     def search(self, phrase: str, sex: Optional[str] = None, max_results: Optional[int] = 8,
-               filters: Optional[List[str]] = None, **kwargs: Dict) -> List[Dict[str, str]]:
+               filters: Optional[List[Union[SearchFilter, str]]] = None, **kwargs: Any) -> List[Dict[str, str]]:
         """
         Makes an API search request and returns list of dicts containing keys: 'id', 'label' and 'type'.
         Each dict represent an evidence (symptom, lab test or risk factor).
@@ -612,7 +615,7 @@ class APISharedConnector(APIConnector):
         :param phrase: Phrase to look for
         :param sex: (optional) Sex of the patient 'female' or 'male' to narrow results
         :param max_results: (optional) Maximum number of result to return, default is 8
-        :param filters: (optional) List of search filters, taken from SEARCH_FILTERS variable
+        :param filters: (optional) List of search filters (enums SearchFilter or str) to narrow the response
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
 
         :returns: A List of dicts with 'id' and 'label' keys
@@ -635,7 +638,7 @@ class APISharedConnector(APIConnector):
                 params['type'] = [filters]
 
             for filter_type in params['type']:
-                if filter_type not in SEARCH_FILTERS.ALL:
+                if not SearchFilter.has_value(filter_type):
                     raise exceptions.InvalidSearchFilter(filter_type)
 
         return super().search(
@@ -644,12 +647,12 @@ class APISharedConnector(APIConnector):
         )
 
     def parse(self, text: str, include_tokens: Optional[bool] = False, interview_id: Optional[str] = None,
-              **kwargs: Dict) -> Dict:
+              **kwargs: Any) -> Dict:
         """
         Makes an parse API request with provided text and include_tokens parameter.
         Returns parse results with detailed list of mentions found in the text.
 
-        :param phrase: Text to parse
+        :param text: Text to parse
         :param include_tokens: (optional) Switch to manipulate the include_tokens parameter
         :param interview_id: (optional) Unique interview id for diagnosis session
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
@@ -671,7 +674,7 @@ class APISharedConnector(APIConnector):
         )
 
     def suggest(self, data: Dict, max_results: Optional[int] = 8, interview_id: Optional[str] = None,
-                **kwargs: Dict) -> List[Dict[str, str]]:
+                **kwargs: Any) -> List[Dict[str, str]]:
         """
         Makes an API suggest request and returns a list of suggested evidence.
 
@@ -693,7 +696,7 @@ class APISharedConnector(APIConnector):
         )
 
     def red_flags(self, data: Dict, max_results: Optional[int] = 8, interview_id: Optional[str] = None,
-                  **kwargs: Dict) -> List[Dict[str, str]]:
+                  **kwargs: Any) -> List[Dict[str, str]]:
         """
         Makes an API request with provided diagnosis data and returns a list
         of evidence that may be related to potentially life-threatening
@@ -716,10 +719,10 @@ class APISharedConnector(APIConnector):
             **kwargs
         )
 
-    def explain(self, data: Dict, target_id: str, interview_id: Optional[str] = None, **kwargs: Dict) -> Dict:
+    def explain(self, data: Dict, target_id: str, interview_id: Optional[str] = None, **kwargs: Any) -> Dict:
         """
         Makes an explain API request with provided diagnosis data and target condition.
-        Returns explain results with supporting and conflicting evidences.
+        Returns explain results with supporting and conflicting evidence.
 
         :param data: Diagnosis request data
         :param target_id: Condition id for which explain shall be calculated

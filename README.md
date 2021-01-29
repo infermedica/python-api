@@ -52,7 +52,7 @@ print(api.info())
 ```
 
 ### Api version
-Both of the above options to configure API object take an optional parameter `api_version`, which determines the version of Infermedica API to be used. For the current version the default API version is set automatically to `v2` and this is the recommended version to use.
+Both of the above options to configure API object take an optional parameter `api_version`, which determines the version of Infermedica API to be used. For the current version the default API version is set automatically to `v3` and this is the recommended version to use.
 
 ## Usage
 
@@ -76,7 +76,7 @@ request = api.diagnosis(request)
 # Access question asked by API
 print(request.question)
 print(request.question.text)  # actual text of the question
-print(request.question.items)  # list of related evidences with possible answers
+print(request.question.items)  # list of related evidence with possible answers
 print(request.question.items[0]['id'])
 print(request.question.items[0]['name'])
 print(request.question.items[0]['choices'])  # list of possible answers

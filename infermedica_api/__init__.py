@@ -8,7 +8,7 @@ Infermedica Python API client provides access to powerful medical diagnostic API
 Basic usage:
 
    >>> import infermedica_api
-   >>> api = infermedica_api.API(app_id='YOUR_APP_ID', app_key='YOUR_APP_KEY')
+   >>> api = infermedica_api.APIv3Connector(app_id='YOUR_APP_ID', app_key='YOUR_APP_KEY')
    >>> print(api.info())
    {
       "updated_at": "2016-09-27T07:08:25Z",
@@ -101,11 +101,15 @@ from .models.rationale import RationaleResult
 from .models.red_flag import RedFlagList
 from .models.risk_factor import RiskFactor, RiskFactorList
 from .models.symptom import Symptom, SymptomList
-from .webservice import (
-    SEARCH_FILTERS,
-    configure,
-    get_api,
+from .connectors import (
+    SearchFilter,
+    ConceptType,
     APIConnector,
     APIv2Connector,
-    APIv2ModelConnector
+    APIv2ModelConnector,
+    APIv3Connector
+)
+from .webservice import (
+    configure,
+    get_api
 )

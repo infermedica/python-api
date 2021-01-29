@@ -54,8 +54,18 @@ class MissingConfiguration(Exception):
 
     def __str__(self):
         if self.alias:
-            return f"API credentials for alias '{self.alias}' has not been configured."
-        return "API credentials has not been configured."
+            return f"API configuration for alias '{self.alias}' has not been configured."
+        return "Default API configuration has not been configured."
+
+
+class MissingAPIDefinition(Exception):
+    """API not configured."""
+
+    def __init__(self, api_version=None):
+        self.api_version = api_version
+
+    def __str__(self):
+        return f"Missing API definition for '{self.api_version}'."
 
 
 class MethodNotAllowed(ConnectionError):
@@ -74,24 +84,24 @@ class MethodNotAvailableInAPIVersion(Exception):
 
 
 class InvalidSearchFilter(Exception):
-    def __init__(self, filter):
-        self.filter = filter
+    def __init__(self, filter_name):
+        self.filter_name = filter_name
 
     def __str__(self):
-        return f"Invalid search filter: '{self.filter}'."
+        return f"Invalid search filter: '{self.filter_name}'."
 
 
 class InvalidAgeUnit(Exception):
-    def __init__(self, filter):
-        self.filter = filter
+    def __init__(self, age_unit):
+        self.age_unit = age_unit
 
     def __str__(self):
-        return f"Invalid age unit: '{self.filter}', use 'year' or 'month'."
+        return f"Invalid age unit: '{self.age_unit}', use 'year' or 'month'."
 
 
 class InvalidConceptType(Exception):
-    def __init__(self, filter):
-        self.filter = filter
+    def __init__(self, concept_type):
+        self.concept_type = concept_type
 
     def __str__(self):
-        return f"Invalid concept type: '{self.filter}'."
+        return f"Invalid concept type: '{self.concept_type}'."

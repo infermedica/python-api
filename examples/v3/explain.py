@@ -4,7 +4,7 @@ config.setup_examples()
 import infermedica_api
 
 if __name__ == '__main__':
-    api = infermedica_api.get_api()
+    api: infermedica_api.APIv3Connector = infermedica_api.get_api()
 
     # Prepare the diagnosis request object
     request = config.get_example_request_data()

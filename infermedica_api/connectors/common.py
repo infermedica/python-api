@@ -170,13 +170,6 @@ class APIConnector:
         except KeyError:
             raise exceptions.MethodNotAvailableInAPIVersion(self.api_version, name)
 
-    def __get_interview_id_headers(self, interview_id: Optional[str] = None) -> Dict:
-        headers = {}
-        if interview_id:
-            headers['Interview-Id'] = interview_id
-
-        return headers
-
     # API Common Methods
 
     def info(self, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> Dict:
@@ -215,23 +208,19 @@ class APIConnector:
             headers=headers
         )
 
-    def parse(self, data: Dict, interview_id: Optional[str] = None, params: Optional[Dict] = None,
+    def parse(self, data: Dict, params: Optional[Dict] = None,
               headers: Optional[Dict] = None) -> Dict:
         """
         Makes an parse API request with provided text and include_tokens parameter.
         Returns parse results with detailed list of mentions found in the text.
 
         :param data: Request data
-        :param interview_id: (optional) Unique interview id for diagnosis session
         :param params: (optional) URL query params
         :param headers: (optional) HTTP request headers
 
         :returns: A dict object with api response
         """
         method = self.__get_method('parse')
-        if headers is None:
-            headers = {}
-        headers.update(self.__get_interview_id_headers(interview_id=interview_id))
 
         return self.call_api_post(
             method=method,
@@ -240,22 +229,18 @@ class APIConnector:
             headers=headers
         )
 
-    def suggest(self, data: Dict, interview_id: Optional[str] = None, params: Optional[Dict] = None,
+    def suggest(self, data: Dict, params: Optional[Dict] = None,
                 headers: Optional[Dict] = None) -> List[Dict[str, str]]:
         """
         Makes an API suggest request and returns a list of suggested evidence.
 
         :param data: Request data
-        :param interview_id: (optional) Unique interview id for diagnosis session
         :param params: (optional) URL query params
         :param headers: (optional) HTTP request headers
 
         :returns: A list of dicts with 'id', 'name' and 'common_name' keys
         """
         method = self.__get_method('suggest')
-        if headers is None:
-            headers = {}
-        headers.update(self.__get_interview_id_headers(interview_id=interview_id))
 
         return self.call_api_post(
             method=method,
@@ -264,7 +249,7 @@ class APIConnector:
             headers=headers
         )
 
-    def red_flags(self, data: Dict, interview_id: Optional[str] = None, params: Optional[Dict] = None,
+    def red_flags(self, data: Dict, params: Optional[Dict] = None,
                   headers: Optional[Dict] = None) -> List[Dict[str, str]]:
         """
         Makes an API request with provided diagnosis data and returns a list
@@ -272,16 +257,12 @@ class APIConnector:
         conditions.
 
         :param data: Request data
-        :param interview_id: (optional) Unique interview id for diagnosis session
         :param params: (optional) URL query params
         :param headers: (optional) HTTP request headers
 
         :returns: A list of dicts with 'id', 'name' and 'common_name' keys
         """
         method = self.__get_method('red_flags')
-        if headers is None:
-            headers = {}
-        headers.update(self.__get_interview_id_headers(interview_id=interview_id))
 
         return self.call_api_post(
             method=method,
@@ -290,23 +271,19 @@ class APIConnector:
             headers=headers
         )
 
-    def diagnosis(self, data: Dict, interview_id: Optional[str] = None, params: Optional[Dict] = None,
+    def diagnosis(self, data: Dict, params: Optional[Dict] = None,
                   headers: Optional[Dict] = None) -> Dict:
         """
         Makes a diagnosis API request with provided diagnosis data
         and returns diagnosis question with possible conditions.
 
         :param data: Request data
-        :param interview_id: (optional) Unique interview id for diagnosis session
         :param params: (optional) URL query params
         :param headers: (optional) HTTP request headers
 
         :returns: A dict object with api response
         """
         method = self.__get_method('diagnosis')
-        if headers is None:
-            headers = {}
-        headers.update(self.__get_interview_id_headers(interview_id=interview_id))
 
         return self.call_api_post(
             method=method,
@@ -315,23 +292,19 @@ class APIConnector:
             headers=headers
         )
 
-    def explain(self, data: Dict, interview_id: Optional[str] = None, params: Optional[Dict] = None,
+    def explain(self, data: Dict, params: Optional[Dict] = None,
                 headers: Optional[Dict] = None) -> Dict:
         """
         Makes an explain API request with provided diagnosis data and target condition.
         Returns explain results with supporting and conflicting evidence.
 
         :param data: Request data
-        :param interview_id: (optional) Unique interview id for diagnosis session
         :param params: (optional) URL query params
         :param headers: (optional) HTTP request headers
 
         :returns: A dict object with api response
         """
         method = self.__get_method('explain')
-        if headers is None:
-            headers = {}
-        headers.update(self.__get_interview_id_headers(interview_id=interview_id))
 
         return self.call_api_post(
             method=method,
@@ -340,7 +313,7 @@ class APIConnector:
             headers=headers
         )
 
-    def triage(self, data: Dict, interview_id: Optional[str] = None, params: Optional[Dict] = None,
+    def triage(self, data: Dict, params: Optional[Dict] = None,
                headers: Optional[Dict] = None) -> Dict:
         """
         Makes a triage API request with provided diagnosis data.
@@ -348,16 +321,12 @@ class APIConnector:
         See the docs: https://developer.infermedica.com/docs/triage.
 
         :param data: Request data
-        :param interview_id: (optional) Unique interview id for diagnosis session
         :param params: (optional) URL query params
         :param headers: (optional) HTTP request headers
 
         :returns: A dict object with api response
         """
         method = self.__get_method('triage')
-        if headers is None:
-            headers = {}
-        headers.update(self.__get_interview_id_headers(interview_id=interview_id))
 
         return self.call_api_post(
             method=method,
@@ -366,22 +335,18 @@ class APIConnector:
             headers=headers
         )
 
-    def specialist_recommender(self, data: Dict, interview_id: Optional[str] = None, params: Optional[Dict] = None,
+    def specialist_recommender(self, data: Dict, params: Optional[Dict] = None,
                                headers: Optional[Dict] = None) -> Dict:
         """
         Makes a specialist recommendation API request with provided diagnosis data.
 
         :param data: Request data
-        :param interview_id: (optional) Unique interview id for diagnosis session
         :param params: (optional) URL query params
         :param headers: (optional) HTTP request headers
 
         :returns: A dict object with api response
         """
         method = self.__get_method('specialist_recommender')
-        if headers is None:
-            headers = {}
-        headers.update(self.__get_interview_id_headers(interview_id=interview_id))
 
         return self.call_api_post(
             method=method,
@@ -390,24 +355,19 @@ class APIConnector:
             headers=headers
         )
 
-    def rationale(self, data: Dict, interview_id: Optional[str] = None, params: Optional[Dict] = None,
-                  headers: Optional[Dict] = None) -> Dict:
+    def rationale(self, data: Dict, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> Dict:
         """
         Makes an API request with provided diagnosis data and returns
         an explanation of why the given question has been selected by
         the reasoning engine.
 
         :param data: Request data
-        :param interview_id: (optional) Unique interview id for diagnosis session
         :param params: (optional) URL query params
         :param headers: (optional) HTTP request headers
 
         :returns: A dict object with api response
         """
         method = self.__get_method('rationale')
-        if headers is None:
-            headers = {}
-        headers.update(self.__get_interview_id_headers(interview_id=interview_id))
 
         return self.call_api_post(
             method=method,
@@ -605,6 +565,13 @@ class APISharedConnector(APIConnector):
     Intermediate level API Connector with methods shared between different API versions (mostly v2 and v3).
     """
 
+    def __get_interview_id_headers(self, interview_id: Optional[str] = None) -> Dict:
+        headers = {}
+        if interview_id:
+            headers['Interview-Id'] = interview_id
+
+        return headers
+
     def search(self, phrase: str, sex: Optional[str] = None, max_results: Optional[int] = 8,
                filters: Optional[List[Union[SearchFilter, str]]] = None, **kwargs: Any) -> List[Dict[str, str]]:
         """
@@ -660,6 +627,10 @@ class APISharedConnector(APIConnector):
         :returns: A dict object with api response
         """
         params = kwargs.pop('params', {})
+
+        headers = kwargs.pop('headers', {})
+        headers.update(self.__get_interview_id_headers(interview_id=interview_id))
+
         data = kwargs.pop('data', {})
         data.update({
             'text': text,
@@ -669,8 +640,7 @@ class APISharedConnector(APIConnector):
         return super().parse(
             data=data,
             params=params,
-            interview_id=interview_id,
-            **kwargs
+            headers=headers
         )
 
     def suggest(self, data: Dict, max_results: Optional[int] = 8, interview_id: Optional[str] = None,
@@ -688,11 +658,13 @@ class APISharedConnector(APIConnector):
         params = kwargs.pop('params', {})
         params.update({'max_results': max_results})
 
+        headers = kwargs.pop('headers', {})
+        headers.update(self.__get_interview_id_headers(interview_id=interview_id))
+
         return super().suggest(
             data=data,
             params=params,
-            interview_id=interview_id,
-            **kwargs
+            headers=headers
         )
 
     def red_flags(self, data: Dict, max_results: Optional[int] = 8, interview_id: Optional[str] = None,
@@ -712,10 +684,32 @@ class APISharedConnector(APIConnector):
         params = kwargs.pop('params', {})
         params.update({'max_results': max_results})
 
+        headers = kwargs.pop('headers', {})
+        headers.update(self.__get_interview_id_headers(interview_id=interview_id))
+
         return super().red_flags(
             data=data,
             params=params,
-            interview_id=interview_id,
+            headers=headers
+        )
+
+    def diagnosis(self, data: Dict, interview_id: Optional[str] = None, **kwargs: Any) -> Dict:
+        """
+        Makes a diagnosis API request with provided diagnosis data
+        and returns diagnosis question with possible conditions.
+
+        :param data: Request data
+        :param interview_id: (optional) Unique interview id for diagnosis session
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+
+        :returns: A dict object with api response
+        """
+        headers = kwargs.pop('headers', {})
+        headers.update(self.__get_interview_id_headers(interview_id=interview_id))
+
+        return super().diagnosis(
+            data=data,
+            headers=headers,
             **kwargs
         )
 
@@ -733,8 +727,72 @@ class APISharedConnector(APIConnector):
         """
         data_with_target = dict(data, **{'target': target_id})
 
+        headers = kwargs.pop('headers', {})
+        headers.update(self.__get_interview_id_headers(interview_id=interview_id))
+
         return super().explain(
             data=data_with_target,
-            interview_id=interview_id,
+            headers=headers,
             **kwargs,
+        )
+
+    def triage(self, data: Dict, interview_id: Optional[str] = None, **kwargs: Any) -> Dict:
+        """
+        Makes a triage API request with provided diagnosis data.
+        Returns triage results dict.
+        See the docs: https://developer.infermedica.com/docs/triage.
+
+        :param data: Request data
+        :param interview_id: (optional) Unique interview id for diagnosis session
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+
+        :returns: A dict object with api response
+        """
+        headers = kwargs.pop('headers', {})
+        headers.update(self.__get_interview_id_headers(interview_id=interview_id))
+
+        return super().triage(
+            data=data,
+            headers=headers,
+            **kwargs
+        )
+
+    def specialist_recommender(self, data: Dict, interview_id: Optional[str] = None, **kwargs: Any) -> Dict:
+        """
+        Makes a specialist recommendation API request with provided diagnosis data.
+
+        :param data: Request data
+        :param interview_id: (optional) Unique interview id for diagnosis session
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+
+        :returns: A dict object with api response
+        """
+        headers = kwargs.pop('headers', {})
+        headers.update(self.__get_interview_id_headers(interview_id=interview_id))
+
+        return super().specialist_recommender(
+            data=data,
+            headers=headers,
+            **kwargs
+        )
+
+    def rationale(self, data: Dict, interview_id: Optional[str] = None, **kwargs: Any) -> Dict:
+        """
+        Makes an API request with provided diagnosis data and returns
+        an explanation of why the given question has been selected by
+        the reasoning engine.
+
+        :param data: Request data
+        :param interview_id: (optional) Unique interview id for diagnosis session
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+
+        :returns: A dict object with api response
+        """
+        headers = kwargs.pop('headers', {})
+        headers.update(self.__get_interview_id_headers(interview_id=interview_id))
+
+        return super().rationale(
+            data=data,
+            headers=headers,
+            **kwargs
         )

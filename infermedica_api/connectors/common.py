@@ -16,6 +16,12 @@ import requests
 
 from .. import __version__, exceptions, API_CONFIG, DEFAULT_API_VERSION, DEFAULT_API_ENDPOINT
 
+ConditionDetails = Dict[str, Any]
+SymptomDetails = Dict[str, Any]
+RiskFactorDetails = Dict[str, Any]
+LabTestDetails = Dict[str, Any]
+ConceptDetails = Dict[str, Any]
+
 
 class SearchFilter(Enum):
     """Enum to hold search filter constants."""
@@ -124,7 +130,6 @@ class APIConnector:
         If response is not correct raise appropriate exception.
 
         :returns: dict or list with response data
-        :rtype: dict or list
         :raises:
             infermedica_api.exceptions.BadRequest,
             infermedica_api.exceptions.UnauthorizedAccess,
@@ -377,7 +382,7 @@ class APIConnector:
         )
 
     def condition_details(self, condition_id: str, params: Optional[Dict] = None,
-                          headers: Optional[Dict] = None) -> Dict:
+                          headers: Optional[Dict] = None) -> ConditionDetails:
         """
         Makes an API request and returns condition details object.
 
@@ -396,7 +401,7 @@ class APIConnector:
             headers=headers
         )
 
-    def conditions_list(self, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> List[Dict]:
+    def conditions_list(self, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> List[ConditionDetails]:
         """
         Makes an API request and returns list of condition details objects.
 
@@ -413,7 +418,8 @@ class APIConnector:
             headers=headers
         )
 
-    def symptom_details(self, symptom_id: str, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> Dict:
+    def symptom_details(self, symptom_id: str, params: Optional[Dict] = None,
+                        headers: Optional[Dict] = None) -> SymptomDetails:
         """
         Makes an API request and returns symptom details object.
 
@@ -432,7 +438,7 @@ class APIConnector:
             headers=headers
         )
 
-    def symptoms_list(self, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> List[Dict]:
+    def symptoms_list(self, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> List[SymptomDetails]:
         """
         Makes an API request and returns list of symptom details objects.
 
@@ -450,7 +456,7 @@ class APIConnector:
         )
 
     def risk_factor_details(self, risk_factor_id: str, params: Optional[Dict] = None,
-                            headers: Optional[Dict] = None) -> Dict:
+                            headers: Optional[Dict] = None) -> RiskFactorDetails:
         """
         Makes an API request and returns risk factor details object.
 
@@ -469,7 +475,8 @@ class APIConnector:
             headers=headers
         )
 
-    def risk_factors_list(self, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> List:
+    def risk_factors_list(self, params: Optional[Dict] = None,
+                          headers: Optional[Dict] = None) -> List[RiskFactorDetails]:
         """
         Makes an API request and returns list of risk factors details objects.
 
@@ -487,7 +494,7 @@ class APIConnector:
         )
 
     def lab_test_details(self, lab_test_id: str, params: Optional[Dict] = None,
-                         headers: Optional[Dict] = None) -> Dict:
+                         headers: Optional[Dict] = None) -> LabTestDetails:
         """
         Makes an API request and returns lab test details object.
 
@@ -506,7 +513,7 @@ class APIConnector:
             headers=headers
         )
 
-    def lab_tests_list(self, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> List:
+    def lab_tests_list(self, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> List[LabTestDetails]:
         """
         Makes an API request and returns list of lab test details objects.
 
@@ -523,7 +530,8 @@ class APIConnector:
             headers=headers
         )
 
-    def concept_details(self, concept_id: str, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> Dict:
+    def concept_details(self, concept_id: str, params: Optional[Dict] = None,
+                        headers: Optional[Dict] = None) -> ConceptDetails:
         """
         Makes an API request and returns concept details object.
 
@@ -542,7 +550,7 @@ class APIConnector:
             headers=headers
         )
 
-    def concept_list(self, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> List:
+    def concept_list(self, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> List[ConceptDetails]:
         """
         Makes an API request and returns list of concept details objects.
 

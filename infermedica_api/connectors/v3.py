@@ -10,7 +10,14 @@ This module contains API Connector classes for API v3 version.
 from enum import Enum
 from typing import Optional, List, Dict, Union, Any
 
-from .common import APISharedConnector
+from .common import (
+    APISharedConnector,
+    ConceptDetails,
+    ConditionDetails,
+    SymptomDetails,
+    RiskFactorDetails,
+    LabTestDetails,
+)
 from .. import exceptions
 
 
@@ -156,7 +163,8 @@ class APIv3Connector(APISharedConnector):
             **kwargs
         )
 
-    def condition_details(self, condition_id: str, age: int, age_unit: Optional[str] = None, **kwargs) -> Dict:
+    def condition_details(self, condition_id: str, age: int, age_unit: Optional[str] = None,
+                          **kwargs) -> ConditionDetails:
         """
         Makes an API request and returns condition details object.
 
@@ -176,7 +184,7 @@ class APIv3Connector(APISharedConnector):
             **kwargs
         )
 
-    def conditions_list(self, age: int, age_unit: Optional[str] = None, **kwargs) -> List[Dict]:
+    def conditions_list(self, age: int, age_unit: Optional[str] = None, **kwargs) -> List[ConditionDetails]:
         """
         Makes an API request and returns list of condition details objects.
 
@@ -194,7 +202,7 @@ class APIv3Connector(APISharedConnector):
             **kwargs
         )
 
-    def symptom_details(self, symptom_id: str, age: int, age_unit: Optional[str] = None, **kwargs) -> Dict:
+    def symptom_details(self, symptom_id: str, age: int, age_unit: Optional[str] = None, **kwargs) -> SymptomDetails:
         """
         Makes an API request and returns symptom details object.
 
@@ -214,7 +222,7 @@ class APIv3Connector(APISharedConnector):
             **kwargs
         )
 
-    def symptoms_list(self, age: int, age_unit: Optional[str] = None, **kwargs) -> List[Dict]:
+    def symptoms_list(self, age: int, age_unit: Optional[str] = None, **kwargs) -> List[SymptomDetails]:
         """
         Makes an API request and returns list of symptom details objects.
 
@@ -232,7 +240,8 @@ class APIv3Connector(APISharedConnector):
             **kwargs
         )
 
-    def risk_factor_details(self, risk_factor_id: str, age: int, age_unit: Optional[str] = None, **kwargs) -> Dict:
+    def risk_factor_details(self, risk_factor_id: str, age: int, age_unit: Optional[str] = None,
+                            **kwargs) -> RiskFactorDetails:
         """
         Makes an API request and returns risk factor details object.
 
@@ -252,7 +261,7 @@ class APIv3Connector(APISharedConnector):
             **kwargs
         )
 
-    def risk_factors_list(self, age: int, age_unit: Optional[str] = None, **kwargs) -> List:
+    def risk_factors_list(self, age: int, age_unit: Optional[str] = None, **kwargs) -> List[RiskFactorDetails]:
         """
         Makes an API request and returns list of risk factors details objects.
 
@@ -270,7 +279,8 @@ class APIv3Connector(APISharedConnector):
             **kwargs
         )
 
-    def lab_test_details(self, lab_test_id: str, age: int, age_unit: Optional[str] = None, **kwargs) -> Dict:
+    def lab_test_details(self, lab_test_id: str, age: int, age_unit: Optional[str] = None,
+                         **kwargs) -> LabTestDetails:
         """
         Makes an API request and returns lab_test details object.
 
@@ -290,7 +300,7 @@ class APIv3Connector(APISharedConnector):
             **kwargs
         )
 
-    def lab_tests_list(self, age: int, age_unit: Optional[str] = None, **kwargs) -> List:
+    def lab_tests_list(self, age: int, age_unit: Optional[str] = None, **kwargs) -> List[LabTestDetails]:
         """
         Makes an API request and returns list of lab test details objects.
 
@@ -308,7 +318,7 @@ class APIv3Connector(APISharedConnector):
             **kwargs
         )
 
-    def concept_details(self, concept_id: str, age: int, age_unit: Optional[str] = None, **kwargs) -> Dict:
+    def concept_details(self, concept_id: str, age: int, age_unit: Optional[str] = None, **kwargs) -> ConceptDetails:
         """
         Makes an API request and returns lab test details object.
 
@@ -329,7 +339,7 @@ class APIv3Connector(APISharedConnector):
         )
 
     def concept_list(self, age: int, age_unit: Optional[str] = None, ids: Optional[List[str]] = None,
-                     types: Optional[List[Union[ConceptType, str]]] = None, **kwargs) -> List:
+                     types: Optional[List[Union[ConceptType, str]]] = None, **kwargs) -> List[ConceptDetails]:
         """
         Makes an API request and returns list of concept details objects.
 

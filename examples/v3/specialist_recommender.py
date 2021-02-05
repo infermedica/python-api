@@ -10,7 +10,7 @@ if __name__ == '__main__':
     request = config.get_example_request_data()
 
     # call triage method
-    request = api.specialist_recommender(request)
+    request = api.specialist_recommender(**request)
 
     # and see the results
     print('\n\n', request)

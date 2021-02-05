@@ -10,6 +10,6 @@ if __name__ == '__main__':
     request = config.get_example_request_data()
 
     # call diagnosis
-    request = api.diagnosis(request)
+    request = api.diagnosis(**request)
 
     print(request)

@@ -10,7 +10,7 @@ if __name__ == '__main__':
     request = config.get_example_request_data()
 
     # call the explain method
-    request = api.explain(request, target_id='c_49')
+    request = api.explain(**request, target_id='c_49')
 
     # and see the results
     print('\n\n', request)

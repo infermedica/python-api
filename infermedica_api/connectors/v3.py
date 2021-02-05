@@ -12,35 +12,22 @@ from typing import Optional, List, Dict, Union, Any
 
 from .common import (
     SearchConceptType,
-
     ConceptDetails,
     ConditionDetails,
     SymptomDetails,
     RiskFactorDetails,
     LabTestDetails,
-
+    EvidenceList,
+    ExtrasDict,
     BaseAPIConnector,
-    BasicAPIInfoMixin,
-    BasicAPISearchMixin,
-    BasicAPIParseMixin,
-    BasicAPISuggestMixin,
-    BasicAPIDiagnosisMixin,
-    BasicAPIRationaleMixin,
-    BasicAPIExplainMixin,
-    BasicAPITriageMixin,
-    BasicAPIConditionMixin,
-    BasicAPISymptomMixin,
-    BasicAPIRiskFactorMixin,
-    BasicAPILabTestMixin,
-
-    APIParseMixin,
-    APISuggestMixin,
-    APIDiagnosisMixin,
-    APIRationaleMixin,
-    APIExplainMixin,
-    APITriageMixin,
+    BasicAPICommonMethodsMixin,
 )
 from .. import exceptions
+
+
+# Types
+AgeDict = Dict[str, Union[int, str]]
+DiagnosticDict = Dict[str, Union[str, AgeDict, EvidenceList, ExtrasDict]]
 
 
 class ConceptType(Enum):
@@ -58,21 +45,7 @@ class ConceptType(Enum):
             return val in (item.value for item in ConceptType)
 
 
-class BasicAPIv3Connector(
-    BasicAPIInfoMixin,
-    BasicAPISearchMixin,
-    BasicAPIParseMixin,
-    BasicAPISuggestMixin,
-    BasicAPIDiagnosisMixin,
-    BasicAPIRationaleMixin,
-    BasicAPIExplainMixin,
-    BasicAPITriageMixin,
-    BasicAPIConditionMixin,
-    BasicAPISymptomMixin,
-    BasicAPIRiskFactorMixin,
-    BasicAPILabTestMixin,
-    BaseAPIConnector
-):
+class BasicAPIv3Connector(BasicAPICommonMethodsMixin, BaseAPIConnector):
     def __init__(self, *args, api_version='v3', **kwargs: Any):
         """
         Initialize API connector.
@@ -145,21 +118,13 @@ class BasicAPIv3Connector(
         )
 
 
-class APIv3Connector(
-    APIParseMixin,
-    APISuggestMixin,
-    APIDiagnosisMixin,
-    APIRationaleMixin,
-    APIExplainMixin,
-    APITriageMixin,
-    BasicAPIv3Connector
-):
+class APIv3Connector(BasicAPIv3Connector):
     """
     Intermediate level class which handles requests to the Infermedica API,
     provides methods with detailed parameters, but still works on simple data structures.
     """
 
-    def get_age_object(self, age: int, age_unit: Optional[str] = None) -> Dict:
+    def get_age_object(self, age: int, age_unit: Optional[str] = None) -> AgeDict:
         """
         Prepare age object to sent in API request URL query.
 
@@ -181,7 +146,7 @@ class APIv3Connector(
 
         return age_obj
 
-    def get_age_query_params(self, age: int, age_unit: Optional[str] = None) -> Dict:
+    def get_age_query_params(self, age: int, age_unit: Optional[str] = None) -> Dict[str, Union[int, str]]:
         """
         Prepare age object to sent in API request URL query.
 
@@ -198,6 +163,19 @@ class APIv3Connector(
             f'age.{key}': value
             for key, value in age_obj.items()
         }
+
+    def get_diagnostic_data_dict(self, evidence: EvidenceList, sex: str, age: int, age_unit: Optional[str] = None,
+                                 extras: Optional[ExtrasDict] = None) -> DiagnosticDict:
+        data = {
+            'sex': sex,
+            'age': self.get_age_object(age=age, age_unit=age_unit),
+            'evidence': evidence
+        }
+
+        if extras:
+            data['extras'] = extras
+
+        return data
 
     def search(self, phrase: str, age: int, age_unit: Optional[str] = None, sex: Optional[str] = None,
                max_results: Optional[int] = 8, types: Optional[List[Union[SearchConceptType, str]]] = None,
@@ -243,7 +221,8 @@ class APIv3Connector(
             **kwargs
         )
 
-    def parse(self, text: str, age: int, age_unit: Optional[str] = None, **kwargs: Any) -> Dict:
+    def parse(self, text: str, age: int, age_unit: Optional[str] = None, include_tokens: Optional[bool] = False,
+              interview_id: Optional[str] = None, **kwargs: Any) -> Dict:
         """
         Makes an parse API request with provided text and include_tokens parameter.
         Returns parse results with detailed list of mentions found in the text.
@@ -251,33 +230,233 @@ class APIv3Connector(
         :param text: Text to parse
         :param age: Age value
         :param age_unit: (optional) Age unit, one of values 'year' or 'month'
-        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`BasicAPIv3Connector` method
-
-        :returns: A dict object with api response
-        """
-        data = kwargs.pop('data', {})
-        data.update({
-            'age': self.get_age_object(age=age, age_unit=age_unit),
-        })
-
-        return super().parse(
-            text=text,
-            data=data,
-            **kwargs
-        )
-
-    def specialist_recommender(self, data: Dict, interview_id: Optional[str] = None, **kwargs: Any) -> Dict:
-        """
-        Makes a specialist recommendation API request with provided diagnosis data.
-
-        :param data: Request data
+        :param include_tokens: (optional) Switch to manipulate the include_tokens parameter
         :param interview_id: (optional) Unique interview id for diagnosis session
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`BasicAPIv3Connector` method
 
         :returns: A dict object with api response
         """
         headers = kwargs.pop('headers', {})
-        headers.update(self._get_interview_id_headers(interview_id=interview_id))
+        headers.update(self.get_interview_id_headers(interview_id=interview_id))
+
+        data = {
+            'text': text,
+            'age': self.get_age_object(age=age, age_unit=age_unit),
+            'include_tokens': include_tokens
+        }
+
+        return super().parse(
+            data=data,
+            headers=headers,
+            **kwargs
+        )
+
+    def suggest(self, evidence: EvidenceList, sex: str, age: int, age_unit: Optional[str] = None,
+                extras: Optional[ExtrasDict] = None, suggest_method: Optional[str] = 'symptoms',
+                max_results: Optional[int] = 8, interview_id: Optional[str] = None,
+                **kwargs: Any) -> List[Dict[str, str]]:
+        """
+        Makes an API suggest request and returns a list of suggested evidence.
+
+        :param evidence: Diagnostic evidence list
+        :param sex: Biological sex value, one of values 'female' or 'male'
+        :param age: Age value
+        :param age_unit: (optional) Age unit, one of values 'year' or 'month'
+        :param extras: (optional) Dict with API extras
+        :param suggest_method: (optional) Suggest method to be used,
+                               one of values 'symptoms' (default), 'risk_factors', 'red_flags'
+        :param max_results: (optional) Maximum number of result to return, default is 8
+        :param interview_id: (optional) Unique interview id for diagnosis session
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+
+        :returns: A list of dicts with 'id', 'name' and 'common_name' keys
+        """
+        params = kwargs.pop('params', {})
+        params.update({'max_results': max_results})
+
+        headers = kwargs.pop('headers', {})
+        headers.update(self.get_interview_id_headers(interview_id=interview_id))
+
+        data = self.get_diagnostic_data_dict(
+            evidence=evidence,
+            sex=sex,
+            age=age,
+            age_unit=age_unit,
+            extras=extras
+        )
+        if suggest_method:
+            data['suggest_method'] = suggest_method
+
+        return super().suggest(
+            data=data,
+            params=params,
+            headers=headers
+        )
+
+    def diagnosis(self, evidence: EvidenceList, sex: str, age: int, age_unit: Optional[str] = None,
+                  extras: Optional[ExtrasDict] = None, interview_id: Optional[str] = None, **kwargs: Any) -> Dict:
+        """
+        Makes a diagnosis API request with provided diagnosis data
+        and returns diagnosis question with possible conditions.
+
+        :param evidence: Diagnostic evidence list
+        :param sex: Biological sex value, one of values 'female' or 'male'
+        :param age: Age value
+        :param age_unit: (optional) Age unit, one of values 'year' or 'month'
+        :param extras: (optional) Dict with API extras
+        :param interview_id: (optional) Unique interview id for diagnosis session
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+
+        :returns: A dict object with api response
+        """
+        headers = kwargs.pop('headers', {})
+        headers.update(self.get_interview_id_headers(interview_id=interview_id))
+
+        data = self.get_diagnostic_data_dict(
+            evidence=evidence,
+            sex=sex,
+            age=age,
+            age_unit=age_unit,
+            extras=extras
+        )
+
+        return super().diagnosis(
+            data=data,
+            headers=headers,
+            **kwargs
+        )
+
+    def rationale(self, evidence: EvidenceList, sex: str, age: int, age_unit: Optional[str] = None,
+                  extras: Optional[ExtrasDict] = None, interview_id: Optional[str] = None, **kwargs: Any) -> Dict:
+        """
+        Makes an API request with provided diagnosis data and returns
+        an explanation of why the given question has been selected by
+        the reasoning engine.
+
+        :param evidence: Diagnostic evidence list
+        :param sex: Biological sex value, one of values 'female' or 'male'
+        :param age: Age value
+        :param age_unit: (optional) Age unit, one of values 'year' or 'month'
+        :param extras: (optional) Dict with API extras
+        :param interview_id: (optional) Unique interview id for diagnosis session
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
+
+        :returns: A dict object with api response
+        """
+        headers = kwargs.pop('headers', {})
+        headers.update(self.get_interview_id_headers(interview_id=interview_id))
+
+        data = self.get_diagnostic_data_dict(
+            evidence=evidence,
+            sex=sex,
+            age=age,
+            age_unit=age_unit,
+            extras=extras
+        )
+
+        return super().rationale(
+            data=data,
+            headers=headers,
+            **kwargs
+        )
+
+    def explain(self, target_id: str, evidence: EvidenceList, sex: str, age: int, age_unit: Optional[str] = None,
+                extras: Optional[ExtrasDict] = None, interview_id: Optional[str] = None, **kwargs: Any) -> Dict:
+        """
+        Makes an explain API request with provided diagnosis data and target condition.
+        Returns explain results with supporting and conflicting evidence.
+
+        :param target_id: Condition id for which explain shall be calculated
+        :param evidence: Diagnostic evidence list
+        :param sex: Biological sex value, one of values 'female' or 'male'
+        :param age: Age value
+        :param age_unit: (optional) Age unit, one of values 'year' or 'month'
+        :param extras: (optional) Dict with API extras
+        :param interview_id: (optional) Unique interview id for diagnosis session
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`BasicAPIv3Connector` method
+
+        :returns: A dict object with api response
+        """
+
+        headers = kwargs.pop('headers', {})
+        headers.update(self.get_interview_id_headers(interview_id=interview_id))
+
+        data = self.get_diagnostic_data_dict(
+            evidence=evidence,
+            sex=sex,
+            age=age,
+            age_unit=age_unit,
+            extras=extras
+        )
+        data['target'] = target_id
+
+        return super().explain(
+            data=data,
+            headers=headers,
+            **kwargs,
+        )
+
+    def triage(self, evidence: EvidenceList, sex: str, age: int, age_unit: Optional[str] = None,
+               extras: Optional[ExtrasDict] = None, interview_id: Optional[str] = None, **kwargs: Any) -> Dict:
+        """
+        Makes a triage API request with provided diagnosis data.
+        Returns triage results dict.
+        See the docs: https://developer.infermedica.com/docs/triage.
+
+        :param evidence: Diagnostic evidence list
+        :param sex: Biological sex value, one of values 'female' or 'male'
+        :param age: Age value
+        :param age_unit: (optional) Age unit, one of values 'year' or 'month'
+        :param extras: (optional) Dict with API extras
+        :param interview_id: (optional) Unique interview id for diagnosis session
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`BasicAPIv3Connector` method
+
+        :returns: A dict object with api response
+        """
+        headers = kwargs.pop('headers', {})
+        headers.update(self.get_interview_id_headers(interview_id=interview_id))
+
+        data = self.get_diagnostic_data_dict(
+            evidence=evidence,
+            sex=sex,
+            age=age,
+            age_unit=age_unit,
+            extras=extras
+        )
+
+        return super().triage(
+            data=data,
+            headers=headers,
+            **kwargs
+        )
+
+    def specialist_recommender(self, evidence: List, sex: str, age: int, age_unit: Optional[str] = None,
+                               extras: Optional[ExtrasDict] = None, interview_id: Optional[str] = None,
+                               **kwargs: Any) -> Dict:
+        """
+        Makes a specialist recommendation API request with provided diagnosis data.
+
+        :param evidence: Diagnostic evidence list
+        :param sex: Biological sex value, one of values 'female' or 'male'
+        :param age: Age value
+        :param age_unit: (optional) Age unit, one of values 'year' or 'month'
+        :param extras: (optional) Dict with API extras
+        :param interview_id: (optional) Unique interview id for diagnosis session
+        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`BasicAPIv3Connector` method
+
+        :returns: A dict object with api response
+        """
+        headers = kwargs.pop('headers', {})
+        headers.update(self.get_interview_id_headers(interview_id=interview_id))
+
+        data = kwargs.pop('data', {})
+        data.update(self.get_diagnostic_data_dict(
+            evidence=evidence,
+            sex=sex,
+            age=age,
+            age_unit=age_unit,
+            extras=extras
+        ))
 
         return super().specialist_recommender(
             data=data,

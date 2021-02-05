@@ -10,7 +10,7 @@ if __name__ == '__main__':
     request = config.get_example_request_data()
 
     # call triage method
-    request = api.triage(request)
+    request = api.triage(**request)
 
     # and see the results
     print('\n\n', request)

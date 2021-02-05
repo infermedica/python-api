@@ -10,19 +10,19 @@ if __name__ == '__main__':
     request = config.get_example_request_data()
 
     # call triage method
-    response = api.suggest(request)
+    response = api.suggest(**request)
     print('\n\n', response)
 
     # Set different suggest_method
     request['suggest_method'] = 'risk_factors'
 
     # call triage method
-    response = api.suggest(request)
+    response = api.suggest(**request)
     print('\n\n', response)
 
     # Set different suggest_method
     request['suggest_method'] = 'red_flags'
 
     # call triage method
-    response = api.suggest(request)
+    response = api.suggest(**request)
     print('\n\n', response)

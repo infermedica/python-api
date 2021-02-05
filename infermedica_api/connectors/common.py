@@ -23,6 +23,9 @@ RiskFactorDetails = Dict[str, Any]
 LabTestDetails = Dict[str, Any]
 ConceptDetails = Dict[str, Any]
 
+EvidenceList = List[Dict[str, str]]
+ExtrasDict = Dict[str, Union[bool, str]]
+
 
 class SearchConceptType(Enum):
     """Enum to hold search filter constants."""
@@ -66,7 +69,7 @@ class BaseAPIConnector(ABC):
 
         Usage::
             >>> import infermedica_api
-            >>> api = infermedica_api.APIConnector(app_id='YOUR_APP_ID', app_key='YOUR_APP_KEY')
+            >>> api = infermedica_api.BaseAPIConnector(app_id='YOUR_APP_ID', app_key='YOUR_APP_KEY')
 
         :raises: infermedica_api.exceptions.MissingAPIDefinition
         """
@@ -121,7 +124,7 @@ class BaseAPIConnector(ABC):
         headers.update(passed_headers)  # Make sure passed headers take precedence
         return headers
 
-    def _get_interview_id_headers(self, interview_id: Optional[str] = None) -> Dict:
+    def get_interview_id_headers(self, interview_id: Optional[str] = None) -> Dict:
         headers = {}
         if interview_id:
             headers['Interview-Id'] = interview_id
@@ -268,30 +271,6 @@ class BasicAPISuggestMixin(ABC):
         :returns: A list of dicts with 'id', 'name' and 'common_name' keys
         """
         method = self._get_method('suggest')
-
-        return self.call_api_post(
-            method=method,
-            data=data,
-            params=params,
-            headers=headers
-        )
-
-
-class BasicAPIRedFlagsMixin(ABC):
-    def red_flags(self, data: Dict, params: Optional[Dict] = None,
-                  headers: Optional[Dict] = None) -> List[Dict[str, str]]:
-        """
-        Makes an API request with provided diagnosis data and returns a list
-        of evidence that may be related to potentially life-threatening
-        conditions.
-
-        :param data: Request data
-        :param params: (optional) URL query params
-        :param headers: (optional) HTTP request headers
-
-        :returns: A list of dicts with 'id', 'name' and 'common_name' keys
-        """
-        method = self._get_method('red_flags')
 
         return self.call_api_post(
             method=method,
@@ -551,180 +530,18 @@ class BasicAPILabTestMixin(ABC):
         )
 
 
-class APIParseMixin(ABC):
-    def parse(self, text: str, include_tokens: Optional[bool] = False, interview_id: Optional[str] = None,
-              **kwargs: Any) -> Dict:
-        """
-        Makes an parse API request with provided text and include_tokens parameter.
-        Returns parse results with detailed list of mentions found in the text.
-
-        :param text: Text to parse
-        :param include_tokens: (optional) Switch to manipulate the include_tokens parameter
-        :param interview_id: (optional) Unique interview id for diagnosis session
-        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
-
-        :returns: A dict object with api response
-        """
-        params = kwargs.pop('params', {})
-
-        headers = kwargs.pop('headers', {})
-        headers.update(self._get_interview_id_headers(interview_id=interview_id))
-
-        data = kwargs.pop('data', {})
-        data.update({
-            'text': text,
-            'include_tokens': include_tokens
-        })
-
-        return super().parse(
-            data=data,
-            params=params,
-            headers=headers
-        )
-
-
-class APISuggestMixin(ABC):
-    def suggest(self, data: Dict, max_results: Optional[int] = 8, interview_id: Optional[str] = None,
-                **kwargs: Any) -> List[Dict[str, str]]:
-        """
-        Makes an API suggest request and returns a list of suggested evidence.
-
-        :param data: Diagnosis request data
-        :param max_results: (optional) Maximum number of result to return, default is 8
-        :param interview_id: (optional) Unique interview id for diagnosis session
-        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
-
-        :returns: A list of dicts with 'id', 'name' and 'common_name' keys
-        """
-        params = kwargs.pop('params', {})
-        params.update({'max_results': max_results})
-
-        headers = kwargs.pop('headers', {})
-        headers.update(self._get_interview_id_headers(interview_id=interview_id))
-
-        return super().suggest(
-            data=data,
-            params=params,
-            headers=headers
-        )
-
-
-class APIRedFlagsMixin(ABC):
-    def red_flags(self, data: Dict, max_results: Optional[int] = 8, interview_id: Optional[str] = None,
-                  **kwargs: Any) -> List[Dict[str, str]]:
-        """
-        Makes an API request with provided diagnosis data and returns a list
-        of evidence that may be related to potentially life-threatening
-        conditions.
-
-        :param data: Diagnosis request data
-        :param max_results: (optional) Maximum number of result to return, default is 8
-        :param interview_id: (optional) Unique interview id for diagnosis session
-        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
-
-        :returns: A list of dicts with 'id', 'name' and 'common_name' keys
-        """
-        params = kwargs.pop('params', {})
-        params.update({'max_results': max_results})
-
-        headers = kwargs.pop('headers', {})
-        headers.update(self._get_interview_id_headers(interview_id=interview_id))
-
-        return super().red_flags(
-            data=data,
-            params=params,
-            headers=headers
-        )
-
-
-class APIDiagnosisMixin(ABC):
-    def diagnosis(self, data: Dict, interview_id: Optional[str] = None, **kwargs: Any) -> Dict:
-        """
-        Makes a diagnosis API request with provided diagnosis data
-        and returns diagnosis question with possible conditions.
-
-        :param data: Request data
-        :param interview_id: (optional) Unique interview id for diagnosis session
-        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
-
-        :returns: A dict object with api response
-        """
-        headers = kwargs.pop('headers', {})
-        headers.update(self._get_interview_id_headers(interview_id=interview_id))
-
-        return super().diagnosis(
-            data=data,
-            headers=headers,
-            **kwargs
-        )
-
-
-class APIExplainMixin(ABC):
-    def explain(self, data: Dict, target_id: str, interview_id: Optional[str] = None, **kwargs: Any) -> Dict:
-        """
-        Makes an explain API request with provided diagnosis data and target condition.
-        Returns explain results with supporting and conflicting evidence.
-
-        :param data: Diagnosis request data
-        :param target_id: Condition id for which explain shall be calculated
-        :param interview_id: (optional) Unique interview id for diagnosis session
-        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
-
-        :returns: A dict object with api response
-        """
-        data_with_target = dict(data, **{'target': target_id})
-
-        headers = kwargs.pop('headers', {})
-        headers.update(self._get_interview_id_headers(interview_id=interview_id))
-
-        return super().explain(
-            data=data_with_target,
-            headers=headers,
-            **kwargs,
-        )
-
-
-class APITriageMixin(ABC):
-    def triage(self, data: Dict, interview_id: Optional[str] = None, **kwargs: Any) -> Dict:
-        """
-        Makes a triage API request with provided diagnosis data.
-        Returns triage results dict.
-        See the docs: https://developer.infermedica.com/docs/triage.
-
-        :param data: Request data
-        :param interview_id: (optional) Unique interview id for diagnosis session
-        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
-
-        :returns: A dict object with api response
-        """
-        headers = kwargs.pop('headers', {})
-        headers.update(self._get_interview_id_headers(interview_id=interview_id))
-
-        return super().triage(
-            data=data,
-            headers=headers,
-            **kwargs
-        )
-
-
-class APIRationaleMixin(ABC):
-    def rationale(self, data: Dict, interview_id: Optional[str] = None, **kwargs: Any) -> Dict:
-        """
-        Makes an API request with provided diagnosis data and returns
-        an explanation of why the given question has been selected by
-        the reasoning engine.
-
-        :param data: Request data
-        :param interview_id: (optional) Unique interview id for diagnosis session
-        :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
-
-        :returns: A dict object with api response
-        """
-        headers = kwargs.pop('headers', {})
-        headers.update(self._get_interview_id_headers(interview_id=interview_id))
-
-        return super().rationale(
-            data=data,
-            headers=headers,
-            **kwargs
-        )
+class BasicAPICommonMethodsMixin(
+    BasicAPIInfoMixin,
+    BasicAPISearchMixin,
+    BasicAPIParseMixin,
+    BasicAPISuggestMixin,
+    BasicAPIDiagnosisMixin,
+    BasicAPIRationaleMixin,
+    BasicAPIExplainMixin,
+    BasicAPITriageMixin,
+    BasicAPIConditionMixin,
+    BasicAPISymptomMixin,
+    BasicAPIRiskFactorMixin,
+    BasicAPILabTestMixin,
+    ABC
+): pass

@@ -50,9 +50,7 @@ def setup_examples():
 def get_example_request_data():
     return {
         'sex': 'male',
-        'age': {
-            'value': 30
-        },
+        'age': 30,
         'evidence': [
             {'id': 's_1193', 'choice_id': 'present', 'source': 'initial'},
             {'id': 's_488', 'choice_id': 'present'},

@@ -199,6 +199,7 @@ class BasicAPIInfoMixin(ABC):
     def info(self, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> Dict:
         """
         Makes an API request and returns basic API information.
+        See the docs: https://developer.infermedica.com/docs/v3/basics#info-endpoint.
 
         :param params: (optional) URL query params
         :param headers: (optional) HTTP request headers
@@ -241,6 +242,7 @@ class BasicAPIParseMixin(ABC):
         """
         Makes an parse API request with provided text and include_tokens parameter.
         Returns parse results with detailed list of mentions found in the text.
+        See the docs: https://developer.infermedica.com/docs/v3/nlp.
 
         :param data: Request data
         :param params: (optional) URL query params
@@ -263,6 +265,7 @@ class BasicAPISuggestMixin(ABC):
                 headers: Optional[Dict] = None) -> List[Dict[str, str]]:
         """
         Makes an API suggest request and returns a list of suggested evidence.
+        See the docs: https://developer.infermedica.com/docs/v3/suggest-related-concepts.
 
         :param data: Request data
         :param params: (optional) URL query params
@@ -281,11 +284,11 @@ class BasicAPISuggestMixin(ABC):
 
 
 class BasicAPIDiagnosisMixin(ABC):
-    def diagnosis(self, data: Dict, params: Optional[Dict] = None,
-                  headers: Optional[Dict] = None) -> Dict:
+    def diagnosis(self, data: Dict, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> Dict:
         """
         Makes a diagnosis API request with provided diagnosis data
         and returns diagnosis question with possible conditions.
+        See the docs: https://developer.infermedica.com/docs/v3/diagnosis.
 
         :param data: Request data
         :param params: (optional) URL query params
@@ -309,6 +312,7 @@ class BasicAPIRationaleMixin(ABC):
         Makes an API request with provided diagnosis data and returns
         an explanation of why the given question has been selected by
         the reasoning engine.
+        See the docs: https://developer.infermedica.com/docs/v3/rationale.
 
         :param data: Request data
         :param params: (optional) URL query params
@@ -332,6 +336,7 @@ class BasicAPIExplainMixin(ABC):
         """
         Makes an explain API request with provided diagnosis data and target condition.
         Returns explain results with supporting and conflicting evidence.
+        See the docs: https://developer.infermedica.com/docs/v3/explain.
 
         :param data: Request data
         :param params: (optional) URL query params
@@ -355,7 +360,7 @@ class BasicAPITriageMixin(ABC):
         """
         Makes a triage API request with provided diagnosis data.
         Returns triage results dict.
-        See the docs: https://developer.infermedica.com/docs/triage.
+        See the docs: https://developer.infermedica.com/docs/v3/triage.
 
         :param data: Request data
         :param params: (optional) URL query params
@@ -378,6 +383,7 @@ class BasicAPIConditionMixin(ABC):
                           headers: Optional[Dict] = None) -> ConditionDetails:
         """
         Makes an API request and returns condition details object.
+        See the docs: https://developer.infermedica.com/docs/v3/medical-concepts#conditions.
 
         :param condition_id: Condition id
         :param params: (optional) URL query params
@@ -397,6 +403,7 @@ class BasicAPIConditionMixin(ABC):
     def conditions_list(self, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> List[ConditionDetails]:
         """
         Makes an API request and returns list of condition details objects.
+        See the docs: https://developer.infermedica.com/docs/v3/medical-concepts#conditions.
 
         :param params: (optional) URL query params
         :param headers: (optional) HTTP request headers
@@ -417,6 +424,7 @@ class BasicAPISymptomMixin(ABC):
                         headers: Optional[Dict] = None) -> SymptomDetails:
         """
         Makes an API request and returns symptom details object.
+        See the docs: https://developer.infermedica.com/docs/v3/medical-concepts#symptoms.
 
         :param symptom_id: Symptom id
         :param params: (optional) URL query params
@@ -436,6 +444,7 @@ class BasicAPISymptomMixin(ABC):
     def symptoms_list(self, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> List[SymptomDetails]:
         """
         Makes an API request and returns list of symptom details objects.
+        See the docs: https://developer.infermedica.com/docs/v3/medical-concepts#symptoms.
 
         :param params: (optional) URL query params
         :param headers: (optional) HTTP request headers
@@ -456,6 +465,7 @@ class BasicAPIRiskFactorMixin(ABC):
                             headers: Optional[Dict] = None) -> RiskFactorDetails:
         """
         Makes an API request and returns risk factor details object.
+        See the docs: https://developer.infermedica.com/docs/v3/medical-concepts#risk-factors.
 
         :param risk_factor_id: risk factor id
         :param params: (optional) URL query params
@@ -476,6 +486,7 @@ class BasicAPIRiskFactorMixin(ABC):
                           headers: Optional[Dict] = None) -> List[RiskFactorDetails]:
         """
         Makes an API request and returns list of risk factors details objects.
+        See the docs: https://developer.infermedica.com/docs/v3/medical-concepts#risk-factors.
 
         :param params: (optional) URL query params
         :param headers: (optional) HTTP request headers
@@ -496,6 +507,7 @@ class BasicAPILabTestMixin(ABC):
                          headers: Optional[Dict] = None) -> LabTestDetails:
         """
         Makes an API request and returns lab test details object.
+        See the docs: https://developer.infermedica.com/docs/v3/medical-concepts#lab-tests-and-lab-test-results.
 
         :param lab_test_id: LabTest id
         :param params: (optional) URL query params
@@ -515,6 +527,7 @@ class BasicAPILabTestMixin(ABC):
     def lab_tests_list(self, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> List[LabTestDetails]:
         """
         Makes an API request and returns list of lab test details objects.
+        See the docs: https://developer.infermedica.com/docs/v3/medical-concepts#lab-tests-and-lab-test-results.
 
         :param params: (optional) URL query params
         :param headers: (optional) HTTP request headers

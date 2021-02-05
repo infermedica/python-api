@@ -44,6 +44,7 @@ class BasicAPIv2Connector(BasicAPICommonMethodsMixin, BaseAPIConnector):
         Makes an API request with provided diagnosis data and returns a list
         of evidence that may be related to potentially life-threatening
         conditions.
+        See the docs: https://developer.infermedica.com/docs/red-flags.
 
         :param data: Request data
         :param params: (optional) URL query params
@@ -120,6 +121,7 @@ class APIv2Connector(BasicAPIv2Connector):
         """
         Makes an parse API request with provided text and include_tokens parameter.
         Returns parse results with detailed list of mentions found in the text.
+        See the docs: https://developer.infermedica.com/docs/nlp.
 
         :param text: Text to parse
         :param include_tokens: (optional) Switch to manipulate the include_tokens parameter
@@ -150,6 +152,7 @@ class APIv2Connector(BasicAPIv2Connector):
                 **kwargs: Any) -> List[Dict[str, str]]:
         """
         Makes an API suggest request and returns a list of suggested evidence.
+        See the docs: https://developer.infermedica.com/docs/suggest-related-concepts.
 
         :param evidence: Diagnostic evidence list
         :param sex: Biological sex value, one of values 'female' or 'male'
@@ -187,6 +190,7 @@ class APIv2Connector(BasicAPIv2Connector):
         Makes an API request with provided diagnosis data and returns a list
         of evidence that may be related to potentially life-threatening
         conditions.
+        See the docs: https://developer.infermedica.com/docs/red-flags.
 
         :param evidence: Diagnostic evidence list
         :param sex: Biological sex value, one of values 'female' or 'male'
@@ -222,6 +226,7 @@ class APIv2Connector(BasicAPIv2Connector):
         """
         Makes a diagnosis API request with provided diagnosis data
         and returns diagnosis question with possible conditions.
+        See the docs: https://developer.infermedica.com/docs/diagnosis.
 
         :param evidence: Diagnostic evidence list
         :param sex: Biological sex value, one of values 'female' or 'male'
@@ -254,6 +259,7 @@ class APIv2Connector(BasicAPIv2Connector):
         Makes an API request with provided diagnosis data and returns
         an explanation of why the given question has been selected by
         the reasoning engine.
+        See the docs: https://developer.infermedica.com/docs/rationale.
 
         :param evidence: Diagnostic evidence list
         :param sex: Biological sex value, one of values 'female' or 'male'
@@ -285,6 +291,7 @@ class APIv2Connector(BasicAPIv2Connector):
         """
         Makes an explain API request with provided diagnosis data and target condition.
         Returns explain results with supporting and conflicting evidence.
+        See the docs: https://developer.infermedica.com/docs/explain.
 
         :param target_id: Condition id for which explain shall be calculated
         :param evidence: Diagnostic evidence list
@@ -357,6 +364,7 @@ class ModelAPIv2Connector(APIv2Connector):
                 **kwargs: Any) -> List[Dict[str, str]]:
         """
         Makes an API suggest request and returns a list of suggested evidence.
+        See the docs: https://developer.infermedica.com/docs/suggest-related-concepts.
 
         :param diagnosis_request: Diagnosis request object
         :param max_results: (optional) Maximum number of result to return, default is 8
@@ -380,6 +388,7 @@ class ModelAPIv2Connector(APIv2Connector):
         Makes an API request with provided diagnosis data and returns a list
         of evidence that may be related to potentially life-threatening
         conditions.
+        See the docs: https://developer.infermedica.com/docs/red-flags.
 
         :param diagnosis_request: Diagnosis request object
         :param max_results: (optional) Maximum number of result to return, default is 8
@@ -402,6 +411,7 @@ class ModelAPIv2Connector(APIv2Connector):
         """
         Makes an parse API request with provided text and include_tokens parameter.
         Returns parse results with detailed list of mentions found in the text.
+        See the docs: https://developer.infermedica.com/docs/nlp.
 
         :param text: Text to parse
         :param include_tokens: (optional) Switch to manipulate the include_tokens parameter
@@ -423,6 +433,7 @@ class ModelAPIv2Connector(APIv2Connector):
         """
         Makes a diagnosis API request with provided diagnosis data
         and returns diagnosis question with possible conditions.
+        See the docs: https://developer.infermedica.com/docs/diagnosis.
 
         :param diagnosis_request: Diagnosis request object
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
@@ -445,6 +456,7 @@ class ModelAPIv2Connector(APIv2Connector):
         Makes an API request with provided diagnosis data and returns
         an explanation of why the given question has been selected by
         the reasoning engine.
+        See the docs: https://developer.infermedica.com/docs/rationale.
 
         :param diagnosis_request: Diagnosis request object
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
@@ -465,6 +477,7 @@ class ModelAPIv2Connector(APIv2Connector):
         """
         Makes an explain API request with provided diagnosis data and target condition.
         Returns explain results with supporting and conflicting evidence.
+        See the docs: https://developer.infermedica.com/docs/explain.
 
         :param diagnosis_request: Diagnosis request object
         :param target_id: Condition id for which explain shall be calculated
@@ -507,6 +520,7 @@ class ModelAPIv2Connector(APIv2Connector):
     def condition_details(self, condition_id: str, **kwargs: Any) -> models.Condition:
         """
         Makes an API request and returns condition details object.
+        See the docs: https://developer.infermedica.com/docs/medical-concepts#conditions.
 
         :param condition_id: Condition id
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
@@ -523,6 +537,7 @@ class ModelAPIv2Connector(APIv2Connector):
     def conditions_list(self, **kwargs: Any) -> models.ConditionList:
         """
         Makes an API request and returns list of condition details objects.
+        See the docs: https://developer.infermedica.com/docs/medical-concepts#conditions.
 
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
 
@@ -535,6 +550,7 @@ class ModelAPIv2Connector(APIv2Connector):
     def symptom_details(self, symptom_id: str, **kwargs: Any) -> models.Symptom:
         """
         Makes an API request and returns symptom details object.
+        See the docs: https://developer.infermedica.com/docs/medical-concepts#symptoms.
 
         :param symptom_id: Symptom id
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
@@ -551,6 +567,7 @@ class ModelAPIv2Connector(APIv2Connector):
     def symptoms_list(self, **kwargs: Any) -> models.SymptomList:
         """
         Makes an API request and returns list of symptom details objects.
+        See the docs: https://developer.infermedica.com/docs/medical-concepts#symptoms.
 
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
 
@@ -563,6 +580,7 @@ class ModelAPIv2Connector(APIv2Connector):
     def risk_factor_details(self, risk_factor_id: str, **kwargs: Any) -> models.RiskFactor:
         """
         Makes an API request and returns risk factor details object.
+        See the docs: https://developer.infermedica.com/docs/medical-concepts#risk-factors.
 
         :param risk_factor_id: Risk factor id
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
@@ -579,6 +597,7 @@ class ModelAPIv2Connector(APIv2Connector):
     def risk_factors_list(self, **kwargs: Any) -> models.RiskFactorList:
         """
         Makes an API request and returns list of risk factors details objects.
+        See the docs: https://developer.infermedica.com/docs/medical-concepts#risk-factors.
 
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
 
@@ -591,6 +610,7 @@ class ModelAPIv2Connector(APIv2Connector):
     def lab_test_details(self, lab_test_id: str, **kwargs: Any) -> models.LabTest:
         """
         Makes an API request and returns lab_test details object.
+        See the docs: https://developer.infermedica.com/docs/medical-concepts#lab-tests-and-lab-test-results.
 
         :param lab_test_id: Lab test id
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
@@ -607,6 +627,7 @@ class ModelAPIv2Connector(APIv2Connector):
     def lab_tests_list(self, **kwargs: Any) -> models.LabTestList:
         """
         Makes an API request and returns list of lab_test details objects.
+        See the docs: https://developer.infermedica.com/docs/medical-concepts#lab-tests-and-lab-test-results.
 
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
 

@@ -64,6 +64,7 @@ class BasicAPIv3Connector(BasicAPICommonMethodsMixin, BaseAPIConnector):
                                headers: Optional[Dict] = None) -> Dict:
         """
         Makes a specialist recommendation API request with provided diagnosis data.
+        See the docs: https://developer.infermedica.com/docs/v3/specialist-recommender.
 
         :param data: Request data
         :param params: (optional) URL query params
@@ -84,6 +85,7 @@ class BasicAPIv3Connector(BasicAPICommonMethodsMixin, BaseAPIConnector):
                         headers: Optional[Dict] = None) -> ConceptDetails:
         """
         Makes an API request and returns concept details object.
+        See the docs: https://developer.infermedica.com/docs/v3/concepts.
 
         :param concept_id: Concept id
         :param params: (optional) URL query params
@@ -103,6 +105,7 @@ class BasicAPIv3Connector(BasicAPICommonMethodsMixin, BaseAPIConnector):
     def concept_list(self, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> List[ConceptDetails]:
         """
         Makes an API request and returns list of concept details objects.
+        See the docs: https://developer.infermedica.com/docs/v3/concepts.
 
         :param params: (optional) URL query params
         :param headers: (optional) HTTP request headers
@@ -226,6 +229,7 @@ class APIv3Connector(BasicAPIv3Connector):
         """
         Makes an parse API request with provided text and include_tokens parameter.
         Returns parse results with detailed list of mentions found in the text.
+        See the docs: https://developer.infermedica.com/docs/v3/nlp.
 
         :param text: Text to parse
         :param age: Age value
@@ -257,6 +261,7 @@ class APIv3Connector(BasicAPIv3Connector):
                 **kwargs: Any) -> List[Dict[str, str]]:
         """
         Makes an API suggest request and returns a list of suggested evidence.
+        See the docs: https://developer.infermedica.com/docs/v3/suggest-related-concepts.
 
         :param evidence: Diagnostic evidence list
         :param sex: Biological sex value, one of values 'female' or 'male'
@@ -298,6 +303,7 @@ class APIv3Connector(BasicAPIv3Connector):
         """
         Makes a diagnosis API request with provided diagnosis data
         and returns diagnosis question with possible conditions.
+        See the docs: https://developer.infermedica.com/docs/v3/diagnosis.
 
         :param evidence: Diagnostic evidence list
         :param sex: Biological sex value, one of values 'female' or 'male'
@@ -332,6 +338,7 @@ class APIv3Connector(BasicAPIv3Connector):
         Makes an API request with provided diagnosis data and returns
         an explanation of why the given question has been selected by
         the reasoning engine.
+        See the docs: https://developer.infermedica.com/docs/v3/rationale.
 
         :param evidence: Diagnostic evidence list
         :param sex: Biological sex value, one of values 'female' or 'male'
@@ -365,6 +372,7 @@ class APIv3Connector(BasicAPIv3Connector):
         """
         Makes an explain API request with provided diagnosis data and target condition.
         Returns explain results with supporting and conflicting evidence.
+        See the docs: https://developer.infermedica.com/docs/v3/explain.
 
         :param target_id: Condition id for which explain shall be calculated
         :param evidence: Diagnostic evidence list
@@ -401,7 +409,7 @@ class APIv3Connector(BasicAPIv3Connector):
         """
         Makes a triage API request with provided diagnosis data.
         Returns triage results dict.
-        See the docs: https://developer.infermedica.com/docs/triage.
+        See the docs: https://developer.infermedica.com/docs/v3/triage.
 
         :param evidence: Diagnostic evidence list
         :param sex: Biological sex value, one of values 'female' or 'male'
@@ -435,6 +443,7 @@ class APIv3Connector(BasicAPIv3Connector):
                                **kwargs: Any) -> Dict:
         """
         Makes a specialist recommendation API request with provided diagnosis data.
+        See the docs: https://developer.infermedica.com/docs/v3/specialist-recommender.
 
         :param evidence: Diagnostic evidence list
         :param sex: Biological sex value, one of values 'female' or 'male'
@@ -468,6 +477,7 @@ class APIv3Connector(BasicAPIv3Connector):
                           **kwargs) -> ConditionDetails:
         """
         Makes an API request and returns condition details object.
+        See the docs: https://developer.infermedica.com/docs/v3/medical-concepts#conditions.
 
         :param condition_id: Condition id
         :param age: Age value
@@ -488,6 +498,7 @@ class APIv3Connector(BasicAPIv3Connector):
     def conditions_list(self, age: int, age_unit: Optional[str] = None, **kwargs) -> List[ConditionDetails]:
         """
         Makes an API request and returns list of condition details objects.
+        See the docs: https://developer.infermedica.com/docs/v3/medical-concepts#conditions.
 
         :param age: Age value
         :param age_unit: (optional) Age unit, one of values 'year' or 'month'
@@ -506,6 +517,7 @@ class APIv3Connector(BasicAPIv3Connector):
     def symptom_details(self, symptom_id: str, age: int, age_unit: Optional[str] = None, **kwargs) -> SymptomDetails:
         """
         Makes an API request and returns symptom details object.
+        See the docs: https://developer.infermedica.com/docs/v3/medical-concepts#symptoms.
 
         :param symptom_id: Symptom id
         :param age: Age value
@@ -526,6 +538,7 @@ class APIv3Connector(BasicAPIv3Connector):
     def symptoms_list(self, age: int, age_unit: Optional[str] = None, **kwargs) -> List[SymptomDetails]:
         """
         Makes an API request and returns list of symptom details objects.
+        See the docs: https://developer.infermedica.com/docs/v3/medical-concepts#symptoms.
 
         :param age: Age value
         :param age_unit: (optional) Age unit, one of values 'year' or 'month'
@@ -545,6 +558,7 @@ class APIv3Connector(BasicAPIv3Connector):
                             **kwargs) -> RiskFactorDetails:
         """
         Makes an API request and returns risk factor details object.
+        See the docs: https://developer.infermedica.com/docs/v3/medical-concepts#risk-factors.
 
         :param risk_factor_id: risk factor id
         :param age: Age value
@@ -565,6 +579,7 @@ class APIv3Connector(BasicAPIv3Connector):
     def risk_factors_list(self, age: int, age_unit: Optional[str] = None, **kwargs) -> List[RiskFactorDetails]:
         """
         Makes an API request and returns list of risk factors details objects.
+        See the docs: https://developer.infermedica.com/docs/v3/medical-concepts#risk-factors.
 
         :param age: Age value
         :param age_unit: (optional) Age unit, one of values 'year' or 'month'
@@ -584,6 +599,7 @@ class APIv3Connector(BasicAPIv3Connector):
                          **kwargs) -> LabTestDetails:
         """
         Makes an API request and returns lab_test details object.
+        See the docs: https://developer.infermedica.com/docs/v3/medical-concepts#lab-tests-and-lab-test-results.
 
         :param lab_test_id: LabTest id
         :param age: Age value
@@ -604,6 +620,7 @@ class APIv3Connector(BasicAPIv3Connector):
     def lab_tests_list(self, age: int, age_unit: Optional[str] = None, **kwargs) -> List[LabTestDetails]:
         """
         Makes an API request and returns list of lab test details objects.
+        See the docs: https://developer.infermedica.com/docs/v3/medical-concepts#lab-tests-and-lab-test-results.
 
         :param age: Age value
         :param age_unit: (optional) Age unit, one of values 'year' or 'month'
@@ -622,6 +639,7 @@ class APIv3Connector(BasicAPIv3Connector):
     def concept_details(self, concept_id: str, **kwargs) -> ConceptDetails:
         """
         Makes an API request and returns concept details object.
+        See the docs: https://developer.infermedica.com/docs/v3/concepts.
 
         :param concept_id: Concept id
         :param age: Age value
@@ -639,6 +657,7 @@ class APIv3Connector(BasicAPIv3Connector):
                      types: Optional[List[Union[ConceptType, str]]] = None, **kwargs) -> List[ConceptDetails]:
         """
         Makes an API request and returns list of concept details objects.
+        See the docs: https://developer.infermedica.com/docs/v3/concepts.
 
         :param ids: (optional) List of concept ids to fetch data only for selected ids
         :param types: (optional) List of concept types (enums ConceptType or str) to narrow the response

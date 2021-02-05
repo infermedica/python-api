@@ -440,9 +440,9 @@ class APIv3Connector(
             **kwargs
         )
 
-    def concept_details(self, concept_id: str, age: int, age_unit: Optional[str] = None, **kwargs) -> ConceptDetails:
+    def concept_details(self, concept_id: str, **kwargs) -> ConceptDetails:
         """
-        Makes an API request and returns lab test details object.
+        Makes an API request and returns concept details object.
 
         :param concept_id: Concept id
         :param age: Age value
@@ -451,22 +451,16 @@ class APIv3Connector(
 
         :returns: A dict object with concept details
         """
-        params = kwargs.pop('params', {})
-        params.update(self.get_age_query_params(age=age, age_unit=age_unit))
-
         return super().concept_details(
             concept_id=concept_id,
-            params=params,
             **kwargs
         )
 
-    def concept_list(self, age: int, age_unit: Optional[str] = None, ids: Optional[List[str]] = None,
+    def concept_list(self, ids: Optional[List[str]] = None,
                      types: Optional[List[Union[ConceptType, str]]] = None, **kwargs) -> List[ConceptDetails]:
         """
         Makes an API request and returns list of concept details objects.
 
-        :param age: Age value
-        :param age_unit: (optional) Age unit, one of values 'year' or 'month'
         :param ids: (optional) List of concept ids to fetch data only for selected ids
         :param types: (optional) List of concept types (enums ConceptType or str) to narrow the response
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`BasicAPIv3Connector` method
@@ -474,7 +468,6 @@ class APIv3Connector(
         :returns: A list of dict objects with concept details
         """
         params = kwargs.pop('params', {})
-        params.update(self.get_age_query_params(age=age, age_unit=age_unit))
 
         if ids:
             params['ids'] = ','.join(ids)

@@ -22,7 +22,7 @@ DiagnosticDict = Dict[str, Union[str, int, EvidenceList, ExtrasDict]]
 
 
 class BasicAPIv2Connector(BasicAPICommonMethodsMixin, BaseAPIConnector):
-    def __init__(self, *args, api_version='v2', **kwargs: Any):
+    def __init__(self, *args, api_version="v2", **kwargs: Any):
         """
         Initialize API connector.
 
@@ -36,8 +36,9 @@ class BasicAPIv2Connector(BasicAPICommonMethodsMixin, BaseAPIConnector):
         """
         super().__init__(*args, api_version=api_version, **kwargs)
 
-    def red_flags(self, data: Dict, params: Optional[Dict] = None,
-                  headers: Optional[Dict] = None) -> List[Dict[str, str]]:
+    def red_flags(
+        self, data: Dict, params: Optional[Dict] = None, headers: Optional[Dict] = None
+    ) -> List[Dict[str, str]]:
         """
         Makes an API request with provided diagnosis data and returns a list
         of evidence that may be related to potentially life-threatening
@@ -50,11 +51,8 @@ class BasicAPIv2Connector(BasicAPICommonMethodsMixin, BaseAPIConnector):
 
         :returns: A list of dicts with 'id', 'name' and 'common_name' keys
         """
-        method = self._get_method('red_flags')
+        method = self._get_method("red_flags")
 
         return self.call_api_post(
-            method=method,
-            data=data,
-            params=params,
-            headers=headers
+            method=method, data=data, params=params, headers=headers
         )

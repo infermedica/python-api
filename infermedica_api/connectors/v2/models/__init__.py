@@ -1,5 +1,10 @@
 from .condition import Condition, ConditionList
-from .diagnosis import Diagnosis, DiagnosisQuestion, ConditionResult, ConditionResultList
+from .diagnosis import (
+    Diagnosis,
+    DiagnosisQuestion,
+    ConditionResult,
+    ConditionResultList,
+)
 from .lab_test import LabTest, LabTestList
 from .risk_factor import RiskFactor, RiskFactorList
 from .symptom import Symptom, SymptomList

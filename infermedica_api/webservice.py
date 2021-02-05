@@ -41,9 +41,14 @@ def get_api(alias: str = None) -> connectors.APIConnectorType:
     return __api__
 
 
-def configure(app_id: str, app_key: str, alias: Optional[str] = None, default: Optional[bool] = False,
-              api_connector: Optional[Union[connectors.APIConnectorType, str]] = 'APIv3Connector',
-              **kwargs: Any) -> connectors.APIConnectorType:
+def configure(
+    app_id: str,
+    app_key: str,
+    alias: Optional[str] = None,
+    default: Optional[bool] = False,
+    api_connector: Optional[Union[connectors.APIConnectorType, str]] = "APIv3Connector",
+    **kwargs: Any
+) -> connectors.APIConnectorType:
     """
     Configure and create new global API object with given configuration. Many global configurations can be created
     upfront (e.g. with different credentials or language models configured) by providing a unique alias

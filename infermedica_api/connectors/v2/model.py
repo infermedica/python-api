@@ -19,8 +19,12 @@ class ModelAPIv2Connector(APIv2Connector):
     provides methods that operates on data models.
     """
 
-    def suggest(self, diagnosis_request: models.Diagnosis, max_results: Optional[int] = 8,
-                **kwargs: Any) -> List[Dict[str, str]]:
+    def suggest(
+        self,
+        diagnosis_request: models.Diagnosis,
+        max_results: Optional[int] = 8,
+        **kwargs: Any
+    ) -> List[Dict[str, str]]:
         """
         Makes an API suggest request and returns a list of suggested evidence.
         See the docs: https://developer.infermedica.com/docs/suggest-related-concepts.
@@ -34,15 +38,17 @@ class ModelAPIv2Connector(APIv2Connector):
         data = diagnosis_request.get_api_request()
 
         response = super().suggest(
-            max_results=max_results,
-            interview_id=diagnosis_request.interview_id,
-            **data
+            max_results=max_results, interview_id=diagnosis_request.interview_id, **data
         )
 
         return response  # TODO: Pack response into model class
 
-    def red_flags(self, diagnosis_request: models.Diagnosis, max_results: Optional[int] = 8,
-                  **kwargs: Any) -> models.RedFlagList:
+    def red_flags(
+        self,
+        diagnosis_request: models.Diagnosis,
+        max_results: Optional[int] = 8,
+        **kwargs: Any
+    ) -> models.RedFlagList:
         """
         Makes an API request with provided diagnosis data and returns a list
         of evidence that may be related to potentially life-threatening
@@ -58,15 +64,18 @@ class ModelAPIv2Connector(APIv2Connector):
         data = diagnosis_request.get_api_request()
 
         response = super().red_flags(
-            max_results=max_results,
-            interview_id=diagnosis_request.interview_id,
-            **data
+            max_results=max_results, interview_id=diagnosis_request.interview_id, **data
         )
 
         return models.RedFlagList.from_json(response)
 
-    def parse(self, text: str, include_tokens: Optional[bool] = False, interview_id: Optional[str] = None,
-              **kwargs: Any) -> models.ParseResults:
+    def parse(
+        self,
+        text: str,
+        include_tokens: Optional[bool] = False,
+        interview_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> models.ParseResults:
         """
         Makes an parse API request with provided text and include_tokens parameter.
         Returns parse results with detailed list of mentions found in the text.
@@ -88,7 +97,9 @@ class ModelAPIv2Connector(APIv2Connector):
 
         return models.ParseResults.from_json(response)
 
-    def diagnosis(self, diagnosis_request: models.Diagnosis, **kwargs: Any) -> models.Diagnosis:
+    def diagnosis(
+        self, diagnosis_request: models.Diagnosis, **kwargs: Any
+    ) -> models.Diagnosis:
         """
         Makes a diagnosis API request with provided diagnosis data
         and returns diagnosis question with possible conditions.
@@ -102,15 +113,15 @@ class ModelAPIv2Connector(APIv2Connector):
         data = diagnosis_request.get_api_request()
 
         response = super().diagnosis(
-            interview_id=diagnosis_request.interview_id,
-            **data,
-            **kwargs
+            interview_id=diagnosis_request.interview_id, **data, **kwargs
         )
         diagnosis_request.update_from_api(response)
 
         return diagnosis_request
 
-    def rationale(self, diagnosis_request: models.Diagnosis, **kwargs: Any) -> models.RationaleResult:
+    def rationale(
+        self, diagnosis_request: models.Diagnosis, **kwargs: Any
+    ) -> models.RationaleResult:
         """
         Makes an API request with provided diagnosis data and returns
         an explanation of why the given question has been selected by
@@ -125,14 +136,14 @@ class ModelAPIv2Connector(APIv2Connector):
         data = diagnosis_request.get_api_request()
 
         response = super().rationale(
-            interview_id=diagnosis_request.interview_id,
-            **data,
-            **kwargs
+            interview_id=diagnosis_request.interview_id, **data, **kwargs
         )
 
         return models.RationaleResult.from_json(response)
 
-    def explain(self, diagnosis_request: models.Diagnosis, target_id, **kwargs: Any) -> models.ExplainResults:
+    def explain(
+        self, diagnosis_request: models.Diagnosis, target_id, **kwargs: Any
+    ) -> models.ExplainResults:
         """
         Makes an explain API request with provided diagnosis data and target condition.
         Returns explain results with supporting and conflicting evidence.
@@ -169,9 +180,7 @@ class ModelAPIv2Connector(APIv2Connector):
         data = diagnosis_request.get_api_request()
 
         response = super().triage(
-            interview_id=diagnosis_request.interview_id,
-            **data,
-            **kwargs
+            interview_id=diagnosis_request.interview_id, **data, **kwargs
         )
 
         return response  # TODO:  Pack response into model class
@@ -186,10 +195,7 @@ class ModelAPIv2Connector(APIv2Connector):
 
         :returns:A Condition object
         """
-        response = super().condition_details(
-            condition_id=condition_id,
-            **kwargs
-        )
+        response = super().condition_details(condition_id=condition_id, **kwargs)
 
         return models.Condition.from_json(response)
 
@@ -216,10 +222,7 @@ class ModelAPIv2Connector(APIv2Connector):
 
         :returns: A Symptom object
         """
-        response = super().symptom_details(
-            symptom_id=symptom_id,
-            **kwargs
-        )
+        response = super().symptom_details(symptom_id=symptom_id, **kwargs)
 
         return models.Symptom.from_json(response)
 
@@ -236,7 +239,9 @@ class ModelAPIv2Connector(APIv2Connector):
 
         return models.SymptomList.from_json(response)
 
-    def risk_factor_details(self, risk_factor_id: str, **kwargs: Any) -> models.RiskFactor:
+    def risk_factor_details(
+        self, risk_factor_id: str, **kwargs: Any
+    ) -> models.RiskFactor:
         """
         Makes an API request and returns risk factor details object.
         See the docs: https://developer.infermedica.com/docs/medical-concepts#risk-factors.
@@ -246,10 +251,7 @@ class ModelAPIv2Connector(APIv2Connector):
 
         :returns: A RiskFactor object
         """
-        response = super().risk_factor_details(
-            risk_factor_id=risk_factor_id,
-            **kwargs
-        )
+        response = super().risk_factor_details(risk_factor_id=risk_factor_id, **kwargs)
 
         return models.RiskFactor.from_json(response)
 
@@ -276,10 +278,7 @@ class ModelAPIv2Connector(APIv2Connector):
 
         :returns: A LabTest object
         """
-        response = super().lab_test_details(
-            lab_test_id=lab_test_id,
-            **kwargs
-        )
+        response = super().lab_test_details(lab_test_id=lab_test_id, **kwargs)
 
         return models.LabTest.from_json(response)
 

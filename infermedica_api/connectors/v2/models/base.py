@@ -33,7 +33,9 @@ class ModelCommon:
         :rtype: str
         """
         if pretty_print:
-            return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
+            return json.dumps(
+                self, default=lambda o: o.__dict__, sort_keys=True, indent=4
+            )
         return json.dumps(self, default=lambda o: o.__dict__)
 
     def to_dict(self):
@@ -43,7 +45,12 @@ class ModelCommon:
         :return: Class object as dict.
         :rtype: dict
         """
-        return dict({key: val.to_dict() if hasattr(val, 'to_dict') else val for key, val in self.__dict__.items()})
+        return dict(
+            {
+                key: val.to_dict() if hasattr(val, "to_dict") else val
+                for key, val in self.__dict__.items()
+            }
+        )
 
 
 class BaseModel(ModelCommon):
@@ -69,8 +76,8 @@ class BaseModelList(list, ModelCommon):
         abstract = True
 
     def __init__(self, *args, **kwargs):
-        if 'mapping' in kwargs:
-            self.mapping = kwargs.pop('mapping')
+        if "mapping" in kwargs:
+            self.mapping = kwargs.pop("mapping")
         else:
             self.mapping = {}
 
@@ -97,7 +104,7 @@ class BaseModelList(list, ModelCommon):
         :return: Class object as simple list.
         :rtype: list
         """
-        return [val.to_dict() if hasattr(val, 'to_dict') else val for val in self]
+        return [val.to_dict() if hasattr(val, "to_dict") else val for val in self]
 
     def to_dict(self):
         """

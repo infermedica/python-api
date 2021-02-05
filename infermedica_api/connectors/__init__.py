@@ -17,5 +17,5 @@ APIConnectorType = Union[
     APIv2Connector,
     ModelAPIv2Connector,
     BasicAPIv3Connector,
-    APIv3Connector
+    APIv3Connector,
 ]

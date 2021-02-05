@@ -17,7 +17,7 @@ from ..common import (
 
 
 class BasicAPIv3Connector(BasicAPICommonMethodsMixin, BaseAPIConnector):
-    def __init__(self, *args, api_version='v3', **kwargs: Any):
+    def __init__(self, *args, api_version="v3", **kwargs: Any):
         """
         Initialize API connector.
 
@@ -31,8 +31,9 @@ class BasicAPIv3Connector(BasicAPICommonMethodsMixin, BaseAPIConnector):
         """
         super().__init__(*args, api_version=api_version, **kwargs)
 
-    def specialist_recommender(self, data: Dict, params: Optional[Dict] = None,
-                               headers: Optional[Dict] = None) -> Dict:
+    def specialist_recommender(
+        self, data: Dict, params: Optional[Dict] = None, headers: Optional[Dict] = None
+    ) -> Dict:
         """
         Makes a specialist recommendation API request with provided diagnosis data.
         See the docs: https://developer.infermedica.com/docs/v3/specialist-recommender.
@@ -43,17 +44,18 @@ class BasicAPIv3Connector(BasicAPICommonMethodsMixin, BaseAPIConnector):
 
         :returns: A dict object with api response
         """
-        method = self._get_method('specialist_recommender')
+        method = self._get_method("specialist_recommender")
 
         return self.call_api_post(
-            method=method,
-            data=data,
-            params=params,
-            headers=headers
+            method=method, data=data, params=params, headers=headers
         )
 
-    def concept_details(self, concept_id: str, params: Optional[Dict] = None,
-                        headers: Optional[Dict] = None) -> ConceptDetails:
+    def concept_details(
+        self,
+        concept_id: str,
+        params: Optional[Dict] = None,
+        headers: Optional[Dict] = None,
+    ) -> ConceptDetails:
         """
         Makes an API request and returns concept details object.
         See the docs: https://developer.infermedica.com/docs/v3/concepts.
@@ -64,16 +66,14 @@ class BasicAPIv3Connector(BasicAPICommonMethodsMixin, BaseAPIConnector):
 
         :returns: A dict object with concept details
         """
-        method = self._get_method('concept_details')
-        method = method.format(**{'id': concept_id})
+        method = self._get_method("concept_details")
+        method = method.format(**{"id": concept_id})
 
-        return self.call_api_get(
-            method=method,
-            params=params,
-            headers=headers
-        )
+        return self.call_api_get(method=method, params=params, headers=headers)
 
-    def concept_list(self, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> List[ConceptDetails]:
+    def concept_list(
+        self, params: Optional[Dict] = None, headers: Optional[Dict] = None
+    ) -> List[ConceptDetails]:
         """
         Makes an API request and returns list of concept details objects.
         See the docs: https://developer.infermedica.com/docs/v3/concepts.
@@ -83,10 +83,6 @@ class BasicAPIv3Connector(BasicAPICommonMethodsMixin, BaseAPIConnector):
 
         :returns: A list of dict objects with concept details
         """
-        method = self._get_method('concepts')
+        method = self._get_method("concepts")
 
-        return self.call_api_get(
-            method=method,
-            params=params,
-            headers=headers
-        )
+        return self.call_api_get(method=method, params=params, headers=headers)

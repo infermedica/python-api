@@ -16,10 +16,11 @@ pip install infermedica-api
 ### Quick start
 
 A Quick verification if all works fine:
+
 ```python
 import infermedica_api
 
-api = infermedica_api.APIv3Connector(app_id='YOUR_APP_ID', app_key='YOUR_APP_KEY')
+api = infermedica_api.APIv3Connector(app_id="YOUR_APP_ID", app_key="YOUR_APP_KEY")
 print(api.info())
 ```
 
@@ -72,7 +73,7 @@ Single local API Connector.
 ```python
 import infermedica_api
 
-api = infermedica_api.APIv3Connector(app_id='YOUR_APP_ID', app_key='YOUR_APP_KEY')
+api = infermedica_api.APIv3Connector(app_id="YOUR_APP_ID", app_key="YOUR_APP_KEY")
 
 print(api.info())
 ```
@@ -89,42 +90,44 @@ Configuration of one or many global API Connectors, that are easily available ev
 The `configure` function takes exactly the same parameters as each API Connector class constructor, but expect few additional optional parameters:
 * `alias` - A unique string identifier of the configuration, if not provided configuration is registered as default.
 * `default` - In case `alias` is provided, this flag determinate if the configuration should be also registered as the default one. There may be only one default.
-* `api_connector` - API connector class to be used for the configuration or just a string with API Connector name, e.g. `'APIv3Connector'` _(default)_
+* `api_connector` - API connector class to be used for the configuration or just a string with API Connector name, e.g. `"APIv3Connector"` _(default)_
 
 To define a single global connector:
+
 ```python
 import infermedica_api
 
-infermedica_api.configure(app_id='YOUR_APP_ID', app_key='YOUR_APP_KEY')
+infermedica_api.configure(app_id="YOUR_APP_ID", app_key="YOUR_APP_KEY")
 ```
 
 To define multiple global connectors:
+
 ```python
 import infermedica_api
 
 # Aliased, default configuration with English language
 infermedica_api.configure(
-    alias='en',
+    alias="en",
     default=True,
-    app_id='YOUR_APP_ID', 
-    app_key='YOUR_APP_KEY',
-    model='infermedica-en'
+    app_id="YOUR_APP_ID",
+    app_key="YOUR_APP_KEY",
+    model="infermedica-en"
 )
 
 # Configuration with Polish language
 infermedica_api.configure(
-    alias='pl',
-    app_id='YOUR_APP_ID', 
-    app_key='YOUR_APP_KEY',
-    model='infermedica-pl'
+    alias="pl",
+    app_id="YOUR_APP_ID",
+    app_key="YOUR_APP_KEY",
+    model="infermedica-pl"
 )
 
 # Configuration with English language based on non-default connector
 infermedica_api.configure(
-    alias='basic-en',
-    app_id='YOUR_APP_ID', 
-    app_key='YOUR_APP_KEY',
-    model='infermedica-en',
+    alias="basic-en",
+    app_id="YOUR_APP_ID",
+    app_key="YOUR_APP_KEY",
+    model="infermedica-en",
     api_connector=infermedica_api.BasicAPIv3Connector
 )
 ```
@@ -137,7 +140,7 @@ import infermedica_api
 api = infermedica_api.get_api()  # Get default connector
 print(api.info())
 
-api = infermedica_api.get_api('pl')  # Get connector by alias
+api = infermedica_api.get_api("pl")  # Get connector by alias
 print(api.info())
 ```
 
@@ -148,50 +151,50 @@ Here is an example of how to use the API to get a list of patient's likely condi
 ```python
 import infermedica_api
 
-api = infermedica_api.APIv3Connector(app_id='YOUR_APP_ID', app_key='YOUR_APP_KEY')
+api = infermedica_api.APIv3Connector(app_id="YOUR_APP_ID", app_key="YOUR_APP_KEY")
 
 # Prepare initial patients diagnostic information.
-sex = 'female'
+sex = "female"
 age = 32
 evidence = [
-    {'id': 's_21', 'choice_id': 'present', 'source': 'initial'},
-    {'id': 's_98', 'choice_id': 'present', 'source': 'initial'},
-    {'id': 's_107', 'choice_id': 'present'}
+    {"id": "s_21", "choice_id": "present", "source": "initial"},
+    {"id": "s_98", "choice_id": "present", "source": "initial"},
+    {"id": "s_107", "choice_id": "present"}
 ]
 
 # call diagnosis
 response = api.diagnosis(evidence=evidence, sex=sex, age=age)
 
 # Access question asked by API
-print(response['question'])
-print(response['question']['text'])  # actual text of the question
-print(response['question']['items'])  # list of related evidence with possible answers
-print(response['question']['items'][0]['id'])
-print(response['question']['items'][0]['name'])
-print(response['question']['items'][0]['choices'])  # list of possible answers
-print(response['question']['items'][0]['choices'][0]['id'])  # answer id
-print(response['question']['items'][0]['choices'][0]['label'])  # answer label
+print(response["question"])
+print(response["question"]["text"])  # actual text of the question
+print(response["question"]["items"])  # list of related evidence with possible answers
+print(response["question"]["items"][0]["id"])
+print(response["question"]["items"][0]["name"])
+print(response["question"]["items"][0]["choices"])  # list of possible answers
+print(response["question"]["items"][0]["choices"][0]["id"])  # answer id
+print(response["question"]["items"][0]["choices"][0]["label"])  # answer label
 
-# Check the 'should_stop' flag
-print(response['should_stop'])
+# Check the "should_stop" flag
+print(response["should_stop"])
 
 # Next update the request and get next question:
 evidence.append({
-    'id': response['question']['items'][0]['id'],
-    'choice_id': response['question']['items'][0]['choices'][0]['id']  # Just example, the choice_id shall be taken from the real user answer
+    "id": response["question"]["items"][0]["id"],
+    "choice_id": response["question"]["items"][0]["choices"][0]["id"]  # Just example, the choice_id shall be taken from the real user answer
 })
 
 # call diagnosis method again
 response = api.diagnosis(evidence=evidence, sex=sex, age=age)
 
-# ... and so on, continue the interview and watch for the 'should_stop' flag. 
+# ... and so on, continue the interview and watch for the "should_stop" flag. 
 # Once it will be set to true you can present the condition results:
 
 # Access list of conditions with probabilities
-print(response['conditions'])
-print(response['conditions'][0]['id'])
-print(response['conditions'][0]['name'])
-print(response['conditions'][0]['probability'])
+print(response["conditions"])
+print(response["conditions"][0]["id"])
+print(response["conditions"][0]["name"])
+print(response["conditions"][0]["probability"])
 ```
 
 
@@ -244,7 +247,7 @@ There are also few additional exception that may occur:
 
 Arkadiusz Szydełko ([akszydelko](https://github.com/akszydelko)) and Paweł Iwaszko ([iwaszko](https://github.com/iwaszko)) are the creators and current maintainers of the Infermedica API Python client. 
 
-Pull requests are always welcome. Before submitting a pull request, please ensure that your coding style follows PEP 8 and rules form `.editorconfig` file.
+Pull requests are always welcome. Before submitting a pull request, please ensure that your coding style follows PEP 8 and rules form `.editorconfig` file. Also note that the library if formatted according to `black` rules so please apply them.
 
 # Legal
 

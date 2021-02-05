@@ -37,59 +37,59 @@ is available at <https://developer.infermedica.com>.
 
 """
 
-__title__ = 'Infermedica API'
-__version__ = '0.1.1'
-__author__ = 'Arkadiusz Szydelko'
-__license__ = 'Apache 2.0'
-__copyright__ = 'Copyright 2021 Infermedica'
+__title__ = "Infermedica API"
+__version__ = "0.1.1"
+__author__ = "Arkadiusz Szydelko"
+__license__ = "Apache 2.0"
+__copyright__ = "Copyright 2021 Infermedica"
 
-DEFAULT_API_VERSION = 'v3'
-DEFAULT_API_ENDPOINT = 'https://api.infermedica.com/'
+DEFAULT_API_VERSION = "v3"
+DEFAULT_API_ENDPOINT = "https://api.infermedica.com/"
 
 API_CONFIG = {
-    'v2': {
-        'methods': {
-            'info': '/info',
-            'search': '/search',
-            'suggest': '/suggest',
-            'parse': '/parse',
-            'diagnosis': '/diagnosis',
-            'explain': '/explain',
-            'triage': '/triage',
-            'conditions': '/conditions',
-            'condition_details': '/conditions/{id}',
-            'symptoms': '/symptoms',
-            'symptom_details': '/symptoms/{id}',
-            'lab_tests': '/lab_tests',
-            'lab_test_details': '/lab_tests/{id}',
-            'risk_factors': '/risk_factors',
-            'risk_factor_details': '/risk_factors/{id}',
-            'red_flags': '/red_flags',
-            'rationale': '/rationale',
+    "v2": {
+        "methods": {
+            "info": "/info",
+            "search": "/search",
+            "suggest": "/suggest",
+            "parse": "/parse",
+            "diagnosis": "/diagnosis",
+            "explain": "/explain",
+            "triage": "/triage",
+            "conditions": "/conditions",
+            "condition_details": "/conditions/{id}",
+            "symptoms": "/symptoms",
+            "symptom_details": "/symptoms/{id}",
+            "lab_tests": "/lab_tests",
+            "lab_test_details": "/lab_tests/{id}",
+            "risk_factors": "/risk_factors",
+            "risk_factor_details": "/risk_factors/{id}",
+            "red_flags": "/red_flags",
+            "rationale": "/rationale",
         },
     },
-    'v3': {
-        'methods': {
-            'info': '/info',
-            'search': '/search',
-            'parse': '/parse',
-            'suggest': '/suggest',
-            'diagnosis': '/diagnosis',
-            'rationale': '/rationale',
-            'explain': '/explain',
-            'triage': '/triage',
-            'specialist_recommender': '/recommend_specialist',
-            'conditions': '/conditions',
-            'condition_details': '/conditions/{id}',
-            'symptoms': '/symptoms',
-            'symptom_details': '/symptoms/{id}',
-            'lab_tests': '/lab_tests',
-            'lab_test_details': '/lab_tests/{id}',
-            'risk_factors': '/risk_factors',
-            'risk_factor_details': '/risk_factors/{id}',
-            'red_flags': '/red_flags',
-            'concepts': '/concepts',
-            'concept_details': '/concepts/{id}',
+    "v3": {
+        "methods": {
+            "info": "/info",
+            "search": "/search",
+            "parse": "/parse",
+            "suggest": "/suggest",
+            "diagnosis": "/diagnosis",
+            "rationale": "/rationale",
+            "explain": "/explain",
+            "triage": "/triage",
+            "specialist_recommender": "/recommend_specialist",
+            "conditions": "/conditions",
+            "condition_details": "/conditions/{id}",
+            "symptoms": "/symptoms",
+            "symptom_details": "/symptoms/{id}",
+            "lab_tests": "/lab_tests",
+            "lab_test_details": "/lab_tests/{id}",
+            "risk_factors": "/risk_factors",
+            "risk_factor_details": "/risk_factors/{id}",
+            "red_flags": "/red_flags",
+            "concepts": "/concepts",
+            "concept_details": "/concepts/{id}",
         },
     },
 }
@@ -101,9 +101,6 @@ from .connectors import (
     APIv2Connector,
     BasicAPIv3Connector,
     ModelAPIv2Connector,
-    APIv3Connector
+    APIv3Connector,
 )
-from .webservice import (
-    configure,
-    get_api
-)
+from .webservice import configure, get_api

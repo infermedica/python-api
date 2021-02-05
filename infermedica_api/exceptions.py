@@ -17,9 +17,9 @@ class ConnectionError(Exception):
 
     def __str__(self):
         message = "Failed."
-        if hasattr(self.response, 'status_code'):
+        if hasattr(self.response, "status_code"):
             message += f" Response status: {self.response.status_code}."
-        if hasattr(self.response, 'reason'):
+        if hasattr(self.response, "reason"):
             message += f" Reason: {self.response.reason}."
         if self.content is not None:
             message += f" Error message: {self.content}"
@@ -54,7 +54,9 @@ class MissingConfiguration(Exception):
 
     def __str__(self):
         if self.alias:
-            return f"API configuration for alias '{self.alias}' has not been configured."
+            return (
+                f"API configuration for alias '{self.alias}' has not been configured."
+            )
         return "Default API configuration has not been configured."
 
 

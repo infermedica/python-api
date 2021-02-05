@@ -105,12 +105,9 @@ class Diagnosis(ModelCommon):
 
     def __add_evidence(self, collection, _id, state, source=None):
         """Helper function to update evidence list."""
-        evidence = {
-            "id": _id,
-            "choice_id": state
-        }
+        evidence = {"id": _id, "choice_id": state}
         if source:
-            evidence['source'] = source
+            evidence["source"] = source
 
         collection.append(evidence)
 
@@ -221,14 +218,16 @@ class Diagnosis(ModelCommon):
         :param json: Dict obtained from the API diagnosis response
         :type json: dict
         """
-        if 'question' in json and isinstance(json['question'], dict):
-            self.question = DiagnosisQuestion.from_json(json['question'])
+        if "question" in json and isinstance(json["question"], dict):
+            self.question = DiagnosisQuestion.from_json(json["question"])
         else:
             self.question = None
 
-        self.conditions = ConditionResultList.from_json(json.get('conditions', []) or [])
-        self.should_stop = json.get('should_stop', None)
-        self.extras = json.get('extras', {}) or {}
+        self.conditions = ConditionResultList.from_json(
+            json.get("conditions", []) or []
+        )
+        self.should_stop = json.get("should_stop", None)
+        self.extras = json.get("extras", {}) or {}
 
     def get_evidence(self):
         return self.symptoms + self.lab_tests + self.risk_factors
@@ -244,14 +243,12 @@ class Diagnosis(ModelCommon):
         request = {
             "sex": self.patient_sex,
             "age": self.patient_age,
-
             "evidence": self.get_evidence(),
-
-            "extras": dict(self.extras_permanent, **self.extras)
+            "extras": dict(self.extras_permanent, **self.extras),
         }
 
         if self.pursued:
-            request['pursued'] = self.pursued
+            request["pursued"] = self.pursued
 
         return request
 
@@ -262,8 +259,15 @@ class Diagnosis(ModelCommon):
         :return: Diagnosis object as dict.
         :rtype: dict
         """
-        return dict(self.get_api_request(), **{
-            "question": self.question.to_dict() if hasattr(self.question, 'to_dict') else None,
-            "conditions": self.conditions.to_dict() if hasattr(self.conditions, 'to_dict') else None,
-            "should_stop": self.should_stop
-        })
+        return dict(
+            self.get_api_request(),
+            **{
+                "question": self.question.to_dict()
+                if hasattr(self.question, "to_dict")
+                else None,
+                "conditions": self.conditions.to_dict()
+                if hasattr(self.conditions, "to_dict")
+                else None,
+                "should_stop": self.should_stop,
+            }
+        )

@@ -495,7 +495,7 @@ class APIv3Connector(BasicAPIv3Connector):
             **kwargs
         )
 
-    def conditions_list(self, age: int, age_unit: Optional[str] = None, **kwargs) -> List[ConditionDetails]:
+    def condition_list(self, age: int, age_unit: Optional[str] = None, **kwargs) -> List[ConditionDetails]:
         """
         Makes an API request and returns list of condition details objects.
         See the docs: https://developer.infermedica.com/docs/v3/medical-concepts#conditions.
@@ -509,7 +509,7 @@ class APIv3Connector(BasicAPIv3Connector):
         params = kwargs.pop('params', {})
         params.update(self.get_age_query_params(age=age, age_unit=age_unit))
 
-        return super().conditions_list(
+        return super().condition_list(
             params=params,
             **kwargs
         )
@@ -535,7 +535,7 @@ class APIv3Connector(BasicAPIv3Connector):
             **kwargs
         )
 
-    def symptoms_list(self, age: int, age_unit: Optional[str] = None, **kwargs) -> List[SymptomDetails]:
+    def symptom_list(self, age: int, age_unit: Optional[str] = None, **kwargs) -> List[SymptomDetails]:
         """
         Makes an API request and returns list of symptom details objects.
         See the docs: https://developer.infermedica.com/docs/v3/medical-concepts#symptoms.
@@ -549,7 +549,7 @@ class APIv3Connector(BasicAPIv3Connector):
         params = kwargs.pop('params', {})
         params.update(self.get_age_query_params(age=age, age_unit=age_unit))
 
-        return super().symptoms_list(
+        return super().symptom_list(
             params=params,
             **kwargs
         )
@@ -576,7 +576,7 @@ class APIv3Connector(BasicAPIv3Connector):
             **kwargs
         )
 
-    def risk_factors_list(self, age: int, age_unit: Optional[str] = None, **kwargs) -> List[RiskFactorDetails]:
+    def risk_factor_list(self, age: int, age_unit: Optional[str] = None, **kwargs) -> List[RiskFactorDetails]:
         """
         Makes an API request and returns list of risk factors details objects.
         See the docs: https://developer.infermedica.com/docs/v3/medical-concepts#risk-factors.
@@ -590,7 +590,7 @@ class APIv3Connector(BasicAPIv3Connector):
         params = kwargs.pop('params', {})
         params.update(self.get_age_query_params(age=age, age_unit=age_unit))
 
-        return super().risk_factors_list(
+        return super().risk_factor_list(
             params=params,
             **kwargs
         )
@@ -617,7 +617,7 @@ class APIv3Connector(BasicAPIv3Connector):
             **kwargs
         )
 
-    def lab_tests_list(self, age: int, age_unit: Optional[str] = None, **kwargs) -> List[LabTestDetails]:
+    def lab_test_list(self, age: int, age_unit: Optional[str] = None, **kwargs) -> List[LabTestDetails]:
         """
         Makes an API request and returns list of lab test details objects.
         See the docs: https://developer.infermedica.com/docs/v3/medical-concepts#lab-tests-and-lab-test-results.
@@ -631,7 +631,7 @@ class APIv3Connector(BasicAPIv3Connector):
         params = kwargs.pop('params', {})
         params.update(self.get_age_query_params(age=age, age_unit=age_unit))
 
-        return super().lab_tests_list(
+        return super().lab_test_list(
             params=params,
             **kwargs
         )

@@ -534,7 +534,7 @@ class ModelAPIv2Connector(APIv2Connector):
 
         return models.Condition.from_json(response)
 
-    def conditions_list(self, **kwargs: Any) -> models.ConditionList:
+    def condition_list(self, **kwargs: Any) -> models.ConditionList:
         """
         Makes an API request and returns list of condition details objects.
         See the docs: https://developer.infermedica.com/docs/medical-concepts#conditions.
@@ -543,7 +543,7 @@ class ModelAPIv2Connector(APIv2Connector):
 
         :returns: A ConditionList list object with Condition objects
         """
-        response = super().conditions_list(**kwargs)
+        response = super().condition_list(**kwargs)
 
         return models.ConditionList.from_json(response)
 
@@ -564,7 +564,7 @@ class ModelAPIv2Connector(APIv2Connector):
 
         return models.Symptom.from_json(response)
 
-    def symptoms_list(self, **kwargs: Any) -> models.SymptomList:
+    def symptom_list(self, **kwargs: Any) -> models.SymptomList:
         """
         Makes an API request and returns list of symptom details objects.
         See the docs: https://developer.infermedica.com/docs/medical-concepts#symptoms.
@@ -573,7 +573,7 @@ class ModelAPIv2Connector(APIv2Connector):
 
         :returns: A SymptomList list object with Symptom objects
         """
-        response = super().symptoms_list(**kwargs)
+        response = super().symptom_list(**kwargs)
 
         return models.SymptomList.from_json(response)
 
@@ -594,7 +594,7 @@ class ModelAPIv2Connector(APIv2Connector):
 
         return models.RiskFactor.from_json(response)
 
-    def risk_factors_list(self, **kwargs: Any) -> models.RiskFactorList:
+    def risk_factor_list(self, **kwargs: Any) -> models.RiskFactorList:
         """
         Makes an API request and returns list of risk factors details objects.
         See the docs: https://developer.infermedica.com/docs/medical-concepts#risk-factors.
@@ -603,7 +603,7 @@ class ModelAPIv2Connector(APIv2Connector):
 
         :returns: A RiskFactorList list object with RiskFactor objects
         """
-        response = super().risk_factors_list(**kwargs)
+        response = super().risk_factor_list(**kwargs)
 
         return models.RiskFactorList.from_json(response)
 
@@ -624,7 +624,7 @@ class ModelAPIv2Connector(APIv2Connector):
 
         return models.LabTest.from_json(response)
 
-    def lab_tests_list(self, **kwargs: Any) -> models.LabTestList:
+    def lab_test_list(self, **kwargs: Any) -> models.LabTestList:
         """
         Makes an API request and returns list of lab_test details objects.
         See the docs: https://developer.infermedica.com/docs/medical-concepts#lab-tests-and-lab-test-results.
@@ -633,6 +633,6 @@ class ModelAPIv2Connector(APIv2Connector):
 
         :returns: A LabTestList list object with LabTest objects
         """
-        response = super().lab_tests_list(**kwargs)
+        response = super().lab_test_list(**kwargs)
 
         return models.LabTestList.from_json(response)

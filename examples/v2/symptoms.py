@@ -7,7 +7,7 @@ if __name__ == '__main__':
     api = infermedica_api.get_api('v2')
 
     print('Symptoms list:')
-    print(api.symptoms_list(), end="\n\n")
+    print(api.symptom_list(), end="\n\n")
 
     print('Symptom details:')
     print(api.symptom_details('s_56'), end="\n\n")

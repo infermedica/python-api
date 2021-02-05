@@ -400,7 +400,7 @@ class BasicAPIConditionMixin(ABC):
             headers=headers
         )
 
-    def conditions_list(self, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> List[ConditionDetails]:
+    def condition_list(self, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> List[ConditionDetails]:
         """
         Makes an API request and returns list of condition details objects.
         See the docs: https://developer.infermedica.com/docs/v3/medical-concepts#conditions.
@@ -441,7 +441,7 @@ class BasicAPISymptomMixin(ABC):
             headers=headers
         )
 
-    def symptoms_list(self, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> List[SymptomDetails]:
+    def symptom_list(self, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> List[SymptomDetails]:
         """
         Makes an API request and returns list of symptom details objects.
         See the docs: https://developer.infermedica.com/docs/v3/medical-concepts#symptoms.
@@ -482,7 +482,7 @@ class BasicAPIRiskFactorMixin(ABC):
             headers=headers
         )
 
-    def risk_factors_list(self, params: Optional[Dict] = None,
+    def risk_factor_list(self, params: Optional[Dict] = None,
                           headers: Optional[Dict] = None) -> List[RiskFactorDetails]:
         """
         Makes an API request and returns list of risk factors details objects.
@@ -524,7 +524,7 @@ class BasicAPILabTestMixin(ABC):
             headers=headers
         )
 
-    def lab_tests_list(self, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> List[LabTestDetails]:
+    def lab_test_list(self, params: Optional[Dict] = None, headers: Optional[Dict] = None) -> List[LabTestDetails]:
         """
         Makes an API request and returns list of lab test details objects.
         See the docs: https://developer.infermedica.com/docs/v3/medical-concepts#lab-tests-and-lab-test-results.

@@ -9,7 +9,7 @@ if __name__ == '__main__':
     age = 45
 
     print('Risk factors list:')
-    print(api.risk_factors_list(age=age), end="\n\n")
+    print(api.risk_factor_list(age=age), end="\n\n")
 
     print('\n\nRisk factor details:')
     print(api.risk_factor_details('p_37', age=age), end="\n\n")

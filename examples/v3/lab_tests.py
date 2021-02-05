@@ -9,7 +9,7 @@ if __name__ == '__main__':
     age = 52
 
     print('Laboratory tests list:')
-    print(api.lab_tests_list(age=age), end="\n\n")
+    print(api.lab_test_list(age=age), end="\n\n")
 
     print('\n\nLaboratory test details:')
     print(api.lab_test_details('lt_81', age=age), end="\n\n")

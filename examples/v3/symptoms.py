@@ -10,7 +10,7 @@ if __name__ == '__main__':
     age_unit = 'year'
 
     print('Symptoms list:')
-    print(api.symptoms_list(age=age, age_unit=age_unit), end="\n\n")
+    print(api.symptom_list(age=age, age_unit=age_unit), end="\n\n")
 
     print('Symptom details:')
     print(api.symptom_details('s_56', age=age, age_unit=age_unit), end="\n\n")

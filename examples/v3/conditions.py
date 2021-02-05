@@ -9,7 +9,7 @@ if __name__ == '__main__':
     age = 35
 
     print('Conditions list:')
-    print(api.conditions_list(age=age), end="\n\n")
+    print(api.condition_list(age=age), end="\n\n")
 
     print('Condition details:')
     print(api.condition_details('c_221', age=age), end="\n\n")

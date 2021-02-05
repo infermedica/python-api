@@ -7,7 +7,7 @@ if __name__ == '__main__':
     api = infermedica_api.get_api('v2')
 
     print('Risk factors list:')
-    print(api.risk_factors_list(), end="\n\n")
+    print(api.risk_factor_list(), end="\n\n")
 
     print('\n\nRisk factor details:')
     print(api.risk_factor_details('p_37'), end="\n\n")

@@ -5,7 +5,7 @@ import infermedica_api
 
 
 if __name__ == '__main__':
-    api = infermedica_api.get_api('v2')
+    api: infermedica_api.ModelAPIv2Connector = infermedica_api.get_api('v2')
 
     print('Parse simple text:')
     response = api.parse('i feel smooch pain but no coughing today')

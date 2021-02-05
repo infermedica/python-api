@@ -67,10 +67,6 @@ class BaseAPIConnector(ABC):
         :param default_headers: (optional) Dict with default headers that will be send with every request
         :param api_definitions: (optional) Dict with custom API method definitions
 
-        Usage::
-            >>> import infermedica_api
-            >>> api = infermedica_api.BaseAPIConnector(app_id='YOUR_APP_ID', app_key='YOUR_APP_KEY')
-
         :raises: infermedica_api.exceptions.MissingAPIDefinition
         """
         self.app_id = app_id
@@ -483,7 +479,7 @@ class BasicAPIRiskFactorMixin(ABC):
         )
 
     def risk_factor_list(self, params: Optional[Dict] = None,
-                          headers: Optional[Dict] = None) -> List[RiskFactorDetails]:
+                         headers: Optional[Dict] = None) -> List[RiskFactorDetails]:
         """
         Makes an API request and returns list of risk factors details objects.
         See the docs: https://developer.infermedica.com/docs/v3/medical-concepts#risk-factors.
@@ -557,4 +553,5 @@ class BasicAPICommonMethodsMixin(
     BasicAPIRiskFactorMixin,
     BasicAPILabTestMixin,
     ABC
-): pass
+):
+    pass

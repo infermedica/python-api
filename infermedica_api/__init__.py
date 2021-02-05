@@ -94,13 +94,6 @@ API_CONFIG = {
     },
 }
 
-from .models.condition import Condition, ConditionList
-from .models.diagnosis import Diagnosis, DiagnosisQuestion, ConditionResult, ConditionResultList
-from .models.lab_test import LabTest, LabTestList
-from .models.rationale import RationaleResult
-from .models.red_flag import RedFlagList
-from .models.risk_factor import RiskFactor, RiskFactorList
-from .models.symptom import Symptom, SymptomList
 from .connectors import (
     SearchConceptType,
     ConceptType,

@@ -1,12 +1,13 @@
+from infermedica_api.connectors.v2.models import Diagnosis
 from .. import config
 
 config.setup_examples()
 import infermedica_api
 
 if __name__ == '__main__':
-    api = infermedica_api.get_api('v2')
+    api: infermedica_api.ModelAPIv2Connector = infermedica_api.get_api('v2')
 
-    request = infermedica_api.Diagnosis(sex='female', age=35)
+    request = Diagnosis(sex='female', age=35)
 
     request.add_symptom('s_21', 'present', source='initial')
     request.add_symptom('s_98', 'present', source='initial')

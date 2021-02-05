@@ -4,7 +4,7 @@ config.setup_examples()
 import infermedica_api
 
 if __name__ == '__main__':
-    api = infermedica_api.get_api('v2')
+    api: infermedica_api.ModelAPIv2Connector = infermedica_api.get_api('v2')
 
     print('Look for evidence containing phrase headache:')
     print(api.search('headache'), end="\n\n")

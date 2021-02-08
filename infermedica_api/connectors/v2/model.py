@@ -30,7 +30,7 @@ class ModelAPIv2Connector(APIv2Connector):
         See the docs: https://developer.infermedica.com/docs/suggest-related-concepts.
 
         :param diagnosis_request: Diagnosis request object
-        :param max_results: (optional) Maximum number of result to return, default is 8
+        :param max_results: (optional) Maximum number of results to return, default is 8
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
 
         :returns: A list of suggestions, dicts with 'id', 'name' and 'common_name' keys
@@ -56,7 +56,7 @@ class ModelAPIv2Connector(APIv2Connector):
         See the docs: https://developer.infermedica.com/docs/red-flags.
 
         :param diagnosis_request: Diagnosis request object
-        :param max_results: (optional) Maximum number of result to return, default is 8
+        :param max_results: (optional) Maximum number of results to return, default is 8
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIv2Connector` method
 
         :returns: A list of RedFlag objects

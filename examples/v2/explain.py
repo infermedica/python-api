@@ -7,10 +7,10 @@ import infermedica_api
 if __name__ == "__main__":
     api: infermedica_api.ModelAPIv2Connector = infermedica_api.get_api("v2")
 
-    # Prepare diagnosis request it need to have sufficient amount of evidence
-    # The most appropriate way to get a request way for explain method is to
+    # To prepare a diagnosis request it needs to have a sufficient amount of evidence
+    # The most appropriate way to get a request for explain method is to
     # use the one which has been created while interacting with diagnosis.
-    # For the example purpose a new one is created.
+    # For example purposes, a new one is created.
     request = Diagnosis(sex="female", age=35)
 
     request.add_symptom("s_10", "present")

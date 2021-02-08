@@ -52,7 +52,7 @@ class APIv2Connector(BasicAPIv2Connector):
 
         :param phrase: Phrase to look for
         :param sex: (optional) Sex of the patient 'female' or 'male' to narrow results
-        :param max_results: (optional) Maximum number of result to return, default is 8
+        :param max_results: (optional) Maximum number of results to return, default is 8
         :param types: (optional) List of search filters (enums SearchConceptType or str) to narrow the response
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`BasicAPIv2Connector` method
 
@@ -126,7 +126,7 @@ class APIv2Connector(BasicAPIv2Connector):
         :param sex: Biological sex value, one of values 'female' or 'male'
         :param age: Age value
         :param extras: (optional) Dict with API extras
-        :param max_results: (optional) Maximum number of result to return, default is 8
+        :param max_results: (optional) Maximum number of results to return, default is 8
         :param interview_id: (optional) Unique interview id for diagnosis session
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
 
@@ -164,7 +164,7 @@ class APIv2Connector(BasicAPIv2Connector):
         :param sex: Biological sex value, one of values 'female' or 'male'
         :param age: Age value
         :param extras: (optional) Dict with API extras
-        :param max_results: (optional) Maximum number of result to return, default is 8
+        :param max_results: (optional) Maximum number of results to return, default is 8
         :param interview_id: (optional) Unique interview id for diagnosis session
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
 

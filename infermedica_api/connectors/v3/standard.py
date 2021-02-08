@@ -129,7 +129,7 @@ class APIv3Connector(BasicAPIv3Connector):
         :param age: Age value
         :param age_unit: (optional) Age unit, one of values 'year' or 'month'
         :param sex: (optional) Sex of the patient 'female' or 'male' to narrow results
-        :param max_results: (optional) Maximum number of result to return, default is 8
+        :param max_results: (optional) Maximum number of results to return, default is 8
         :param types: (optional) List of search concept types (enums SearchConceptType or str) to narrow the response
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`BasicAPIv3Connector` method
 
@@ -214,7 +214,7 @@ class APIv3Connector(BasicAPIv3Connector):
         :param extras: (optional) Dict with API extras
         :param suggest_method: (optional) Suggest method to be used,
                                one of values 'symptoms' (default), 'risk_factors', 'red_flags'
-        :param max_results: (optional) Maximum number of result to return, default is 8
+        :param max_results: (optional) Maximum number of results to return, default is 8
         :param interview_id: (optional) Unique interview id for diagnosis session
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`APIConnector` method
 

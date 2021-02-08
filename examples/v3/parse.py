@@ -9,11 +9,11 @@ if __name__ == "__main__":
     age = 38
 
     print("Parse simple text:")
-    response = api.parse("i feel smooch pain but no coughing today", age=age)
+    response = api.parse("i feel stomach pain but no coughing today", age=age)
     print(response, end="\n\n")
 
     print("Parse simple text and include tokens information:")
     response = api.parse(
-        "i feel smooch pain but no coughing today", age=age, include_tokens=True
+        "i feel stomach pain but no coughing today", age=age, include_tokens=True
     )
     print(response, end="\n\n")

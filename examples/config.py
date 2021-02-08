@@ -6,7 +6,7 @@ import os
 def setup_examples():
     """
     Setup environment to easily run examples.
-    API credentials needs to be provided here in order
+    API credentials need to be provided here in order
     to set up api object correctly.
     """
     try:

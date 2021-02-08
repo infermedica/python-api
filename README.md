@@ -200,7 +200,7 @@ print(response["conditions"][0]["probability"])
 
 ## Examples
 
-To see more use cases on how to use the library look into provided examples. One may easily check out and run examples, first define environmental variables with credentials and run selected example:
+To see more use cases on how to use the library look into provided examples. One may easily check out and run examples, first define environmental variables with credentials and run the selected example:
 
  ```bash
 export APP_ID=<YOUR_APP_ID>
@@ -237,7 +237,7 @@ infermedica_api.exceptions.ConnectionError
 There are also few additional exception that may occur:
 
 * `MissingConfiguration` is raised during the `get_api` call if the API configuration for given alias was not registered. Or the default API has not been configured, while calling `get_api` without alias parameter.
-* `MethodNotAvailableInAPIVersion` is raised if one try to use method from different API version.
+* `MethodNotAvailableInAPIVersion` is raised if one tries to use a method from different API version.
 * `InvalidSearchConceptType` is raised when wrong filters are provided to the `search` method.
 * `InvalidConceptType` is raised when wrong concept types are provided to the `concepts` method.
 * `InvalidAgeUnit` is raised when wrong age unit is provided in API v3 Connectors.

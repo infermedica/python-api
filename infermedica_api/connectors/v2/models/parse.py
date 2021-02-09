@@ -46,6 +46,4 @@ class ParseResults(BaseModel):
         :return: ParseResults object as dict.
         :rtype: dict
         """
-        return {
-            "mentions": [mention.to_dict() for mention in self.mentions]
-        }
+        return {"mentions": [mention.to_dict() for mention in self.mentions]}

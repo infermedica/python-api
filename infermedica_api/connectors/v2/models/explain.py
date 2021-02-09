@@ -7,8 +7,12 @@ class ExplainResults(BaseModel):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        self.supporting_evidence = [ExplainResult.from_json(val) for val in self.supporting_evidence]
-        self.conflicting_evidence = [ExplainResult.from_json(val) for val in self.conflicting_evidence]
+        self.supporting_evidence = [
+            ExplainResult.from_json(val) for val in self.supporting_evidence
+        ]
+        self.conflicting_evidence = [
+            ExplainResult.from_json(val) for val in self.conflicting_evidence
+        ]
 
     @staticmethod
     def from_json(json):
@@ -31,8 +35,12 @@ class ExplainResults(BaseModel):
         :rtype: dict
         """
         return {
-            "supporting_evidence": [result.to_dict() for result in self.supporting_evidence],
-            "conflicting_evidence": [result.to_dict() for result in self.conflicting_evidence]
+            "supporting_evidence": [
+                result.to_dict() for result in self.supporting_evidence
+            ],
+            "conflicting_evidence": [
+                result.to_dict() for result in self.conflicting_evidence
+            ],
         }
 
 

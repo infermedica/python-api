@@ -1,18 +1,17 @@
-from __future__ import print_function
-import config
+from infermedica_api.connectors.v2.models import Diagnosis
+from .. import config
 
 config.setup_examples()
 import infermedica_api
 
-
-if __name__ == '__main__':
-    api = infermedica_api.get_api()
+if __name__ == "__main__":
+    api: infermedica_api.ModelAPIv2Connector = infermedica_api.get_api("v2")
 
     # Prepare the diagnosis request object
-    request = infermedica_api.Diagnosis(sex='male', age=30)
-    request.add_symptom('s_1193', 'present')
-    request.add_symptom('s_488', 'present')
-    request.add_symptom('s_418', 'absent')
+    request = Diagnosis(sex="male", age=30)
+    request.add_symptom("s_1193", "present")
+    request.add_symptom("s_488", "present")
+    request.add_symptom("s_418", "absent")
 
     # Alternatively prepare a dict based request object
     # request = {
@@ -29,4 +28,4 @@ if __name__ == '__main__':
     request = api.triage(request)
 
     # and see the results
-    print('\n\n', request)
+    print("\n\n", request)

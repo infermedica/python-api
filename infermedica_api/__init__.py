@@ -8,12 +8,14 @@ Infermedica Python API client provides access to powerful medical diagnostic API
 Basic usage:
 
    >>> import infermedica_api
-   >>> api = infermedica_api.API(app_id='YOUR_APP_ID', app_key='YOUR_APP_KEY')
+   >>> api = infermedica_api.APIv3Connector(app_id='YOUR_APP_ID', app_key='YOUR_APP_KEY')
    >>> print(api.info())
    {
-     "updated_at": "2015-03-12T00:39:34+01:00",
-     "conditions_count": 385,
-     "observations_count": 875
+      "updated_at": "2016-09-27T07:08:25Z",
+      "conditions_count": 504,
+      "symptoms_count": 1114,
+      "risk_factors_count": 41,
+      "lab_tests_count": 448
    }
 
 ... you can also configure API object globally and use it without initialization in any module.
@@ -35,59 +37,70 @@ is available at <https://developer.infermedica.com>.
 
 """
 
-__title__ = 'Infermedica API'
-__version__ = '0.1.1'
-__author__ = 'Arkadiusz Szydelko'
-__license__ = 'Apache 2.0'
-__copyright__ = 'Copyright 2020 Infermedica'
+__title__ = "Infermedica API"
+__version__ = "1.0.0"
+__author__ = "Arkadiusz Szydelko"
+__license__ = "Apache 2.0"
+__copyright__ = "Copyright 2021 Infermedica"
 
-DEFAULT_API_VERSION = 'v2'
-DEFAULT_API_ENDPOINT = 'https://api.infermedica.com/'
+DEFAULT_API_VERSION = "v3"
+DEFAULT_API_ENDPOINT = "https://api.infermedica.com/"
 
 API_CONFIG = {
-    'v1': {
-        'methods': {
-            'info': '/info',
-            'lookup': '/lookup',
-            'diagnosis': '/diagnosis',
-            'observations': '/observations',
-            'observation_details': '/observations/{id}',
-            'conditions': '/conditions',
-            'condition_details': '/conditions/{id}',
-            'risk_factors': '/risk_factors',
-            'risk_factor_details': '/risk_factors/{id}'
-        }
+    "v2": {
+        "methods": {
+            "info": "/info",
+            "search": "/search",
+            "suggest": "/suggest",
+            "parse": "/parse",
+            "diagnosis": "/diagnosis",
+            "explain": "/explain",
+            "triage": "/triage",
+            "conditions": "/conditions",
+            "condition_details": "/conditions/{id}",
+            "symptoms": "/symptoms",
+            "symptom_details": "/symptoms/{id}",
+            "lab_tests": "/lab_tests",
+            "lab_test_details": "/lab_tests/{id}",
+            "risk_factors": "/risk_factors",
+            "risk_factor_details": "/risk_factors/{id}",
+            "red_flags": "/red_flags",
+            "rationale": "/rationale",
+        },
     },
-    'v2': {
-        'methods': {
-            'info': '/info',
-            'search': '/search',
-            'lookup': '/lookup',
-            'suggest': '/suggest',
-            'parse': '/parse',
-            'diagnosis': '/diagnosis',
-            'explain': '/explain',
-            'triage': '/triage',
-            'conditions': '/conditions',
-            'condition_details': '/conditions/{id}',
-            'symptoms': '/symptoms',
-            'symptom_details': '/symptoms/{id}',
-            'lab_tests': '/lab_tests',
-            'lab_test_details': '/lab_tests/{id}',
-            'risk_factors': '/risk_factors',
-            'risk_factor_details': '/risk_factors/{id}',
-            'red_flags': '/red_flags',
-            'rationale': '/rationale',
+    "v3": {
+        "methods": {
+            "info": "/info",
+            "search": "/search",
+            "parse": "/parse",
+            "suggest": "/suggest",
+            "diagnosis": "/diagnosis",
+            "rationale": "/rationale",
+            "explain": "/explain",
+            "triage": "/triage",
+            "specialist_recommender": "/recommend_specialist",
+            "conditions": "/conditions",
+            "condition_details": "/conditions/{id}",
+            "symptoms": "/symptoms",
+            "symptom_details": "/symptoms/{id}",
+            "lab_tests": "/lab_tests",
+            "lab_test_details": "/lab_tests/{id}",
+            "risk_factors": "/risk_factors",
+            "risk_factor_details": "/risk_factors/{id}",
+            "red_flags": "/red_flags",
+            "concepts": "/concepts",
+            "concept_details": "/concepts/{id}",
         },
     },
 }
 
-from .models.condition import Condition, ConditionList
-from .models.diagnosis import Diagnosis, DiagnosisQuestion, ConditionResult, ConditionResultList
-from .models.lab_test import LabTest, LabTestList
-from .models.observation import Observation, ObservationList
-from .models.rationale import RationaleResult
-from .models.red_flag import RedFlagList
-from .models.risk_factor import RiskFactor, RiskFactorList
-from .models.symptom import Symptom, SymptomList
-from .webservice import configure, get_api, API, SEARCH_FILTERS
+from .connectors import (
+    SearchConceptType,
+    ConceptType,
+    BasicAPIv2Connector,
+    APIv2Connector,
+    BasicAPIv3Connector,
+    ModelAPIv2Connector,
+    APIv3Connector,
+)
+from .webservice import configure, get_api

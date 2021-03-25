@@ -22,7 +22,7 @@ class ParseResults(BaseModel):
     """Model class for API parse response object."""
 
     def __init__(self, **kwargs):
-        super(ParseResults, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.mentions = [ParseMention.from_json(val) for val in self.mentions]
 
@@ -46,6 +46,4 @@ class ParseResults(BaseModel):
         :return: ParseResults object as dict.
         :rtype: dict
         """
-        return {
-            "mentions": [mention.to_dict() for mention in self.mentions]
-        }
+        return {"mentions": [mention.to_dict() for mention in self.mentions]}

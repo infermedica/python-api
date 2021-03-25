@@ -40,12 +40,9 @@ class SearchConceptType(Enum):
     RISK_FACTOR = "risk_factor"
     LAB_TEST = "lab_test"
 
-    @staticmethod
-    def has_value(val: Union["SearchConceptType", str]) -> bool:
-        try:
-            return val in SearchConceptType
-        except TypeError:
-            return val in (item.value for item in SearchConceptType)
+    @classmethod
+    def has_value(cls, value: Union["SearchConceptType", str]) -> bool:
+        return value in cls._value2member_map_
 
     @staticmethod
     def get_value(val: Union["SearchConceptType", str]) -> str:

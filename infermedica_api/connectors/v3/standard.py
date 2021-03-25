@@ -37,12 +37,9 @@ class ConceptType(Enum):
     RISK_FACTOR = "risk_factor"
     LAB_TEST = "lab_test"
 
-    @staticmethod
-    def has_value(val: Union["ConceptType", str]) -> bool:
-        try:
-            return val in ConceptType
-        except TypeError:
-            return val in (item.value for item in ConceptType)
+    @classmethod
+    def has_value(cls, value: Union["ConceptType", str]) -> bool:
+        return value in cls._value2member_map_
 
 
 class APIv3Connector(BasicAPIv3Connector):

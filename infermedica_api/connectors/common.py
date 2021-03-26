@@ -42,6 +42,8 @@ class SearchConceptType(Enum):
 
     @classmethod
     def has_value(cls, value: Union["SearchConceptType", str]) -> bool:
+        if isinstance(value, SearchConceptType):
+            return value.value in (val.value for val in cls.__members__.values())
         return value in (val.value for val in cls.__members__.values())
 
     @staticmethod

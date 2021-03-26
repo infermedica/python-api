@@ -39,6 +39,8 @@ class ConceptType(Enum):
 
     @classmethod
     def has_value(cls, value: Union["ConceptType", str]) -> bool:
+        if isinstance(value, ConceptType):
+            return value.value in (val.value for val in cls.__members__.values())
         return value in (val.value for val in cls.__members__.values())
 
 

@@ -39,10 +39,9 @@ class ConceptType(Enum):
 
     @staticmethod
     def has_value(val: Union["ConceptType", str]) -> bool:
-        try:
+        if isinstance(val, ConceptType):
             return val in ConceptType
-        except TypeError:
-            return val in (item.value for item in ConceptType)
+        return val in (item.value for item in ConceptType)
 
 
 class APIv3Connector(BasicAPIv3Connector):

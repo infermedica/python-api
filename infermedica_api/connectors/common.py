@@ -42,10 +42,9 @@ class SearchConceptType(Enum):
 
     @staticmethod
     def has_value(val: Union["SearchConceptType", str]) -> bool:
-        try:
+        if isinstance(val, SearchConceptType):
             return val in SearchConceptType
-        except TypeError:
-            return val in (item.value for item in SearchConceptType)
+        return val in (item.value for item in SearchConceptType)
 
     @staticmethod
     def get_value(val: Union["SearchConceptType", str]) -> str:

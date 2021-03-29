@@ -37,8 +37,8 @@ class ConceptType(Enum):
     RISK_FACTOR = "risk_factor"
     LAB_TEST = "lab_test"
 
-    @classmethod
-    def has_value(cls, val: Union["ConceptType", str]) -> bool:
+    @staticmethod
+    def has_value(val: Union["ConceptType", str]) -> bool:
         if isinstance(val, ConceptType):
             return val in ConceptType
         return val in (item.value for item in ConceptType)

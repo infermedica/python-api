@@ -40,8 +40,8 @@ class SearchConceptType(Enum):
     RISK_FACTOR = "risk_factor"
     LAB_TEST = "lab_test"
 
-    @classmethod
-    def has_value(cls, val: Union["SearchConceptType", str]) -> bool:
+    @staticmethod
+    def has_value(val: Union["SearchConceptType", str]) -> bool:
         if isinstance(val, SearchConceptType):
             return val in SearchConceptType
         return val in (item.value for item in SearchConceptType)

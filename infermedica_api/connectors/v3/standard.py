@@ -38,10 +38,10 @@ class ConceptType(Enum):
     LAB_TEST = "lab_test"
 
     @classmethod
-    def has_value(cls, value: Union["ConceptType", str]) -> bool:
-        if isinstance(value, ConceptType):
-            return value.value in (val.value for val in cls.__members__.values())
-        return value in (val.value for val in cls.__members__.values())
+    def has_value(cls, val: Union["ConceptType", str]) -> bool:
+        if isinstance(val, ConceptType):
+            return val in ConceptType
+        return val in (item.value for item in ConceptType)
 
 
 class APIv3Connector(BasicAPIv3Connector):

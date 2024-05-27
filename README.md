@@ -251,7 +251,7 @@ Pull requests are always welcome. Before submitting a pull request, please ensur
 
 # Legal
 
-Copyright 2021 by [Infermedica](http://infermedica.com).
+Copyright 2024 by [Infermedica](http://infermedica.com).
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 

@@ -38,6 +38,9 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "Topic :: Software Development :: Libraries",
         "Topic :: Scientific/Engineering :: Medical Science Apps.",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
@@ -48,5 +51,5 @@ setup(
     url="https://github.com/infermedica/python-api",
     license="Apache 2.0",
     packages=find_packages(exclude=["examples"]),
-    install_requires=["requests>=2.4.2"],
+    install_requires=["requests>=2.32.2"],
 )

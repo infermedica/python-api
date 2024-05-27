@@ -603,9 +603,11 @@ class APIv3Connector(BasicAPIv3Connector):
 
         if types:
             types_as_str_list = [
-                concept_type.value
-                if isinstance(concept_type, ConceptType)
-                else concept_type
+                (
+                    concept_type.value
+                    if isinstance(concept_type, ConceptType)
+                    else concept_type
+                )
                 for concept_type in types
             ]
             for concept_type in types_as_str_list:

@@ -166,18 +166,22 @@ class APIv3Connector(BasicAPIv3Connector):
         text: str,
         age: int,
         age_unit: Optional[str] = None,
+        sex: Optional[str] = None,
+        context: Optional[List[str]] = None,
         include_tokens: Optional[bool] = False,
         interview_id: Optional[str] = None,
         **kwargs: Any,
     ) -> Dict:
         """
-        Makes an parse API request with provided text and include_tokens parameter.
+        Makes a parse API request with provided text and include_tokens parameter.
         Returns parse results with detailed list of mentions found in the text.
         See the docs: https://developer.infermedica.com/docs/v3/nlp.
 
         :param text: Text to parse
         :param age: Age value
         :param age_unit: (optional) Age unit, one of values 'year' or 'month'
+        :param sex: (optional) Sex of the patient 'female' or 'male' to narrow results
+        :param context: (optional) List of ids of other present evidences, which can be used to contextualize parsed text
         :param include_tokens: (optional) Switch to manipulate the include_tokens parameter
         :param interview_id: (optional) Unique interview id for diagnosis session
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`BasicAPIv3Connector` method
@@ -190,6 +194,8 @@ class APIv3Connector(BasicAPIv3Connector):
         data = {
             "text": text,
             "age": self.get_age_object(age=age, age_unit=age_unit),
+            "sex": sex,
+            "context": context,
             "include_tokens": include_tokens,
         }
 

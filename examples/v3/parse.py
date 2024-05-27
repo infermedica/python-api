@@ -17,3 +17,10 @@ if __name__ == "__main__":
         "i feel stomach pain but no coughing today", age=age, include_tokens=True
     )
     print(response, end="\n\n")
+
+    print("Parse simple sex specific text:")
+    age = 25
+    response = api.parse("painful period", age=age, sex="female")
+    print(response, end="\n\n")
+    response = api.parse("painful period", age=age, sex="male")
+    print(response, end="\n\n")

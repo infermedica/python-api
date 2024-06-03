@@ -1,2 +1,2 @@
-requests>=2.4.2
-black>=20.8b1
+requests>=2.32.2
+black>=24.4.2

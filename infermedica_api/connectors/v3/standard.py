@@ -117,6 +117,7 @@ class APIv3Connector(BasicAPIv3Connector):
         sex: Optional[str] = None,
         max_results: Optional[int] = 8,
         types: Optional[List[Union[SearchConceptType, str]]] = None,
+        interview_id: Optional[str] = None,
         **kwargs: Any,
     ) -> List[Dict[str, str]]:
         """
@@ -130,12 +131,16 @@ class APIv3Connector(BasicAPIv3Connector):
         :param sex: (optional) Sex of the patient 'female' or 'male' to narrow results
         :param max_results: (optional) Maximum number of results to return, default is 8
         :param types: (optional) List of search concept types (enums SearchConceptType or str) to narrow the response
+        :param interview_id: (optional) Unique interview id for diagnosis session
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`BasicAPIv3Connector` method
 
         :returns: A List of dicts with 'id' and 'label' keys
 
         :raises: :class:`infermedica_api.exceptions.InvalidSearchConceptType`
         """
+        headers = kwargs.pop("headers", {})
+        headers.update(self.get_interview_id_headers(interview_id=interview_id))
+
         params = kwargs.pop("params", {})
         params.update(self.get_age_query_params(age=age, age_unit=age_unit))
         params.update({"phrase": phrase, "max_results": max_results})
@@ -163,10 +168,12 @@ class APIv3Connector(BasicAPIv3Connector):
         age_unit: Optional[str] = None,
         include_tokens: Optional[bool] = False,
         interview_id: Optional[str] = None,
+        sex: Optional[str] = None,
+        context: Optional[List[str]] = None,
         **kwargs: Any,
     ) -> Dict:
         """
-        Makes an parse API request with provided text and include_tokens parameter.
+        Makes a parse API request with provided text and include_tokens parameter.
         Returns parse results with detailed list of mentions found in the text.
         See the docs: https://developer.infermedica.com/docs/v3/nlp.
 
@@ -175,6 +182,8 @@ class APIv3Connector(BasicAPIv3Connector):
         :param age_unit: (optional) Age unit, one of values 'year' or 'month'
         :param include_tokens: (optional) Switch to manipulate the include_tokens parameter
         :param interview_id: (optional) Unique interview id for diagnosis session
+        :param sex: (optional) Sex of the patient 'female' or 'male' to narrow results
+        :param context: (optional) List of ids of other present evidences, which can be used to contextualize parsed text
         :param kwargs: (optional) Keyword arguments passed to lower level parent :class:`BasicAPIv3Connector` method
 
         :returns: A dict object with api response
@@ -185,6 +194,8 @@ class APIv3Connector(BasicAPIv3Connector):
         data = {
             "text": text,
             "age": self.get_age_object(age=age, age_unit=age_unit),
+            "sex": sex,
+            "context": context,
             "include_tokens": include_tokens,
         }
 

@@ -159,7 +159,7 @@ class APIv3Connector(BasicAPIv3Connector):
 
             params["types"] = ",".join(types_as_str_list)
 
-        return super().search(params=params, **kwargs)
+        return super().search(params=params, headers=headers)
 
     def parse(
         self,

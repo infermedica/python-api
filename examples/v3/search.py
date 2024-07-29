@@ -10,6 +10,8 @@ if __name__ == "__main__":
 
     print("Look for evidence containing the phrase headache:")
     print(api.search("headache", age=age), end="\n\n")
+    print("Look for evidence containing the phrase headache, send Interview-Id:")
+    print(api.search("headache", age=age, interview_id="aaaa-bbbb-cccc-dddd"), end="\n\n")
 
     print("Look for evidence containing the phrase breast, female specific symptoms:")
     print(api.search("breast", age=age, sex="female"), end="\n\n")
